@@ -2,7 +2,7 @@
     <!-- sidebar expanded -->
     <aside v-if="is_expanded" class="is-expanded">
         <div class="logo">
-            <img src="../assets/logo.png" alt="Vue">
+            <img src="../assets/navBarLogo.png" alt="Vue">
         </div>
 
         <div class="menu-toggle-wrap">
@@ -29,7 +29,7 @@
     <!-- sidebar NOT expanded -->
     <aside v-else>
         <div class="logo">
-            <img src="../assets/logo.png" alt="Vue">
+            <img src="../assets/navBarLogo.png" alt="Vue">
         </div>
 
         <div class="menu-toggle-wrap">
@@ -80,8 +80,10 @@ aside {
     min-height: 100vh;
     overflow: hidden;
     /* transition: 0.2s ease-out; */
-    background-color: var(--primary);
-    color: var(--dark-grey);
+    /* background-color: var(--primary); */
+    background-color: #7399C6;
+    /* color: var(--dark-grey); */
+    color: white;
     @media (max-width: 768px) {
         aside {
             position: fixed;
@@ -111,7 +113,8 @@ aside {
     transform: rotate(-180deg);
 }
 .material-symbols-outlined {
-    color: var(--dark-grey);
+    /* color: var(--dark-grey); */
+    color: var(--lighter-grey);
     font-size: 2rem;
     margin-left: 15px;
     /* transition: 0.2s ease-out; */
@@ -136,7 +139,7 @@ img {
     padding: 10px 0px 10px 0px;
 }
 .text {
-    color: var(--dark-grey);
+    color: var(--lighter-grey);
     margin-left: 15px;
 }
 .is-expanded .button {
