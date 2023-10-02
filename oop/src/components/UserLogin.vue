@@ -2,9 +2,9 @@
     <div class="login">
         <form>
             <div class="logo">
-                <img src="../assets/logo.png" alt="Vue" class="app_logo">
+                <img src="../assets/GSLogo.png" alt="Vue" class="app_logo">
             </div>
-            <p class="pb-1">Goldman Sachs</p>
+            <!-- <p class="pb-1">Goldman Sachs</p> -->
             <h3>Welcome Back</h3>
             <p>Enter your email and password below</p>
             <!-- Email input -->
@@ -68,13 +68,15 @@ export default {
 .login {
     width: 100%;
     height: 100vh;
-    background: var(--primary);
+    /* background: var(--primary); */
+    /* background-color: #7399C6; */
+    background-color: rgba(115, 153, 198, 0.5)
 }
 .logo {
     margin-bottom: 1rem;
 }
 .app_logo {
-    width: 40px;
+    width: 80px;
 }
 p {
     font-size: 14px;
@@ -92,7 +94,7 @@ form {
 }
 .login_btn {
     width: 100%;
-    background-color: #3751FF;
+    background-color: #7399C6;
     color: white;
     border-radius: 5px;
 }
