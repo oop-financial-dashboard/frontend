@@ -20,6 +20,11 @@ const routes = [
     component: () => import('../views/SettingsPage.vue')
   },
   {
+    path: '/homepage/create_portfolio',
+    name: 'create_portfolio_page',
+    component: () => import('../views/CreatePortfolioView.vue')
+  },
+  {
     path: '/',
     name: 'login_page',
     component: () => import('../components/UserLogin.vue'),

@@ -2,13 +2,20 @@
   <main class="homepage">
     <h1>My Portfolio <span class="button">Trade</span></h1>
     
-    <div class="profile p-5">
+    <div class="profile mt-3 p-5">
       <p><b>Total Assets (SGD) *need API to populate this</b></p>
       <p style="font-size: 30px">100,745</p>
     </div>
     
     <div class="mt-5">
-      <p><b>US Mkt Cap (USD) *need API to populate this table and heading</b><span class="button">Create Portfolio</span></p>
+      <p>
+        <b>US Mkt Cap (USD) *need API to populate this table and heading</b>
+        <span class="button">
+          <button style="color: white" @click="createPortfolio">
+            Create Portfolio
+          </button>
+        </span>
+      </p>
       <table class="table">
         <thead>
           <tr>
@@ -36,6 +43,11 @@
 
 <script>
 export default {
+  methods: {
+    createPortfolio() {
+      this.$router.push('/homepage/create_portfolio'); 
+    }
+  }
 }
 </script>
 
@@ -43,6 +55,7 @@ export default {
 .button {
   float: right;
   font-size: 14px;
+  font-weight: bold;
   color: white;
   background-color: #0A1B39;
   padding: 12px 50px;
