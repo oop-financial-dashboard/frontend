@@ -1,28 +1,28 @@
 <template>
   <div class="app">
-    <SideBar v-if="!$route.meta.hideNavbar"/>
-    <router-view/>
+    <SideBar v-if="!$route.meta.hideNavbar" />
+    <router-view />
   </div>
 </template>
 
 <script setup>
-import SideBar from './components/SideBar.vue'
+import SideBar from "./components/SideBar.vue";
 </script>
 
 <style>
 :root {
   --primary: #363740;
-  --dark-grey: #A4A6B3;
-  --light-grey: #9FA2B4;
-  --lighter-grey: #DDE2FF;
-  --lighter-grey-alt: #F7F8FC;
+  --dark-grey: #a4a6b3;
+  --light-grey: #9fa2b4;
+  --lighter-grey: #dde2ff;
+  --lighter-grey-alt: #f7f8fc;
   --sidebar-width: 300px;
 }
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: Avenir, Helvetica, Arial, sans-serif ;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
 }
 
 body {
@@ -32,11 +32,11 @@ body {
   display: flex;
 }
 main {
-    flex: 1 1 0;
-    padding: 2rem;
-    @media (max-width: 768px) {
-      padding-left: 6rem;
-    }
+  flex: 1 1 0;
+  padding: 2rem;
+  @media (max-width: 768px) {
+    padding-left: 6rem;
+  }
 }
 button {
   cursor: pointer;
