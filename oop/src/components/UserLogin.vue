@@ -29,6 +29,7 @@
 
             <!-- Submit button -->
             <button type="button" class="login_btn my-4 p-2" @click="getUserType()">Log in</button>
+            <p class = "grey_text" data-bs-toggle="modal" data-bs-target="#registerModal">Don't have an account? <u>Register</u></p>
         </form>
 
         <!-- modal for forget pw -->
@@ -87,11 +88,96 @@
                 </div>
             </div>
         </div>
+
+
+        <!-- Modal for registration -->
+        <div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 style="text-align: center">Register</h3>
+                        <button
+                            type="btn"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-hidden="true"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-md-12">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="panel-body">
+                                        <fieldset>
+                                            <div class="form-group row">
+                                                <label
+                                                    for="reg"
+                                                    class="col-sm-3 col-form-label" 
+                                                    >First Name:</label
+                                                >
+                                                <div class="col-sm-3">
+                                                    <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        id="reg"
+                                                        v-model="firstName"
+                                                    />
+                                                </div>
+
+                                                <label
+                                                    for="reg"
+                                                    class="col-sm-3 col-form-label" 
+                                                    >Last Name:</label
+                                                >
+                                                <div class="col-sm-3">
+                                                    <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        id="reg"
+                                                        v-model="lastName"
+                                                    />
+                                                </div>
+
+                                                <div style="padding-top: 10px;"></div>
+                                                <label
+                                                    for="reg"
+                                                    class="col-sm-2 col-form-label" 
+                                                    >Email:</label
+                                                >
+                                                <div class="col-sm-10">
+                                                    <input
+                                                        type="email"
+                                                        class="form-control"
+                                                        id="email"
+                                                        v-model="regEmail"
+                                                    />
+
+                                                </div>
+
+                                            </div>
+                                            <button
+                                                type="button"
+                                                class="send_btn my-4 p-2"
+                                                @click="Register()"
+                                                id="close"
+                                            >
+                                                Register
+                                            </button>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
-// import axios from 'axios'
+import axios from 'axios'
 // import { server } from '@/utils/helper'
 export default {
     data () {
@@ -99,7 +185,11 @@ export default {
             staff: 'admin',
             email: '',
             pwd: '',
-            visible: 'visibility'
+            visible: 'visibility',
+            firstName: '',
+            lastName: '',
+            msg:'',
+            regEmail:''
         }
     },
     methods: {
@@ -120,7 +210,29 @@ export default {
                 this.visible = 'visibility_off'
                 x.type = 'text'
             }
+        },
+        async Register(){
+            // try{
+            //     await axios.post(`http://localhost:8080/api/v1/auth/register`,{
+            //     firstName: this.firstName,
+            //     lastName: this.lastName,
+            //     email: this.regEmail,
+            //     password: "qwertybob",
+            // })
+            // .then((response) => {
+            //     console.log(response.data);
+            // })
+            // } catch(error) {
+            //     console.log(error)
+            // }
+
+            
+            // Notification.success({
+            //     title: 'Success',
+            //     message: 'Registration Successful'
+            // })
         }
+
     }
 }
 </script>
