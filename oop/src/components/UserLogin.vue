@@ -212,25 +212,23 @@ export default {
             }
         },
         async Register(){
-            // try{
-            //     await axios.post(`http://localhost:8080/api/v1/auth/register`,{
-            //     firstName: this.firstName,
-            //     lastName: this.lastName,
-            //     email: this.regEmail,
-            //     password: "qwertybob",
-            // })
-            // .then((response) => {
-            //     console.log(response.data);
-            // })
-            // } catch(error) {
-            //     console.log(error)
-            // }
-
-            
-            // Notification.success({
-            //     title: 'Success',
-            //     message: 'Registration Successful'
-            // })
+            try{
+                await axios.post(`/auth/register`,{
+                firstName: this.firstName,
+                lastName: this.lastName,
+                email: this.regEmail,
+                password: "qwertybob",
+            })
+            .then((response) => {
+                console.log(response.data);
+                Notification.success({
+                    title: 'Success',
+                    message: 'Registration Successful'
+                })
+            })
+            } catch(error) {
+                console.log(error)
+            }
         }
 
     }
