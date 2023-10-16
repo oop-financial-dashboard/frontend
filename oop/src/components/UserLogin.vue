@@ -131,6 +131,7 @@
               data-bs-dismiss="modal"
               aria-hidden="true"
               aria-label="Close"
+              @click="closeModal()"
             ></button>
           </div>
           <div class="modal-body">
@@ -172,7 +173,7 @@
                           <input
                             type="email"
                             class="form-control"
-                            id="email"
+                            id="regEmail"
                             v-model="regEmail"
                           />
                         </div>
@@ -216,12 +217,12 @@ export default {
     };
   },
   methods: {
-    show(group, type = "", text) {
+    show(group, title="", text, type = "") {
       notify({
         group,
-        title: `Success`,
-        text,
+        title,
         type,
+        text
       });
     },
     getUserType() {
@@ -251,24 +252,34 @@ export default {
           password: "qwertybob",
         })
         .then((response) => {
-          if (response.status == 200) {
-            console.log("clicked");
+          if (response.status === 200) {
             this.show(
               "notification",
-              "success",
-              "Successful registration! Please check your inbox."
+              "Success",
+              "Successful registration! Please check your inbox.",
+              "success"
             );
-            console.log("alert");
-            $('#btnclose').trigger('click');
-          } else {
-            this.show(
-              "notification",
-              "warn",
-              "Oh no, something went wrong! Please try again later."
-            );
+            this.closeModal();
           }
+        })
+        .catch((error)=>{
+          console.log(error)
+           this.show(
+              "notification",
+              "Error",
+              "Oh no, something went wrong! Please try again later.",
+              "error"
+            );
+            this.closeModal();
         });
     },
+    closeModal(){
+      $('#btnclose').trigger('click');
+      this.firstName = "";
+      this.lastName = "";
+      this.regEmail = "";
+      // this.password = "";
+    }
   },
 };
 </script>
