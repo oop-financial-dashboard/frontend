@@ -28,7 +28,7 @@
           class="pwd grey_text"
           data-bs-toggle="modal"
           data-bs-target="#forgetpasswordModal"
-          ><u>Forgot Password</u></label
+          ><u>Forgot Password?</u></label
         >
 
         <div class="d-flex">
@@ -40,7 +40,7 @@
             placeholder="Enter Password"
           />
           <span
-            class="material-symbols-outlined visibility-icon"
+            class="material-symbols-outlined visible-icon"
             @click="ShowHide()"
             >{{ visible }}</span
           >
@@ -156,8 +156,11 @@ export default {
   height: 100vh;
   /* background: var(--primary); */
   /* background-color: #7399C6; */
-  background-color: rgba(115, 153, 198, 0.5);
+  /* background-color: rgba(115, 153, 198, 0.5) */
+  background-image: url("../assets/client-centric-banking.jpg");
+  background-size: cover;
 }
+
 .logo {
   margin-bottom: 1rem;
 }
@@ -202,7 +205,7 @@ form {
 .modal {
   top: 25%;
 }
-.visibility-icon {
+.visible-icon {
   cursor: pointer;
 }
 </style>
