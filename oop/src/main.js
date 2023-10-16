@@ -3,6 +3,9 @@ import App from './App.vue';
 import router from './router';
 import store from './store';
 
+import Notifications from '@kyvg/vue3-notification';
+import velocity from 'velocity-animate';
+
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import PrimeVue from 'primevue/config';
@@ -15,5 +18,6 @@ createApp(App)
     .use(PrimeVue, {ripple: true, inputStyle: "filled"})
     .use(store)
     .use(router)
+    .use(Notifications, { velocity })
     .component('font-awesome-icon', FontAwesomeIcon)
     .mount('#app');
