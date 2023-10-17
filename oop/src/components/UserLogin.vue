@@ -16,20 +16,24 @@
           class="form-control grey_text"
           v-model="email"
           placeholder="Enter Email Address"
+          required
         />
       </div>
 
       <!-- Password input -->
       <div class="form-outline mb-4">
-        <label class="form-label grey_text" for="form2Example2">Password</label>
+        <div class="row d-flex">
+          <label class="form-label grey_text col" for="form2Example2">Password</label>
 
-        <!-- Forget Password -->
-        <label
-          class="pwd grey_text"
-          data-bs-toggle="modal"
-          data-bs-target="#forgetpasswordModal"
-          ><u>Forget Password?</u></label
-        >
+          <!-- Forget Password -->
+          <label
+            class="pwd grey_text col d-flex justify-content-lg-end justify-content-md-start"
+            data-bs-toggle="modal"
+            data-bs-target="#forgetpasswordModal"
+            ><u>Forget Password?</u></label
+          >
+        </div>
+        
 
         <div class="d-flex">
           <input
@@ -54,7 +58,9 @@
         data-bs-toggle="modal"
         data-bs-target="#registerModal"
       >
-        Don't have an account? <u>Register</u>
+        Don't have an account? 
+        <!-- <u>Register</u> -->
+        <a href="#registerModal" class="pe-auto">Register</a>
       </p>
     </form>
 
@@ -139,53 +145,88 @@
               <div class="panel panel-default">
                 <div class="panel-body">
                   <div class="panel-body">
-                    <fieldset>
-                      <div class="form-group row">
-                        <label for="reg" class="col-sm-3 col-form-label"
-                          >First Name:</label
-                        >
-                        <div class="col-sm-3">
-                          <input
-                            type="text"
-                            class="form-control"
-                            id="reg"
-                            v-model="firstName"
-                          />
+                    <fieldset class="container">
+                      <div class="form-group">
+                        <div class="row mb-4">
+                          <label for="reg" class="col-sm-3 col-form-label"
+                            >First Name:</label
+                          >
+                          <div class="col-sm-9">
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="reg"
+                              v-model="firstName"
+                              placeholder="Enter First Name"
+                            />
+                          </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                          <label for="reg" class="col-sm-3 col-form-label"
+                            >Last Name:</label
+                          >
+                          <div class="col-sm-9">
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="reg"
+                              v-model="lastName"
+                              placeholder="Enter Last Name"
+                            />
+                          </div>
                         </div>
 
-                        <label for="reg" class="col-sm-3 col-form-label"
-                          >Last Name:</label
-                        >
-                        <div class="col-sm-3">
-                          <input
-                            type="text"
-                            class="form-control"
-                            id="reg"
-                            v-model="lastName"
-                          />
+                        <div class="row mb-4">
+                          <label for="reg" class="col-sm-3 col-form-label"
+                            >Email:</label
+                          >
+                          <div class="col-sm-9">
+                            <input
+                              type="email"
+                              class="form-control"
+                              id="regEmail"
+                              v-model="regEmail"
+                              placeholder="Enter Email Address"
+                            />
+                            <div v-if="emailError" class="text-danger">{{ emailError }}</div>
+                          </div>
                         </div>
+                        
 
-                        <div style="padding-top: 10px"></div>
-                        <label for="reg" class="col-sm-2 col-form-label"
-                          >Email:</label
-                        >
-                        <div class="col-sm-10">
-                          <input
-                            type="email"
-                            class="form-control"
-                            id="regEmail"
-                            v-model="regEmail"
-                          />
+                        <div class="row mb-4">
+                          <label for="regPassword" class="col-sm-3 col-form-label">Password:</label>
+                          <div class="col-sm-9">
+                            <div class="d-flex">
+                              <input
+                                type="password"
+                                class="form-control"
+                                id="regPassword"
+                                v-model="regPassword"
+                                placeholder="Enter Password"
+                              /><span class="material-symbols-outlined" @click="ShowHide2()">{{
+                                visible
+                              }}</span>
+
+                            </div>
+                            
+                            <div v-if="passwordError" class="text-danger">{{ passwordError }}</div>
+                            
+                          </div>
+                          
                         </div>
+                        
+
+                        <button
+                          type="button"
+                          class="send_btn my-4 p-2"
+                          @click="validateEmail(); Register()"
+                          id="closeReg"
+                        >
+                          Register
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        class="send_btn my-4 p-2"
-                        @click="Register()"
-                        id = "closeReg"
-                      >
-                        Register
-                      </button>
+                      
                     </fieldset>
                   </div>
                 </div>
@@ -214,6 +255,9 @@ export default {
       lastName: "",
       msg: "",
       regEmail: "",
+      regPassword: "",
+      passwordError: null,
+      emailError: null,
     };
   },
   methods: {
@@ -243,13 +287,36 @@ export default {
         x.type = "text";
       }
     },
+    ShowHide2() {
+      var x = document.getElementById("regPassword");
+      if (this.visible == "visibility_off") {
+        this.visible = "visibility";
+        x.type = "password";
+      } else {
+        this.visible = "visibility_off";
+        x.type = "text";
+      }
+    },
     Register() {
+      // Reset error messages at the beginning
+      this.emailError = null;
+      this.passwordError = null;
+
+      // Validate both email and password
+      const emailValid = this.validateEmail();
+      const passwordValid = this.isPasswordValid();
+
+      // Check if there are any validation errors
+      if (!emailValid || !passwordValid) {
+        return; // Do not proceed with registration if there are errors
+      }
+
       axios
         .post(`/auth/register`, {
           firstName: this.firstName,
           lastName: this.lastName,
           email: this.regEmail,
-          password: "qwertybob",
+          password: this.regPassword,
         })
         .then((response) => {
           if (response.status === 200) {
@@ -272,14 +339,61 @@ export default {
             );
             this.closeModal();
         });
+
+        // After successful registration or error handling, reset the passwordError
+      this.passwordError = null;
+    },
+    isPasswordValid() {
+      if (this.regPassword.length < 8 || this.regPassword.length > 25) {
+        this.passwordError = "Password must be between 8 and 25 characters.";
+        return false;
+      }
+
+      if (!/[A-Z]/.test(this.regPassword) || !/[a-z]/.test(this.regPassword)) {
+        this.passwordError = "Password must contain both uppercase and lowercase letters.";
+        return false;
+      }
+
+      if (!/\d/.test(this.regPassword)) {
+        this.passwordError = "Password must include at least 1 numeral.";
+        return false;
+      }
+
+      if (!/[!@#$%^&*]/.test(this.regPassword)) {
+        this.passwordError = "Password must include at least 1 symbol.";
+        return false;
+      }
+
+      // Password is valid
+      this.passwordError = null;
+      return true;
+    },
+    validateEmail() {
+      if (!this.regEmail) {
+        this.emailError = "Email is required.";
+        return false;
+      } else {
+        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+        if (!emailPattern.test(this.regEmail) || !this.regEmail.includes("@")) {
+          this.emailError = "Please enter a valid email address.";
+        } else {
+          this.emailError = null;
+        }
+      }
+
+      // Email is valid
+      return this.emailError === null;
     },
     closeModal(){
       $('#btnclose').trigger('click');
       this.firstName = "";
       this.lastName = "";
       this.regEmail = "";
-      // this.password = "";
-    }
+      this.regPassword = "";
+      this.passwordError = null;
+      this.emailError = null;
+    },
+    
   },
 };
 </script>
