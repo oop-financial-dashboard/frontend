@@ -3,6 +3,12 @@
     <SideBar v-if="!$route.meta.hideNavbar" />
     <router-view />
   </div>
+  <Notifications
+    group="notification"
+    position="top right"
+    animation-type="velocity"
+    :speed="1000"
+  />
 </template>
 
 <script setup>
