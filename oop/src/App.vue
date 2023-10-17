@@ -12,11 +12,11 @@ import SideBar from "./components/SideBar.vue";
 <style>
 :root {
   --primary: #363740;
-  --dark-grey: #a4a6b3;
-  --light-grey: #9fa2b4;
-  --lighter-grey: #dde2ff;
-  --lighter-grey-alt: #f7f8fc;
-  --sidebar-width: 300px;
+  --dark-grey: #A4A6B3;
+  --light-grey: #9FA2B4;
+  --lighter-grey: #DDE2FF;
+  --lighter-grey-alt: #F7F8FC;
+  --sidebar-width: 200px;
 }
 * {
   margin: 0;

@@ -1,6 +1,12 @@
 <template>
   <main class="homepage">
-    <h1>My Portfolio <span class="button">Trade</span></h1>
+    <div>
+      <h1>My Portfolio</h1>
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-dark">Trade</button>
+    </div>
 
     <div class="profile mt-3 p-5">
       <p><b>Total Assets (SGD) *need API to populate this</b></p>
@@ -8,14 +14,13 @@
     </div>
 
     <div class="mt-5">
-      <p>
+      <div class="d-flex justify-content-between">
         <b>US Mkt Cap (USD) *need API to populate this table and heading</b>
-        <span class="button">
-          <button style="color: white" @click="createPortfolio">
-            Create Portfolio
-          </button>
-        </span>
-      </p>
+
+        <button class="btn btn-dark" @click="createPortfolio">
+          Create Portfolio
+        </button>
+      </div>
       <table class="table">
         <thead>
           <tr>

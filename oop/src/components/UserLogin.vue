@@ -17,6 +17,9 @@
           v-model="email"
           placeholder="Enter Email Address"
         />
+        <p v-if="invalidEmailInput" class="text-danger">
+          {{ invalidEmailMessage }}
+        </p>
       </div>
 
       <!-- Password input -->
@@ -45,6 +48,9 @@
             >{{ visible }}</span
           >
         </div>
+        <p v-if="invalidPwdInput" class="text-danger">
+          {{ invalidPwdMessage }}
+        </p>
       </div>
 
       <!-- Submit button -->
@@ -125,13 +131,38 @@ export default {
       email: "",
       pwd: "",
       visible: "visibility",
+      invalidEmailInput: false,
+      invalidPwdInput: false,
+      invalidEmailMessage: "",
+      invalidPwdMessage: "",
+      invalidMessages: ["This blank cannot be empty", "Invalid email entered"],
     };
   },
   methods: {
     getUserType() {
-      localStorage.setItem("usertype", this.staff);
-      // sessionStorage.setItem("staff_id", staff.staff_id)
-      this.$router.push("/home");
+      this.invalidEmailInput = false; // Reset validation flags
+      this.invalidPwdInput = false;
+
+      // if email is blank:
+      if (this.email == "") {
+        this.invalidEmailInput = true;
+        this.invalidEmailMessage = this.invalidMessages[0];
+      } else if (this.email && !this.email.includes("@")) {
+        console.log("hi");
+        this.invalidEmailInput = true;
+        this.invalidEmailMessage = this.invalidMessages[1];
+      }
+      if (this.pwd == "") {
+        this.invalidPwdInput = true;
+        this.invalidPwdMessage = this.invalidMessages[0];
+      } else if (
+        this.invalidEmailInput == false &&
+        this.invalidPwdInput == false
+      ) {
+        localStorage.setItem("usertype", this.staff);
+        // sessionStorage.setItem("staff_id", staff.staff_id)
+        this.$router.push("/home");
+      }
     },
     ForgetPassword() {
       this.$router.push("/forget_password");
@@ -154,11 +185,11 @@ export default {
 .login {
   width: 100%;
   height: 100vh;
+  background-image: url("../assets/client-centric-banking.jpg");
+  background-size: cover;
   /* background: var(--primary); */
   /* background-color: #7399C6; */
   /* background-color: rgba(115, 153, 198, 0.5) */
-  background-image: url("../assets/client-centric-banking.jpg");
-  background-size: cover;
 }
 
 .logo {

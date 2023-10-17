@@ -1,17 +1,11 @@
 <template>
   <!-- sidebar expanded -->
-  <aside v-if="is_expanded" class="is-expanded">
+  <aside class="is-expanded">
     <div class="logo">
-      <img src="../assets/navBarLogo.png" alt="Vue" />
+      <img src="../assets/navBarLogo.png" alt="Vue" class="logo2" />
     </div>
 
-    <div class="menu-toggle-wrap">
-      <button class="menu-toggle" @click="ToggleMenu">
-        <span class="material-symbols-outlined"
-          >keyboard_double_arrow_right</span
-        >
-      </button>
-    </div>
+    <!-- <hr class="hr-line"/> -->
 
     <div class="menu">
       <router-link class="button" to="/homepage">
@@ -23,47 +17,12 @@
         <span class="text">Settings</span>
       </router-link>
     </div>
-
-    <span
-      class="material-symbols-outlined logout"
-      title="logout"
-      @click="logout()"
-      >logout</span
-    >
-    <span class="text">Logout</span>
-  </aside>
-
-  <!-- sidebar NOT expanded -->
-  <aside v-else>
-    <div class="logo">
-      <img src="../assets/navBarLogo.png" alt="Vue" />
-    </div>
-
-    <div class="menu-toggle-wrap">
-      <button class="menu-toggle" @click="ToggleMenu">
-        <span class="material-symbols-outlined" title="expand"
-          >keyboard_double_arrow_right</span
-        >
-      </button>
-    </div>
-
-    <div class="menu">
-      <router-link class="button" to="/homepage">
-        <span class="material-symbols-outlined">home</span>
-        <span class="text">Home</span>
-      </router-link>
-      <router-link class="button" to="/settings">
-        <span class="material-symbols-outlined" title="settings">settings</span>
-        <span class="text" style="display: none">Settings</span>
-      </router-link>
-    </div>
-
-    <span
-      class="material-symbols-outlined logout"
-      title="logout"
-      @click="logout()"
-      >logout</span
-    >
+    <button class="logout-section button fixed-bottom" @click="logout()">
+      <span class="material-symbols-outlined logout" title="logout"
+        >logout</span
+      >
+      <span class="text">Logout</span>
+    </button>
   </aside>
 </template>
 
@@ -71,13 +30,10 @@
 export default {
   data() {
     return {
-      is_expanded: false,
+      is_expanded: true,
     };
   },
   methods: {
-    ToggleMenu() {
-      this.is_expanded = !this.is_expanded;
-    },
     logout() {
       this.$router.push("/");
     },
@@ -87,17 +43,12 @@ export default {
 
 <style scoped>
 aside {
-  height: 100%;
   display: flex;
   flex-direction: column;
   width: calc(2rem + 32px);
   min-height: 100vh;
   overflow: hidden;
-  /* transition: 0.2s ease-out; */
-  /* background-color: var(--primary); */
   background-color: #7399c6;
-  /* color: var(--dark-grey); */
-  color: white;
   @media (max-width: 768px) {
     aside {
       position: fixed;
@@ -105,44 +56,40 @@ aside {
     }
   }
 }
+.logout-section {
+  width: var(--sidebar-width);
+}
+
+.logout-section :hover {
+  cursor: pointer;
+}
+
+.logout-section:hover .material-symbols-outlined,
+.logout-section:hover .text {
+  color: #1c2b36;
+}
 .is-expanded {
   width: var(--sidebar-width);
 }
 .logo {
-  padding: 15px;
-  margin-bottom: 1rem;
+  padding: 20px;
 }
-.is-expanded .menu-toggle-wrap {
-  top: -4rem;
+img.logo2 {
+  width: 80px;
 }
-.menu-toggle-wrap {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 1rem;
-  position: relative;
-  top: 0;
-  margin-right: 15px;
-}
-.is-expanded .menu-toggle-wrap .menu-toggle {
-  transform: rotate(-180deg);
-}
+
 .material-symbols-outlined {
-  /* color: var(--dark-grey); */
   color: var(--lighter-grey);
   font-size: 2rem;
-  margin-left: 15px;
-  /* transition: 0.2s ease-out; */
 }
+
 .menu :hover {
-  color: var(--lighter-grey);
+  background-color: #1c2b36;
 }
+
 .router-link-active {
-  background-color: var(--light-grey);
+  background-color: #1c2b36;
   border-left: 5px solid var(--lighter-grey);
-}
-.router-link-active .material-symbols-outlined,
-.router-link-active .text {
-  color: var(--lighter-grey);
 }
 img {
   width: 2rem;
@@ -160,8 +107,5 @@ img {
 .is-expanded .button {
   padding: 1rem;
 }
-.logout {
-  margin-top: 500px;
-  cursor: pointer;
-}
+
 </style>
