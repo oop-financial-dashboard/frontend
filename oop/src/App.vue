@@ -1,7 +1,7 @@
 <template>
   <div class="app">
-    <SideBar v-if="!$route.meta.hideNavbar"/>
-    <router-view/>
+    <SideBar v-if="!$route.meta.hideNavbar" />
+    <router-view />
   </div>
   <Notifications
     group="notification"
@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import SideBar from './components/SideBar.vue'
+import SideBar from "./components/SideBar.vue";
 </script>
 
 <style>
@@ -22,13 +22,13 @@ import SideBar from './components/SideBar.vue'
   --light-grey: #9FA2B4;
   --lighter-grey: #DDE2FF;
   --lighter-grey-alt: #F7F8FC;
-  --sidebar-width: 300px;
+  --sidebar-width: 200px;
 }
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: Avenir, Helvetica, Arial, sans-serif ;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
 }
 
 body {
@@ -38,11 +38,11 @@ body {
   display: flex;
 }
 main {
-    flex: 1 1 0;
-    padding: 2rem;
-    @media (max-width: 768px) {
-      padding-left: 6rem;
-    }
+  flex: 1 1 0;
+  padding: 2rem;
+  @media (max-width: 768px) {
+    padding-left: 6rem;
+  }
 }
 button {
   cursor: pointer;

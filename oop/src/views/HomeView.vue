@@ -1,21 +1,26 @@
 <template>
   <main class="homepage">
-    <h1>My Portfolio <span class="button">Trade</span></h1>
-    
+    <div>
+      <h1>My Portfolio</h1>
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-dark">Trade</button>
+    </div>
+
     <div class="profile mt-3 p-5">
       <p><b>Total Assets (SGD) *need API to populate this</b></p>
       <p style="font-size: 30px">100,745</p>
     </div>
-    
+
     <div class="mt-5">
-      <p>
+      <div class="d-flex justify-content-between">
         <b>US Mkt Cap (USD) *need API to populate this table and heading</b>
-        <span class="button">
-          <button style="color: white" @click="createPortfolio">
-            Create Portfolio
-          </button>
-        </span>
-      </p>
+
+        <button class="btn btn-dark" @click="createPortfolio">
+          Create Portfolio
+        </button>
+      </div>
       <table class="table">
         <thead>
           <tr>
@@ -45,10 +50,10 @@
 export default {
   methods: {
     createPortfolio() {
-      this.$router.push('/homepage/create_portfolio'); 
-    }
-  }
-}
+      this.$router.push("/homepage/create_portfolio");
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -57,17 +62,17 @@ export default {
   font-size: 14px;
   font-weight: bold;
   color: white;
-  background-color: #0A1B39;
+  background-color: #0a1b39;
   padding: 12px 50px;
   border-radius: 15px;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }
 .profile {
-  background-color: rgba(217, 217, 217, 0.40);
+  background-color: rgba(217, 217, 217, 0.4);
   border-radius: 15px;
 }
 .table-heading {
-  color: #9D9D9D;
+  color: #9d9d9d;
   font-weight: normal;
   font-size: small;
 }

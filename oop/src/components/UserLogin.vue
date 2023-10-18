@@ -13,27 +13,30 @@
         <input
           type="email"
           id="form2Example1"
-          class="form-control grey_text"
+          class="form-control"
           v-model="email"
           placeholder="Enter Email Address"
-          required
         />
+        <p v-if="invalidEmailInput" class="text-danger">
+          {{ invalidEmailMessage }}
+        </p>
       </div>
 
       <!-- Password input -->
       <div class="form-outline mb-4">
         <div class="row d-flex">
-          <label class="form-label grey_text col" for="form2Example2">Password</label>
+          <label class="form-label grey_text col" for="form2Example2"
+            >Password</label
+          >
 
           <!-- Forget Password -->
           <label
             class="pwd grey_text col d-flex justify-content-lg-end justify-content-md-start"
             data-bs-toggle="modal"
             data-bs-target="#forgetpasswordModal"
-            ><u>Forget Password?</u></label
+            ><u>Forgot Password?</u></label
           >
         </div>
-        
 
         <div class="d-flex">
           <input
@@ -43,10 +46,15 @@
             v-model="pwd"
             placeholder="Enter Password"
           />
-          <span class="material-symbols-outlined" @click="ShowHide()">{{
-            visible
-          }}</span>
+          <span
+            class="material-symbols-outlined visibility-icon"
+            @click="ShowHide()"
+            >{{ visible }}</span
+          >
         </div>
+        <p v-if="invalidPwdInput" class="text-danger">
+          {{ invalidPwdMessage }}
+        </p>
       </div>
 
       <!-- Submit button -->
@@ -58,7 +66,7 @@
         data-bs-toggle="modal"
         data-bs-target="#registerModal"
       >
-        Don't have an account? 
+        Don't have an account?
         <!-- <u>Register</u> -->
         <a href="#registerModal" class="pe-auto">Register</a>
       </p>
@@ -74,7 +82,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h3 style="text-align: center">Forget Password</h3>
+            <h3 style="text-align: center">Reset your password</h3>
             <button
               type="btn"
               class="btn-close"
@@ -112,7 +120,7 @@
                         @click="ForgetPassword()"
                         id="close"
                       >
-                        Send Password
+                        Submit
                       </button>
                     </fieldset>
                   </div>
@@ -161,7 +169,7 @@
                             />
                           </div>
                         </div>
-                        
+
                         <div class="row mb-4">
                           <label for="reg" class="col-sm-3 col-form-label"
                             >Last Name:</label
@@ -189,13 +197,18 @@
                               v-model="regEmail"
                               placeholder="Enter Email Address"
                             />
-                            <div v-if="emailError" class="text-danger">{{ emailError }}</div>
+                            <div v-if="emailError" class="text-danger">
+                              {{ emailError }}
+                            </div>
                           </div>
                         </div>
-                        
 
                         <div class="row mb-4">
-                          <label for="regPassword" class="col-sm-3 col-form-label">Password:</label>
+                          <label
+                            for="regPassword"
+                            class="col-sm-3 col-form-label"
+                            >Password:</label
+                          >
                           <div class="col-sm-9">
                             <div class="d-flex">
                               <input
@@ -204,29 +217,31 @@
                                 id="regPassword"
                                 v-model="regPassword"
                                 placeholder="Enter Password"
-                              /><span class="material-symbols-outlined" @click="ShowHide2()">{{
-                                visible
-                              }}</span>
-
+                              /><span
+                                class="material-symbols-outlined"
+                                @click="ShowHide2()"
+                                >{{ visible }}</span
+                              >
                             </div>
-                            
-                            <div v-if="passwordError" class="text-danger">{{ passwordError }}</div>
-                            
+
+                            <div v-if="passwordError" class="text-danger">
+                              {{ passwordError }}
+                            </div>
                           </div>
-                          
                         </div>
-                        
 
                         <button
                           type="button"
                           class="send_btn my-4 p-2"
-                          @click="validateEmail(); Register()"
+                          @click="
+                            validateEmail();
+                            Register();
+                          "
                           id="closeReg"
                         >
                           Register
                         </button>
                       </div>
-                      
                     </fieldset>
                   </div>
                 </div>
@@ -242,7 +257,7 @@
 <script>
 import axios from "axios";
 import { notify } from "@kyvg/vue3-notification";
-import $ from 'jquery';
+import $ from "jquery";
 // import { server } from '@/utils/helper'
 export default {
   data() {
@@ -258,21 +273,46 @@ export default {
       regPassword: "",
       passwordError: null,
       emailError: null,
+      invalidEmailInput: false,
+      invalidPwdInput: false,
+      invalidEmailMessage: "",
+      invalidPwdMessage: "",
+      invalidMessages: ["This blank cannot be empty", "Invalid email entered"],
     };
   },
   methods: {
-    show(group, title="", text, type = "") {
+    getUserType() {
+      this.invalidEmailInput = false; // Reset validation flags
+      this.invalidPwdInput = false;
+
+      // if email is blank:
+      if (this.email == "") {
+        this.invalidEmailInput = true;
+        this.invalidEmailMessage = this.invalidMessages[0];
+      } else if (this.email && !this.email.includes("@")) {
+        console.log("hi");
+        this.invalidEmailInput = true;
+        this.invalidEmailMessage = this.invalidMessages[1];
+      }
+      if (this.pwd == "") {
+        this.invalidPwdInput = true;
+        this.invalidPwdMessage = this.invalidMessages[0];
+      } else if (
+        this.invalidEmailInput == false &&
+        this.invalidPwdInput == false
+      ) {
+        localStorage.setItem("usertype", this.staff);
+        // sessionStorage.setItem("staff_id", staff.staff_id)
+        this.$router.push("/home");
+      }
+    },
+    show(group, title = "", text, type = "") {
       notify({
         group,
         title,
         type,
-        text
+        text,
       });
-    },
-    getUserType() {
-      localStorage.setItem("usertype", this.staff);
-      // sessionStorage.setItem("staff_id", staff.staff_id)
-      this.$router.push("/home");
     },
     ForgetPassword() {
       this.$router.push("/forget_password");
@@ -329,18 +369,18 @@ export default {
             this.closeModal();
           }
         })
-        .catch((error)=>{
-          console.log(error)
-           this.show(
-              "notification",
-              "Error",
-              "Oh no, something went wrong! Please try again later.",
-              "error"
-            );
-            this.closeModal();
+        .catch((error) => {
+          console.log(error);
+          this.show(
+            "notification",
+            "Error",
+            "Oh no, something went wrong! Please try again later.",
+            "error"
+          );
+          this.closeModal();
         });
 
-        // After successful registration or error handling, reset the passwordError
+      // After successful registration or error handling, reset the passwordError
       this.passwordError = null;
     },
     isPasswordValid() {
@@ -350,7 +390,8 @@ export default {
       }
 
       if (!/[A-Z]/.test(this.regPassword) || !/[a-z]/.test(this.regPassword)) {
-        this.passwordError = "Password must contain both uppercase and lowercase letters.";
+        this.passwordError =
+          "Password must contain both uppercase and lowercase letters.";
         return false;
       }
 
@@ -384,8 +425,8 @@ export default {
       // Email is valid
       return this.emailError === null;
     },
-    closeModal(){
-      $('#btnclose').trigger('click');
+    closeModal() {
+      $("#btnclose").trigger("click");
       this.firstName = "";
       this.lastName = "";
       this.regEmail = "";
@@ -393,7 +434,6 @@ export default {
       this.passwordError = null;
       this.emailError = null;
     },
-    
   },
 };
 </script>
@@ -402,10 +442,13 @@ export default {
 .login {
   width: 100%;
   height: 100vh;
+  background-image: url("../assets/client-centric-banking.jpg");
+  background-size: cover;
   /* background: var(--primary); */
   /* background-color: #7399C6; */
-  background-color: rgba(115, 153, 198, 0.5);
+  /* background-color: rgba(115, 153, 198, 0.5) */
 }
+
 .logo {
   margin-bottom: 1rem;
 }
@@ -436,6 +479,7 @@ form {
 .pwd {
   font-size: 12px;
   float: right;
+  cursor: pointer;
 }
 .material-symbols-outlined {
   margin-left: -45px;
@@ -448,5 +492,8 @@ form {
 
 .modal {
   top: 25%;
+}
+.visibility-icon {
+  cursor: pointer;
 }
 </style>
