@@ -58,7 +58,7 @@
       </div>
 
       <!-- Submit button -->
-      <button type="button" class="login_btn my-4 p-2" @click="getUserType()">
+      <button type="button" class="login_btn my-4 p-2" @click="Authenticate()">
         Log in
       </button>
       <p
@@ -262,7 +262,6 @@ import $ from "jquery";
 export default {
   data() {
     return {
-      staff: "admin",
       email: "",
       pwd: "",
       visible: "visibility",
@@ -277,33 +276,50 @@ export default {
       invalidPwdInput: false,
       invalidEmailMessage: "",
       invalidPwdMessage: "",
-      invalidMessages: ["This blank cannot be empty", "Invalid email entered"],
+      invalidMessages: ["This field cannot be empty", "Invalid email entered"],
     };
   },
   methods: {
-    getUserType() {
-      this.invalidEmailInput = false; // Reset validation flags
-      this.invalidPwdInput = false;
+    async Authenticate() {
+      try {
+        this.invalidEmailInput = false; // Reset validation flags
+        this.invalidPwdInput = false;
+        if (this.email == "") {
+          this.invalidEmailInput = true;
+          this.invalidEmailMessage = this.invalidMessages[0];
+        } else if (this.email && !this.email.includes("@")) {
+          this.invalidEmailInput = true;
+          this.invalidEmailMessage = this.invalidMessages[1];
+        }
 
-      // if email is blank:
-      if (this.email == "") {
-        this.invalidEmailInput = true;
-        this.invalidEmailMessage = this.invalidMessages[0];
-      } else if (this.email && !this.email.includes("@")) {
-        console.log("hi");
-        this.invalidEmailInput = true;
-        this.invalidEmailMessage = this.invalidMessages[1];
-      }
-      if (this.pwd == "") {
-        this.invalidPwdInput = true;
-        this.invalidPwdMessage = this.invalidMessages[0];
-      } else if (
-        this.invalidEmailInput == false &&
-        this.invalidPwdInput == false
-      ) {
-        localStorage.setItem("usertype", this.staff);
-        // sessionStorage.setItem("staff_id", staff.staff_id)
-        this.$router.push("/home");
+        if (this.pwd == "") {
+          this.invalidPwdInput = true;
+          this.invalidPwdMessage = this.invalidMessages[0];
+        } else if (
+          this.invalidEmailInput == false &&
+          this.invalidPwdInput == false
+        ) {
+          await axios
+            .post(`/auth/login`, {
+              email: this.email,
+              password: this.pwd,
+            })
+            .then((response) => {
+              if (response.status === 200) {
+                sessionStorage.setItem("token", response.data.token);
+                console.log(sessionStorage.getItem("token"));
+                this.$router.push("/home");
+                this.show("notification", "Welcome Back!", "", "success");
+              }
+            });
+        }
+      } catch (e) {
+        this.show(
+          "notification",
+          "Error",
+          "Email or password is incorrect!",
+          "error"
+        );
       }
     },
     show(group, title = "", text, type = "") {
@@ -370,13 +386,21 @@ export default {
           }
         })
         .catch((error) => {
-          console.log(error);
-          this.show(
-            "notification",
-            "Error",
-            "Oh no, something went wrong! Please try again later.",
-            "error"
-          );
+          if (error.response.status === 400) {
+            this.show(
+              "notification",
+              "Error",
+              "Email has been registered!",
+              "error"
+            );
+          } else {
+            this.show(
+              "notification",
+              "Error",
+              "Oh no, something went wrong! Please try again later.",
+              "error"
+            );
+          }
           this.closeModal();
         });
 
