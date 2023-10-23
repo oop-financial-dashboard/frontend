@@ -25,6 +25,11 @@ const routes = [
     component: () => import('../views/CreatePortfolioView.vue')
   },
   {
+    path: '/homepage/portfolio_detail/:portfolioId',
+    name: 'portfolio_detail_page',
+    component: () => import('../views/PortfolioDetail.vue')
+  },
+  {
     path: '/',
     name: 'login_page',
     component: () => import('../components/UserLogin.vue'),
