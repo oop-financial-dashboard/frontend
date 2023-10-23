@@ -47,8 +47,6 @@
 </template>
 
 <script>
-// import PortfolioDetailLink from '@/components/PortfolioDetailLink.vue';
-
 import axios from "axios";
 
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -67,8 +65,15 @@ export default {
   },
   methods: {
     navigateToDetails(selectedPortfolio, portfolioId) {
+      // save the data
+      // this.$store.commit('portfolio', JSON.stringify(selectedPortfolio));
+      // this.$store.commit('portfolioId', portfolioId);
+      localStorage.setItem("portfolioId", portfolioId)
+      localStorage.setItem("portfolio", JSON.stringify(selectedPortfolio))
+      this.$router.push({name: `portfolio_detail_page`})
+
       // Navigate to the "portfolio detail" page and pass the portfolio details
-      this.$router.push({ name: 'portfolio_detail_page', params: { portfolio: selectedPortfolio, portfolioId: portfolioId } });
+      // this.$router.push({ name: 'portfolio_detail_page', params: { portfolio: JSON.stringify(selectedPortfolio), portfolioId: portfolioId } });
     },
     getAllPortfolios() {
       // need to get specific user from login

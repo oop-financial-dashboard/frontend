@@ -25,7 +25,7 @@ const routes = [
     component: () => import('../views/CreatePortfolioView.vue')
   },
   {
-    path: '/homepage/portfolio_detail/:portfolioId',
+    path: '/homepage/portfolio_detail',
     name: 'portfolio_detail_page',
     component: () => import('../views/PortfolioDetail.vue')
   },
