@@ -20,6 +20,11 @@ const routes = [
     component: () => import('../views/SettingsPage.vue')
   },
   {
+    path: '/ChangePassword',
+    name: 'ChangePassword',
+    component: () => import('../views/ChangePassword.vue')
+  },
+  {
     path: '/homepage/create_portfolio',
     name: 'create_portfolio_page',
     component: () => import('../views/CreatePortfolioView.vue')

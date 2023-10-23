@@ -12,7 +12,7 @@
 export default {
     methods:{
         ChangePassword(){
-            console.log("entered");
+            this.$router.push('/ChangePassword');
         }
     },
 };
