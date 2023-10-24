@@ -8,7 +8,7 @@
       <!-- Old password input -->
       <div class="form-outline mb-4">
         <label class="form-label grey_text" for="formExample1"
-          >Old Password</label
+          >Current Password</label
         >
         <div class="d-flex">
           <input
@@ -25,6 +25,9 @@
             @click="ShowHide('formExample1', 'eye')"
             >visibility</span
           >
+        </div>
+        <div v-if="currentPasswordError" class="text-danger">
+          {{ currentPasswordError }}
         </div>
       </div>
 
@@ -49,6 +52,9 @@
             >visibility</span
           >
         </div>
+        <div v-if="newPasswordError" class="text-danger">
+          {{ newPasswordError }}
+        </div>
       </div>
 
       <!-- Confirm Password input -->
@@ -72,6 +78,9 @@
             >visibility</span
           >
         </div>
+        <div v-if="confirmPasswordError" class="text-danger">
+          {{ confirmPasswordError }}
+        </div>
       </div>
 
       <!-- Submit button -->
@@ -82,7 +91,7 @@
       >
         Reset Password
       </button>
-      <div id="incorrect_text"></div>
+      <!-- <div id="incorrect_text"></div> -->
     </form>
   </div>
 </template>
@@ -99,6 +108,9 @@ export default {
       confirmPassword: "",
       visible: "visibility",
       msg: "",
+      currentPasswordError: null, // Error message for current password
+      newPasswordError: null,     // Error message for new password
+      confirmPasswordError: null, // Error message for confirm password
     };
   },
   methods: {
@@ -115,6 +127,25 @@ export default {
     },
     ChangePassword() {
       const token = sessionStorage.getItem("token");
+
+      this.currentPasswordError = null;
+      this.newPasswordError = null;
+      this.confirmPasswordError = null;
+
+      const currentpasswordValid = this.currentpwValid(this.currentPassword);
+      const newpasswordValid = this.newpwValid(this.newPassword);
+
+      if (this.newPassword === this.currentPassword) {
+      this.newPasswordError = "Current password cannot be the same as the new password.";
+      return;
+      } 
+      const confirmpasswordValid = this.confirmpwValid(this.confirmPassword);
+
+      const matchpasswordValid = this.validateConfirmPassword(this.newPassword,this.confirmPassword);
+
+      if (!currentpasswordValid || !newpasswordValid || !confirmpasswordValid || !matchpasswordValid) {
+        return; // Do not proceed with registration if there are errors
+      }
 
       try {
         const config = {
@@ -141,7 +172,7 @@ export default {
                 "",
                 "success"
               );
-            this.$router.push("/");
+            this.$router.push("/forget_password");
             }
           });
       } catch (e) {
@@ -154,6 +185,10 @@ export default {
       }
 
       console.log("here");
+
+      this.currentPasswordError = null;
+      this.newPasswordError = null;
+      this.confirmPasswordError = null;
 
       /*
             // if (this.newpwd != this.pwdconfirm) {
@@ -194,31 +229,93 @@ export default {
             // }
             */
     },
-    isPasswordValid() {
-      if (this.regPassword.length < 8 || this.regPassword.length > 25) {
-        this.passwordError = "Password must be between 8 and 25 characters.";
+    currentpwValid(pw) {
+      if (pw.length < 8 || pw.length > 25) {
+        this.currentPasswordError = "Password must be between 8 and 25 characters.";
         return false;
       }
 
-      if (!/[A-Z]/.test(this.regPassword) || !/[a-z]/.test(this.regPassword)) {
-        this.passwordError =
+      if (!/[A-Z]/.test(pw) || !/[a-z]/.test(pw)) {
+        this.currentPasswordError =
           "Password must contain both uppercase and lowercase letters.";
         return false;
       }
 
-      if (!/\d/.test(this.regPassword)) {
-        this.passwordError = "Password must include at least 1 numeral.";
+      if (!/\d/.test(pw)) {
+        this.currentPasswordError = "Password must include at least 1 numeral.";
         return false;
       }
 
-      if (!/[!@#$%^&*]/.test(this.regPassword)) {
-        this.passwordError = "Password must include at least 1 symbol.";
+      if (!/[!@#$%^&*]/.test(pw)) {
+        this.currentPasswordError = "Password must include at least 1 symbol.";
         return false;
       }
 
       // Password is valid
-      this.passwordError = null;
+      this.currentPasswordError = null;
       return true;
+    },
+
+    newpwValid(pw) {
+      if (pw.length < 8 || pw.length > 25) {
+        this.newPasswordError = "Password must be between 8 and 25 characters.";
+        return false;
+      }
+
+      if (!/[A-Z]/.test(pw) || !/[a-z]/.test(pw)) {
+        this.newPasswordError =
+          "Password must contain both uppercase and lowercase letters.";
+        return false;
+      }
+
+      if (!/\d/.test(pw)) {
+        this.newPasswordError = "Password must include at least 1 numeral.";
+        return false;
+      }
+
+      if (!/[!@#$%^&*]/.test(pw)) {
+        this.newPasswordError = "Password must include at least 1 symbol.";
+        return false;
+      }
+
+      // Password is valid
+      this.newPasswordError = null;
+      return true;
+    },
+
+    confirmpwValid(pw) {
+      if (pw.length < 8 || pw.length > 25) {
+        this.confirmPasswordError = "Password must be between 8 and 25 characters.";
+        return false;
+      }
+
+      if (!/[A-Z]/.test(pw) || !/[a-z]/.test(pw)) {
+        this.confirmPasswordError =
+          "Password must contain both uppercase and lowercase letters.";
+        return false;
+      }
+
+      if (!/\d/.test(pw)) {
+        this.confirmPasswordError = "Password must include at least 1 numeral.";
+        return false;
+      }
+
+      if (!/[!@#$%^&*]/.test(pw)) {
+        this.confirmPasswordError = "Password must include at least 1 symbol.";
+        return false;
+      }
+
+      // Password is valid
+      this.confirmPasswordError = null;
+      return true;
+    },
+
+    validateConfirmPassword(newPassword, confirmPassword) {
+      if (newPassword !== confirmPassword) {
+        this.confirmPasswordError = "Passwords do not match.";
+        return false;
+      }
+      return null; // Passwords match
     },
 
     show(group, title = "", text, type = "") {
