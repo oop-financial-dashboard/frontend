@@ -37,6 +37,12 @@ const routes = [
       hideNavbar: true
     }
   },
+  {
+    path: '/auth/confirm-account',
+    name: 'confirm-account',
+    component: () => import('../views/ConfirmAccount.vue') ,
+    props: (route) => ({ token: route.query.token }), // Pass the token as a prop to the component
+  },
 ];
 
 const router = createRouter({
