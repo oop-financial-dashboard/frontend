@@ -43,7 +43,7 @@ const routes = [
     }
   },
   {
-    path: '/auth/confirm-account',
+    path: '/api/v1/auth/confirm-account',
     name: 'confirm-account',
     component: () => import('../views/ConfirmAccount.vue') ,
     props: (route) => ({ token: route.query.token }), // Pass the token as a prop to the component
