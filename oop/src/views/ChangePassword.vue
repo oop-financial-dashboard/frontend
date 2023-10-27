@@ -142,10 +142,13 @@ export default {
       const confirmpasswordValid = this.confirmpwValid(this.confirmPassword);
 
       const matchpasswordValid = this.validateConfirmPassword(this.newPassword,this.confirmPassword);
+      console.log(currentpasswordValid, newpasswordValid, confirmpasswordValid, matchpasswordValid)
 
       if (!currentpasswordValid || !newpasswordValid || !confirmpasswordValid || !matchpasswordValid) {
         return; // Do not proceed with registration if there are errors
       }
+
+      console.log("helllo over here")
 
       try {
         const config = {
@@ -172,7 +175,7 @@ export default {
                 "",
                 "success"
               );
-            this.$router.push("/forget_password");
+            this.$router.push("/");
             }
           });
       } catch (e) {
@@ -185,10 +188,6 @@ export default {
       }
 
       console.log("here");
-
-      this.currentPasswordError = null;
-      this.newPasswordError = null;
-      this.confirmPasswordError = null;
 
       /*
             // if (this.newpwd != this.pwdconfirm) {
@@ -315,7 +314,7 @@ export default {
         this.confirmPasswordError = "Passwords do not match.";
         return false;
       }
-      return null; // Passwords match
+      return true; // Passwords match
     },
 
     show(group, title = "", text, type = "") {
