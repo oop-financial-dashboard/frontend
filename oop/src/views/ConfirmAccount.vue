@@ -19,22 +19,6 @@ export default {
           this.$router.push("/");
         }
       });
-
-
-    // try {
-    //   axios.get('/auth/confirm-account?token=', {
-    //     params: {
-    //       token: this.token,
-    //     }
-    //   })
-    //   .then((response) => {
-    //     if (response.status === 200) {
-    //       this.$router.push("/");
-    //     }
-    //   });
-    // } catch (error) {
-    //   console.log(error);
-    // }
   }
 };
 </script>
