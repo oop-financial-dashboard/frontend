@@ -1,81 +1,63 @@
 <template>
-    <div>
-      <!-- Your component content here -->
-      <h1> Hi </h1>
-      <p>Token: {{ token }}</p>
+  <div class="cfmAcc">
+    <h3>Your account has been verified!</h3>
+    <p class="grey_text">
+      You will be redirected to login page in {{ countdown }} seconds
+    </p>
+    <div class="spinner-border" role="status">
+      <span class="sr-only"></span>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    props: (route) => {
-        console.log(route.query.token); // Check if the token is correctly received
-        return { token: route.query.token };
+  </div>
+</template>
+
+<script>
+import axios from "axios";
+
+export default {
+  data() {
+    return {
+      countdown: 5,
+    };
+  },
+  name: "ConfirmAccount",
+  props: ["token"],
+  created() {
+    axios.get(`/auth/confirm-account?token=${this.token}`).then((response) => {
+      if (response.status === 200) {
+        this.startCountdown();
+      }
+    });
+  },
+  methods: {
+    startCountdown() {
+      const countdownInterval = setInterval(() => {
+        this.countdown--;
+        if (this.countdown === 0) {
+          clearInterval(countdownInterval);
+          this.redirectToLogin();
+        }
+      }, 1000);
     },
-    // Your component logic here
-  };
-  </script>
-  
+    redirectToLogin() {
+      this.$router.push("/");
+    },
+  },
+};
+</script>
+
 <style scoped>
+p {
+  font-size: 14px;
+}
+
+.cfmAcc {
+  width: 30%;
+  background-color: var(--lighter-grey-alt);
+  padding: 40px;
+  border-radius: 5px;
+  text-align: center;
+  margin: auto;
+  margin-top: 10%;
+  border: 2px solid #7399c6;
+}
 </style>
-
-  
-
-   <!-- <template>
-    <div>
-      <h1>Account Confirmation Page</h1>
-      <p>Token: {{ $route.params.token }}</p>
-      <div v-if="loading" class="loading-bar">
-        <div class="bar" :style="{ width: `${loadingProgress}%` }"></div>
-      </div>
-    </div>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        loading: true,
-        loadingProgress: 0,
-      };
-    },
-    mounted() {
-      this.simulateLoading();
-    },
-    methods: {
-      simulateLoading() {
-        const interval = setInterval(() => {
-          if (this.loadingProgress < 100) {
-            this.loadingProgress += 10; // Increase the loading progress (adjust as needed)
-          } else {
-            clearInterval(interval);
-            setTimeout(() => {
-              this.redirectToHome();
-            }, 5000); // Redirect to /home after 5 seconds
-          }
-        }, 500); // Adjust the interval duration as needed
-      },
-      redirectToHome() {
-        this.$router.push('/'); // Redirect to the /home route
-      },
-    },
-  };
-  </script>
-  
-  <style scoped>
-  .loading-bar {
-    background-color: #ddd;
-    height: 10px;
-    width: 100%;
-    position: relative;
-  }
-  
-  .bar {
-    height: 100%;
-    width: 0;
-    background-color: #007bff; /* Adjust the loading bar color as needed */
-    position: absolute;
-    transition: width 0.5s linear;
-  } -->
-  <!-- </style> -->
-  

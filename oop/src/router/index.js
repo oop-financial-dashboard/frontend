@@ -30,11 +30,6 @@ const routes = [
     component: () => import('../views/CreatePortfolioView.vue')
   },
   {
-    path: '/homepage/portfolio_detail',
-    name: 'portfolio_detail_page',
-    component: () => import('../views/PortfolioDetail.vue')
-  },
-  {
     path: '/',
     name: 'login_page',
     component: () => import('../components/UserLogin.vue'),
@@ -47,6 +42,9 @@ const routes = [
     name: 'confirm-account',
     component: () => import('../views/ConfirmAccount.vue') ,
     props: (route) => ({ token: route.query.token }), // Pass the token as a prop to the component
+    meta: {
+      hideNavbar: true,
+    },
   },
 ];
 
