@@ -177,6 +177,20 @@ export default {
               );
             this.$router.push("/");
             }
+          })
+          .catch((error) => {
+            if (error.response.status === 403) {
+              // Handle the 403 Forbidden status here
+              this.currentPasswordError = "Incorrect current password.";
+            } else {
+              // Handle other error cases
+              this.show(
+                "notification",
+                "Error",
+                "Oh no, something went wrong! Please try again later.",
+                "error"
+              );
+            }
           });
       } catch (e) {
         this.show(
