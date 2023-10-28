@@ -309,7 +309,7 @@ export default {
                 console.log(response);
                 sessionStorage.setItem("token", response.data.token);
                 console.log(sessionStorage.getItem("token"));
-                this.$router.push("/home");
+                this.$router.push("/homepage");
                 this.show("notification", "Welcome Back!", "", "success");
 
                 const data = {
