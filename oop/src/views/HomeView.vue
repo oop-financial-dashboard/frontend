@@ -1,7 +1,17 @@
 <template>
   <main class="homepage">
     <div>
-      <h1>My Portfolios</h1>
+      <h1>My Portfolio</h1>
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-dark">Trade</button>
+    </div>
+
+    <div class="profile mt-3 p-5">
+      <p><b>Total Assets (SGD) *need API to populate this</b></p>
+      <p style="font-size: 30px">100,745</p>
+      <button @click="openPortfolio" class="btn btn-dark">Open Portfolio Page</button>
     </div>
 
     <div class="mt-5">
@@ -112,6 +122,9 @@ export default {
     createPortfolio() {
       this.$router.push("/homepage/create_portfolio");
     },
+    openPortfolio(){
+      this.$router.push("/homepage/portfolio_page");
+    }
   },
 };
 </script>
