@@ -25,7 +25,7 @@ import SideBar from "./components/SideBar.vue";
   --sidebar-width: 200px;
 }
 * {
-  margin: 0;
+  /* margin: 0; removed this for multiselect (let me know if this affect your part - joey) */
   padding: 0;
   box-sizing: border-box;
   font-family: Avenir, Helvetica, Arial, sans-serif;

@@ -34,10 +34,10 @@
             <td>{{calculateTotalStockValue(portfolio.stocks)}}</td>
             <td>{{portfolio.createdAt}}</td>
             <td>
-              <font-awesome-icon @click="deletePortfolio(key)" :icon="['fas', 'trash-can']" style="color: #dc3545"/>
+              <font-awesome-icon class="clickable" @click="deletePortfolio(key)" :icon="['fas', 'trash-can']" style="color: #dc3545"/>
             </td>
             <td>
-              <font-awesome-icon :icon="['fas', 'pencil']" style="color: #007bff"/>
+              <font-awesome-icon class="clickable" :icon="['fas', 'pencil']" style="color: #007bff"/>
             </td>
           </tr>
         </tbody>
@@ -115,16 +115,6 @@ export default {
 </script>
 
 <style scoped>
-.button {
-  float: right;
-  font-size: 14px;
-  font-weight: bold;
-  color: white;
-  background-color: #0a1b39;
-  padding: 12px 50px;
-  border-radius: 15px;
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-}
 .profile {
   background-color: rgba(217, 217, 217, 0.4);
   border-radius: 15px;
@@ -133,5 +123,8 @@ export default {
   color: #9d9d9d;
   font-weight: normal;
   font-size: small;
+}
+.clickable {
+  cursor: pointer;
 }
 </style>

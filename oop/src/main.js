@@ -6,9 +6,15 @@ import store from './store';
 import Notifications from '@kyvg/vue3-notification';
 import velocity from 'velocity-animate';
 
+import PrimeVue from "primevue/config";
+
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
+
+import "primevue/resources/primevue.min.css"; // PrimeVue styles
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import PrimeVue from 'primevue/config';
+
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
@@ -16,6 +22,7 @@ library.add(faChevronRight);
 
 createApp(App)
     .use(PrimeVue, {ripple: true, inputStyle: "filled"})
+    .component('VueDatePicker', VueDatePicker)
     .use(store)
     .use(router)
     .use(Notifications, { velocity })
