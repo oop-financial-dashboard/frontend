@@ -34,7 +34,7 @@
             <td>{{calculateTotalStockValue(portfolio.stocks)}}</td>
             <td>{{portfolio.createdAt}}</td>
             <td>
-              <font-awesome-icon @click="deletePortfolio(key, 1)" :icon="['fas', 'trash-can']" style="color: #dc3545"/>
+              <font-awesome-icon @click="deletePortfolio(key)" :icon="['fas', 'trash-can']" style="color: #dc3545"/>
             </td>
             <td>
               <font-awesome-icon :icon="['fas', 'pencil']" style="color: #007bff"/>
@@ -62,6 +62,7 @@ export default {
   mounted() {
     // call the method when the component is mounted i.e. first thing is loaded
     this.getAllPortfolios();
+    // console.log(sessionStorage.getItem("user_id"));
   },
   methods: {
     navigateToDetails(selectedPortfolio, portfolioId) {
@@ -77,7 +78,7 @@ export default {
     },
     getAllPortfolios() {
       // need to get specific user from login
-      axios.get("/api/portfolio/get-all/1")
+      axios.get("/portfolio/get-all/" + sessionStorage.getItem("user_id"))
         .then((response) => {
           if (response.status === 200) {
             this.portfolioList = response.data.portfolios;
@@ -92,9 +93,10 @@ export default {
       const totalValue = stocks.reduce((total, stock) => total + stock.value, 0);
       return totalValue.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
     },
-    deletePortfolio(portfolioId, userId) {
+    deletePortfolio(portfolioId) {
+      const userId = sessionStorage.getItem("user_id");
       const deleteParams =  {"userId": userId, "portfolioId": portfolioId}
-      axios.post("/api/portfolio/delete", deleteParams)
+      axios.post("/portfolio/delete", deleteParams)
         .then((response) => {
           if (response.status === 200) {
             // refresh the page
