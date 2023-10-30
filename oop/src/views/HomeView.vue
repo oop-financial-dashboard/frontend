@@ -31,13 +31,13 @@
               <a href="#" style="text-decoration: none" @click="navigateToDetails(portfolio, key)">{{key}}</a>
             </td>
             <td>{{portfolio.stocks.length}}</td>
-            <td>{{calculateTotalStockValue(portfolio.stocks)}}</td>
+            <td>{{formatTotalValue(portfolio.totalValue)}}</td>
             <td>{{portfolio.createdAt}}</td>
             <td>
               <font-awesome-icon class="clickable" @click="deletePortfolio(key)" :icon="['fas', 'trash-can']" style="color: #dc3545"/>
             </td>
             <td>
-              <font-awesome-icon class="clickable" :icon="['fas', 'pencil']" style="color: #007bff"/>
+              <font-awesome-icon class="clickable" @click="navigateToEditPortfolio(portfolio, key)" :icon="['fas', 'pencil']" style="color: #007bff"/>
             </td>
           </tr>
         </tbody>
@@ -67,17 +67,15 @@ export default {
   methods: {
     navigateToDetails(selectedPortfolio, portfolioId) {
       // save the data
-      // this.$store.commit('portfolio', JSON.stringify(selectedPortfolio));
-      // this.$store.commit('portfolioId', portfolioId);
-      localStorage.setItem("portfolioId", portfolioId)
-      localStorage.setItem("portfolio", JSON.stringify(selectedPortfolio))
+      sessionStorage.setItem("portfolioId", portfolioId)
+      sessionStorage.setItem("portfolio", JSON.stringify(selectedPortfolio))
       this.$router.push({name: `portfolio_detail_page`})
-
-      // Navigate to the "portfolio detail" page and pass the portfolio details
+      
       // this.$router.push({ name: 'portfolio_detail_page', params: { portfolio: JSON.stringify(selectedPortfolio), portfolioId: portfolioId } });
     },
     getAllPortfolios() {
       // need to get specific user from login
+      //axios.get("/portfolio/get-all/1")
       axios.get("/portfolio/get-all/" + sessionStorage.getItem("user_id"))
         .then((response) => {
           if (response.status === 200) {
@@ -88,10 +86,14 @@ export default {
           console.error(err);
         })
     },
-    calculateTotalStockValue(stocks) {
+    formatTotalValue(totalValue) {
       // Calculate and return the total value of stocks
-      const totalValue = stocks.reduce((total, stock) => total + stock.value, 0);
       return totalValue.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    },
+    navigateToEditPortfolio(selectedPortfolio, portfolioId) {
+      sessionStorage.setItem("portfolioId", portfolioId)
+      sessionStorage.setItem("portfolio", JSON.stringify(selectedPortfolio))
+      this.$router.push({name: `edit_portfolio_page`})
     },
     deletePortfolio(portfolioId) {
       const userId = sessionStorage.getItem("user_id");

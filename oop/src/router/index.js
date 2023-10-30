@@ -30,6 +30,11 @@ const routes = [
     component: () => import('../views/CreatePortfolioView.vue')
   },
   {
+    path: '/homepage/edit_portfolio',
+    name: 'edit_portfolio_page',
+    component: () => import('../views/EditPortfolioView.vue')
+  },
+  {
     path: '/homepage/portfolio_detail',
     name: 'portfolio_detail_page',
     component: () => import('../views/PortfolioDetail.vue')

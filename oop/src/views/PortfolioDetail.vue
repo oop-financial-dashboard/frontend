@@ -35,8 +35,8 @@
 export default {
     data() {
         return {
-            portfolioId: localStorage.getItem('portfolioId'),
-            portfolio: JSON.parse(localStorage.getItem('portfolio'))
+            portfolioId: sessionStorage.getItem('portfolioId'),
+            portfolio: JSON.parse(sessionStorage.getItem('portfolio'))
         }
     }
 }

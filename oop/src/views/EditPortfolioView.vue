@@ -1,6 +1,6 @@
 <template>
   <main class="aboutpage">
-    <h1>Create portfolio</h1>
+    <h1>Edit portfolio</h1>
     <div class="row">
       <div class="col">
         <p><b>Enter portfolio name:</b></p>
@@ -129,10 +129,12 @@ export default {
   },
   data() {
     return {
+      portfolioId: sessionStorage.getItem('portfolioId'),
+      portfolio: JSON.parse(sessionStorage.getItem('portfolio')),
       totalPriceData: 0,
       stocks: ref(),
       selectedStocks: ref(),
-      portfolioName: '',
+      portfolioName: sessionStorage.getItem('portfolioId'),
       portfolioDesc: '',
       portfolioCapital: 0,
       selectedPriceType: null,
@@ -162,6 +164,7 @@ export default {
   },
   mounted() {
     this.getAllAvailStocks();
+    console.log(this.portfolio);
   },
   methods: {
     getAllAvailStocks() {
@@ -283,10 +286,10 @@ export default {
             dateAdded: stock.selectedDate,
             price: stock.selectedPrice,
           })),
-          createdAt: formattedDate, 
+          editedAt: formattedDate, 
         };
         try {
-          const response = await axios.post("/portfolio/create", portfolioData);
+          const response = await axios.post("/portfolio/update", portfolioData);
           if (response.status === 200) {
             this.showNotification("notification", "Success", "Portfolio created successfully!", "success");
             // Reload the page to the homepage after 3 seconds
