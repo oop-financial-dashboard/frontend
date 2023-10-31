@@ -9,12 +9,19 @@
 
 <script>
 
-
 export default {
   name: "PortfolioValueChart",
+ created() {
+    const fetchPortfolioData = async() => {
+      const data = await fetch('https://demo-live-data.highcharts.com/aapl-c.json')
+                          .then(response => response.json());
+      this.stockOptions.series[0].data = data;
+      this.stockOptions.title.text = "AAPL";
+    }
+    fetchPortfolioData();
+  },
   data() {
     return {
-      chartData: null,
       stockOptions: {
         title: {
           text: "Portfolio Name"
