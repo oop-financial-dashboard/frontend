@@ -19,6 +19,11 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 library.add(faChevronRight);
+import HighchartsVue from 'highcharts-vue'
+import Highcharts from 'highcharts'
+import stockInit from 'highcharts/modules/stock'
+
+stockInit(Highcharts)
 
 createApp(App)
     .use(PrimeVue, {ripple: true, inputStyle: "filled"})
@@ -26,5 +31,6 @@ createApp(App)
     .use(store)
     .use(router)
     .use(Notifications, { velocity })
+    .use(HighchartsVue)
     .component('font-awesome-icon', FontAwesomeIcon)
     .mount('#app');

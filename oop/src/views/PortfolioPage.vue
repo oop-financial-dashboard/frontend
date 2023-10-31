@@ -21,6 +21,7 @@
       </data-box>
     </div>
 
+<<<<<<< HEAD
     <div class="time-series-graph border data-box">time series graph</div>
 
     <div class="border d-flex h-auto">
@@ -30,6 +31,20 @@
 
     <div class="performance-attribution-graph border data-box">
       performance-attribution-graph
+=======
+    <div class="time-series-graph data-box bg-white p-4">
+<!--      <header class="mb-1">Time Series Graph</header>-->
+      <portfolio-value-chart class="rounded" />
+    </div>
+
+    <div class="d-flex h-auto justify-content-between">
+      <!-- this exposure chart should be part of the div for all the alignments and padding to apply -->
+      <exposure-chart class="rounded" />
+
+      <div class="bg-white data-box p-4">
+        <header class="mb-1">Assets Pie Chart</header>
+      </div>
+>>>>>>> 88e0400 (Registerd HighCharts to App.vue instead and implemented portfolio value chart without data)
     </div>
 
     <div class="stocks border data-box">stocks</div>
@@ -39,6 +54,13 @@
 <script>
 <<<<<<< HEAD
 import dataBox from "@/components/dataBox.vue";
+<<<<<<< HEAD
+=======
+import ExposureChart from "@/components/Analytics/ExposureChart.vue";
+import StocksTable from "@/components/Analytics/StocksTable.vue";
+import PortfolioValueChart from "@/components/Analytics/PortfolioValueChart.vue";
+
+>>>>>>> 88e0400 (Registerd HighCharts to App.vue instead and implemented portfolio value chart without data)
 export default {
   data() {
     return {
@@ -51,6 +73,7 @@ export default {
     };
   },
   components: {
+    PortfolioValueChart,
     dataBox,
   },
 =======

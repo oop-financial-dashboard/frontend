@@ -1,19 +1,14 @@
 <template>
-  <chart
+  <highcharts
       class="h-50"
-      :options="chartOptions">
-  </chart>
+      :options="chartOptions"
+  >
+  </highcharts>
 </template>
 
 <script>
-
-  import {Chart} from "highcharts-vue";
-
   export default {
     name: "exposureChart",
-    components: {
-      chart: Chart
-    },
     data() {
       return  {
         chartOptions: {
