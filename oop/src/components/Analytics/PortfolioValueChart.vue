@@ -39,6 +39,7 @@ export default {
           enabled: false
         },
         series: [{
+          name: "Stock Price",
           data: null,
           type: 'area',
           threshold: null,
