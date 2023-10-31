@@ -17,6 +17,12 @@
     data() {
       return  {
         chartOptions: {
+          chart: {
+            type: "column"
+          },
+          title: {
+            text: "Sector Exposure"
+          },
           series: [{
             data: [1, 2, 3] // sample data
           }]
