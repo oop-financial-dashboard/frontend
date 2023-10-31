@@ -21,19 +21,8 @@
       </data-box>
     </div>
 
-<<<<<<< HEAD
-    <div class="time-series-graph border data-box">time series graph</div>
-
-    <div class="border d-flex h-auto">
-      <exposure-chart/>
-      <div>assets pie chart</div>
-    </div>
-
-    <div class="performance-attribution-graph border data-box">
-      performance-attribution-graph
-=======
     <div class="time-series-graph data-box bg-white p-4">
-<!--      <header class="mb-1">Time Series Graph</header>-->
+      <!--      <header class="mb-1">Time Series Graph</header>-->
       <portfolio-value-chart class="rounded" />
     </div>
 
@@ -41,26 +30,23 @@
       <!-- this exposure chart should be part of the div for all the alignments and padding to apply -->
       <exposure-chart class="rounded" />
 
-      <div class="bg-white data-box p-4">
-        <header class="mb-1">Assets Pie Chart</header>
-      </div>
->>>>>>> 88e0400 (Registerd HighCharts to App.vue instead and implemented portfolio value chart without data)
+      <!-- <div class="bg-white data-box p-4"> -->
+      <!-- <header class="mb-1">Assets Pie Chart</header> -->
+      <assets-pie-chart class="rounded"></assets-pie-chart>
     </div>
+    <!-- </div> -->
 
     <div class="stocks border data-box">stocks</div>
   </main>
 </template>
 
 <script>
-<<<<<<< HEAD
 import dataBox from "@/components/dataBox.vue";
-<<<<<<< HEAD
-=======
 import ExposureChart from "@/components/Analytics/ExposureChart.vue";
-import StocksTable from "@/components/Analytics/StocksTable.vue";
+import stocksTable from "@/components/Analytics/StocksTable.vue";
 import PortfolioValueChart from "@/components/Analytics/PortfolioValueChart.vue";
+import AssetsPieChart from "@/components/Analytics/AssetsPieChart.vue";
 
->>>>>>> 88e0400 (Registerd HighCharts to App.vue instead and implemented portfolio value chart without data)
 export default {
   data() {
     return {
@@ -75,14 +61,10 @@ export default {
   components: {
     PortfolioValueChart,
     dataBox,
+    ExposureChart,
+    stocksTable,
+    AssetsPieChart,
   },
-=======
-import ExposureChart from "@/components/Analytics/ExposureChart.vue";
-
-export default {
-  components: {ExposureChart},
->>>>>>> 183a730 (Implemented sample chart for exposure and installed highcharts-vue)
-  methods: {},
 };
 </script>
 

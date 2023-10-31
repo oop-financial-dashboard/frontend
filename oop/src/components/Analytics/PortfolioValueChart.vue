@@ -31,7 +31,7 @@ export default {
         plotOptions: {
           series: {
             animation: {
-              duration: 1500
+              duration: 3000
             }
           }
         },
