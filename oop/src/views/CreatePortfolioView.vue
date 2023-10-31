@@ -43,18 +43,21 @@
 
               <!-- calender to pick date: disabled for default -->
               <td>
-                <VueDatePicker @input="handleDateChange" :start-date="startDate" focus-start-date no-today :max-date="maxDate" :key="'selectedDate_' + index" type="date" v-model="item.selectedDate" :enable-time-picker="false"></VueDatePicker>
-                <VueDatePicker v-model="date" :start-date="startDate2" focus-start-date />
+                <VueDatePicker @input="onDateChange(item, index)" :start-date="startDate" focus-start-date no-today :max-date="maxDate" :key="'selectedDate_' + index" type="date" v-model="item.selectedDate" :enable-time-picker="false"></VueDatePicker>
+                <!-- <VueDatePicker v-model="date" :start-date="startDate2" focus-start-date /> -->
               </td>
 
               <!-- price -->
               <td>
-                <input :key="'selectedPrice_' + index" @input="$emit('update:item.selectedPrice', $event.target.value)" :disabled="item.disableFields" :value="item.selectedPrice" type="number" class="table-input" />
+                <!-- <input :key="'selectedPrice_' + index" :disabled="item.disableFields" :value="item.selectedPrice" type="number" class="table-input" /> -->
+                <!-- <input :key="'selectedPrice_' + index" v-model="userEditedPrices[item.name]" :disabled="item.disableFields" type="number" class="table-input" /> -->
+                <input :key="'selectedPrice_' + index" :disabled="item.disableFields" v-model="item.selectedPrice" :placeholder="item.defaultPrice" type="number" class="table-input" />
+                <!-- <input type="text" v-model="item.selectedPrice" @focus="clearDefault" /> -->
               </td>
 
               <!-- qty to purchase per stock -->
               <td>
-                <input :key="'selectedQty_' + index" :disabled="item.disableFields" :value="item.selectedQty" type="number" class="table-input" />
+                <input :key="'selectedQty_' + index" v-model="item.selectedQty" :disabled="item.disableFields" type="number" class="table-input" />
               </td>
 
               <td>
@@ -95,29 +98,24 @@ import { ref } from "vue";
 
 import { notify } from "@kyvg/vue3-notification";
 
+// import _ from 'lodash';
+
 export default {
   components: {
     MultiSelect, VueDatePicker
   },
   watch: {
-    'selectedPrice': {
-      handler: function () {
-          this.calculateTotalPrice();
-        }
-      },
     'selectedStocks': {
       deep: true, // this is causing the unnecessary loop
-      handler: function (newVal) {
+      handler: (function (newVal) {
         newVal.forEach((item) => {
-          //item.selectedDate = new Date(new Date().setDate(new Date().getDate() - 1)); //supposed to set default date
           this.getStockPrice(item.name, item.symbol, item.selectedDate, newVal.indexOf(item));
         });
-      },
+      }),
     },
   },
   data() {
     return {
-      totalPriceData: 0,
       stocks: ref(),
       selectedStocks: ref(),
       portfolioName: '',
@@ -126,14 +124,16 @@ export default {
       selectedPriceType: null,
       selectedDate: null,
       startDate: ref(new Date(new Date().setDate(new Date().getDate() - 1))),
-      startDate2: ref(new Date(2020, 1)),
       maxDate: new Date(new Date().setDate(new Date().getDate() - 1)).toDateString(),
+      userEditedPrices: {}, // Object to hold user-edited prices by stock name
       selectedPrice: 0,
+      defaultPrice: 0,
       customHigh:0,
       customLow: 0,
-      close: 0,
+      closePrice: 0,
       selectedQty: 0,
       allPortolios: '',
+      nullErrMessages: {}
     };
   },
   computed: {
@@ -142,23 +142,43 @@ export default {
 
       if (this.selectedStocks) {
         for (const stock of this.selectedStocks) {
-          // Check if selectedPrice and selectedQty are valid numbers.
-          if (stock.selectedPrice > 0 && stock.selectedQty > 0) {
-            // Calculate the total price for each selected stock and add it to the total.
+          if (stock.selectedPrice === null || isNaN(stock.selectedPrice)) {
+            // Use defaultPrice if selectedPrice is null
+            total += stock.defaultPrice * stock.selectedQty;
+          } else {
             total += stock.selectedPrice * stock.selectedQty;
           }
         }
       }
-      return total.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      if (isNaN(total)) {
+        return "Calculating...";
+      } else {
+        return total.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      }
     }
   },
   mounted() {
     this.getAllAvailStocks();
     this.getAllPortfolios();
+
+    // if (this.nullErrMessages) {
+    //   for (let stockName in this.nullErrMessages) {
+    //     const nullErrMessage = this.nullErrMessages[stockName];
+    //     this.showNotification("notification", "Error", nullErrMessage, "error");
+    //     // Assuming you want to remove the nullErrMessage from the list after displaying it
+    //     delete this.nullErrMessages[stockName];
+    //   }
+    // }
   },
   methods: {
-    handleDateChange(newDate) {
-      console.log('Date has changed:', newDate);
+    onDateChange(item, index) {
+      // Call getStockPrice when the date is selected
+      console.log("IN");
+      this.getStockPrice(item.name, item.symbol, item.selectedDate, index);
+    },
+    // Update the user-edited price in the userEditedPrices object
+    updateUserEditedPrice(stockName, newPrice) {
+      this.userEditedPrices[stockName] = newPrice;
     },
     // remove stocks from the dropdown list
     removeStock(stockName) {
@@ -199,29 +219,42 @@ export default {
         const day = String(date.getDate()).padStart(2, '0');
         const formattedDate = `${year}-${month}-${day}`;
         const stockParams = { "symbol": symbol, "timestamp": formattedDate };
-
-        console.log(formattedDate);
         
         axios.post("/stock/price", stockParams)
           .then((response) => {
             if (response.status === 200) {
               if (response.data == null) {
                 // null e.g. no stock data for this date e.g. closing price
-                this.showNotification(
-                  "notification",
-                  "Error",
-                  `No price for ${name} on ${formattedDate}, please select a different date.`,
-                  "error"
-                );
+                const nullErrMessage = `No price for ${name} on ${formattedDate}, please select a different date.`; // Customize this error message as needed
+                
+                this.showNotification("notification", "Error", nullErrMessage, "error");
+
+                if (!this.nullErrMessages[name]) {
+                  this.nullErrMessages[name] = nullErrMessage;
+                }
+
+                // let count = 0;
+                // for (let stockName in this.nullErrMessages) {
+                //   const nullErrMessage = this.nullErrMessages[stockName];
+                //   if (count = 0) {
+                //     this.showNotification("notification", "Error", nullErrMessage, "error");
+                //   } 
+                  
+                //   // Assuming you want to remove the nullErrMessage from the list after displaying it
+                //   delete this.nullErrMessages[stockName];
+                // }
 
                 // disable the fields
                 this.selectedStocks[index].disableFields = true;
+                this.selectedStocks[index].defaultPrice = 0;
+                this.selectedStocks[index].selectedQty = 0;
               } else {
                 // enable the fields because there is stock data for this date e.g. closing, high, and low price
                 this.selectedStocks[index].disableFields = false;
-                this.selectedStocks[index].selectedPrice = response.data.close;
-                // If you want to perform additional logic based on the response data, you can do it here.
-                // For example, setting the selectedPrice, customHigh, and customLow properties.
+                this.selectedStocks[index].defaultPrice = parseFloat(response.data.close).toFixed(2); // set as placeholder
+                // this.selectedStocks[index].selectedPrice = parseFloat(response.data.close).toFixed(2);
+                this.selectedStocks[index].customHigh = parseFloat(response.data.high).toFixed(2); 
+                this.selectedStocks[index].customLow = parseFloat(response.data.low).toFixed(2); 
               }
             }
           })
@@ -273,8 +306,9 @@ export default {
           return;
         }
         
-        if (stock.selectedPrice == stock.close || (stock.selectedPrice < stock.customLow && stock.selectedPrice > stock.customHigh)) {
-          this.showNotification("notification", "Error", `Invalid custom price. Custom price should be between ${stock.customLow} and ${stock.customHigh}.`, "error");
+        if ((stock.selectedPrice === null || isNaN(stock.selectedPrice)) && 
+            (stock.selectedPrice < stock.customLow || stock.selectedPrice > stock.customHigh)) {
+          this.showNotification("notification", "Error", `Invalid price. ${stock.name} Price should be ${stock.defaultPrice} or between ${stock.customLow} and ${stock.customHigh}.`, "error");
           return;
         }
 
@@ -299,23 +333,26 @@ export default {
             symbol: stock.symbol,
             quantity: stock.selectedQty,
             dateAdded: stock.selectedDate,
-            price: stock.selectedPrice,
+            price: stock.selectedPrice === null || isNaN(stock.selectedPrice)  ? stock.defaultPrice : stock.selectedPrice,
           })),
           createdAt: formattedDate, 
         };
-        try {
-          const response = await axios.post("/portfolio/create", portfolioData);
-          if (response.status === 200) {
-            this.showNotification("notification", "Success", "Portfolio created successfully!", "success");
-            // Reload the page to the homepage after 3 seconds
-            setTimeout(() => {
-              window.location.href = "/homepage";
-            }, 3000); 
-          }
-        } catch (error) {
-          console.error(error);
-          this.showNotification("notification", "Error", "Failed to create the portfolio", "error");
-        }
+
+        console.log(portfolioData);
+        
+        // try {
+        //   const response = await axios.post("/portfolio/create", portfolioData);
+        //   if (response.status === 200) {
+        //     this.showNotification("notification", "Success", "Portfolio created successfully!", "success");
+        //     // Reload the page to the homepage after 3 seconds
+        //     setTimeout(() => {
+        //       window.location.href = "/homepage";
+        //     }, 3000); 
+        //   }
+        // } catch (error) {
+        //   console.error(error);
+        //   this.showNotification("notification", "Error", "Failed to create the portfolio", "error");
+        // }
       }
     }
   }

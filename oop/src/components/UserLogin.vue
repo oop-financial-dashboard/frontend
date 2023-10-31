@@ -300,7 +300,7 @@ export default {
           this.invalidPwdInput == false
         ) {
           await axios
-            .post(`v1/auth/login`, {
+            .post(`/auth/login`, {
               email: this.email,
               password: this.pwd,
             })
