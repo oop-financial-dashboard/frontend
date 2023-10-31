@@ -14,11 +14,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/vue-fontawesome": "^3.0.3",
     "@kyvg/vue3-notification": "^3.0.2",
-<<<<<<< HEAD
     "@vuepic/vue-datepicker": "^7.2.0",
-=======
-    "apexcharts": "^3.44.0",
->>>>>>> 183a730 (Implemented sample chart for exposure and installed highcharts-vue)
     "axios": "^1.2.6",
     "bootstrap": "^5.2.3",
     "chart.js": "^4.4.0",

@@ -36,7 +36,9 @@
     </div>
     <!-- </div> -->
 
-    <div class="stocks border data-box">stocks</div>
+    <div class="stocks border data-box">
+      <stocks-table class="rounded" />
+    </div>
   </main>
 </template>
 
