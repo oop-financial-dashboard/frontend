@@ -23,10 +23,8 @@
 
     <div class="time-series-graph border data-box">time series graph</div>
 
-    <div
-      class="row-exposusure-and-assets border data-box d-flex justify-content-between"
-    >
-      <div>exposure</div>
+    <div class="border d-flex h-auto">
+      <exposure-chart/>
       <div>assets pie chart</div>
     </div>
 
@@ -39,6 +37,7 @@
 </template>
 
 <script>
+<<<<<<< HEAD
 import dataBox from "@/components/dataBox.vue";
 export default {
   data() {
@@ -54,6 +53,12 @@ export default {
   components: {
     dataBox,
   },
+=======
+import ExposureChart from "@/components/Analytics/ExposureChart.vue";
+
+export default {
+  components: {ExposureChart},
+>>>>>>> 183a730 (Implemented sample chart for exposure and installed highcharts-vue)
   methods: {},
 };
 </script>

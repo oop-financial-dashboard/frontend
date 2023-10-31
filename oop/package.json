@@ -14,15 +14,24 @@
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/vue-fontawesome": "^3.0.3",
     "@kyvg/vue3-notification": "^3.0.2",
+<<<<<<< HEAD
     "@vuepic/vue-datepicker": "^7.2.0",
+=======
+    "apexcharts": "^3.44.0",
+>>>>>>> 183a730 (Implemented sample chart for exposure and installed highcharts-vue)
     "axios": "^1.2.6",
     "bootstrap": "^5.2.3",
+    "chart.js": "^4.4.0",
     "core-js": "^3.8.3",
+    "highcharts-vue": "^1.4.3",
     "jquery": "^3.7.1",
     "primevue": "^3.35.0",
     "velocity-animate": "^1.5.2",
     "vue": "^3.2.13",
-    "vue-router": "^4.0.3"
+    "vue-chartjs": "^5.2.0",
+    "vue-plugin-load-script": "^2.1.1",
+    "vue-router": "^4.0.3",
+    "vue3-apexcharts": "^1.4.4"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
