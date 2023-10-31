@@ -15,7 +15,7 @@
       <div class="col">
         <p>
           <b>Select desired stocks (can select multiple):</b>
-          <span style="float: right;">Total: ${{totalPriceComputed}}</span>
+          <span style="float: right;">Total: {{totalPriceComputed}}</span>
         </p>
         <MultiSelect
           id="multiselect"
@@ -32,7 +32,6 @@
           <thead>
             <tr>
               <th class="table-heading" scope="col">Stocks Selected</th>
-              <th class="table-heading" scope="col">Type of Price</th>
               <th class="table-heading" scope="col">Pick a Date</th>
               <th class="table-heading" scope="col">Price</th>
               <th class="table-heading" scope="col">Enter Quantity</th>
@@ -41,30 +40,25 @@
           <tbody>
             <tr v-for="(item, index) in selectedStocks" :key="index">
               <td>{{ item.name }}</td>
-              
-              <!-- dropdown list to select: default price, historical price or custom price -->
-              <td>
-                <select required class="table-input" v-model="item.selectedPriceType">
-                  <option disabled value="">Select a price type:</option>
-                  <option value="Default Price">Default price</option>
-                  <option value="Historical Price">Historical price</option>
-                  <option value="Custom Price">Custom price</option>
-                </select>
-              </td>
 
               <!-- calender to pick date: disabled for default -->
               <td>
-                <VueDatePicker :disabled="item.selectedPriceType === 'Default Price'" :max-date="maxDate" :key="'selectedDate_' + index" type="date" :enable-time-picker="false" v-model="item.selectedDate">{{item.selectedDate}}</VueDatePicker>
+                <VueDatePicker @input="handleDateChange" :start-date="startDate" focus-start-date no-today :max-date="maxDate" :key="'selectedDate_' + index" type="date" v-model="item.selectedDate" :enable-time-picker="false"></VueDatePicker>
+                <VueDatePicker v-model="date" :start-date="startDate2" focus-start-date />
               </td>
 
               <!-- price -->
               <td>
-                <input :disabled="item.selectedPriceType === 'Default Price'" :key="'selectedPrice_' + index" v-model="item.selectedPrice" type="number" class="table-input" />
+                <input :key="'selectedPrice_' + index" @input="$emit('update:item.selectedPrice', $event.target.value)" :disabled="item.disableFields" :value="item.selectedPrice" type="number" class="table-input" />
               </td>
 
               <!-- qty to purchase per stock -->
               <td>
-                <input :key="'selectedQty_' + index" v-model="item.selectedQty" type="number" class="table-input" />
+                <input :key="'selectedQty_' + index" :disabled="item.disableFields" :value="item.selectedQty" type="number" class="table-input" />
+              </td>
+
+              <td>
+                <font-awesome-icon class="clickable" @click="removeStock(item.name)" :icon="['fas', 'x']"/>
               </td>
             </tr>
           </tbody>
@@ -93,6 +87,10 @@ import "primevue/resources/themes/saga-blue/theme.css";
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faX } from "@fortawesome/free-solid-svg-icons";
+library.add(faX);
+
 import { ref } from "vue";
 
 import { notify } from "@kyvg/vue3-notification";
@@ -108,23 +106,13 @@ export default {
         }
       },
     'selectedStocks': {
+      deep: true, // this is causing the unnecessary loop
       handler: function (newVal) {
-        // Update the selectedDate to the default date when "Default Price" is selected
         newVal.forEach((item) => {
-          if (item.selectedPriceType === 'Default Price') {
-            item.selectedDate = new Date().setDate(new Date().getDate() - 1);
-            item.selectedPrice = 0;
-            item.selectedQty = 0;
-          } else if (item.selectedPriceType === 'Historical Price') {
-            // Call the getStockPrice method when Historical Price is selected
-            this.getStockPrice(item.name, item.symbol, item.selectedDate, newVal.indexOf(item));
-          } else if (item.selectedPriceType === 'Custom Price') {
-            // Call the getStockPrice method for Custom Price without setting selectedPrice
-            this.getStockPrice(item.name, item.symbol, item.selectedDate, newVal.indexOf(item), false);
-          }
+          //item.selectedDate = new Date(new Date().setDate(new Date().getDate() - 1)); //supposed to set default date
+          this.getStockPrice(item.name, item.symbol, item.selectedDate, newVal.indexOf(item));
         });
       },
-      deep: true
     },
   },
   data() {
@@ -137,11 +125,15 @@ export default {
       portfolioCapital: 0,
       selectedPriceType: null,
       selectedDate: null,
+      startDate: ref(new Date(new Date().setDate(new Date().getDate() - 1))),
+      startDate2: ref(new Date(2020, 1)),
       maxDate: new Date(new Date().setDate(new Date().getDate() - 1)).toDateString(),
       selectedPrice: 0,
       customHigh:0,
       customLow: 0,
+      close: 0,
       selectedQty: 0,
+      allPortolios: '',
     };
   },
   computed: {
@@ -162,8 +154,31 @@ export default {
   },
   mounted() {
     this.getAllAvailStocks();
+    this.getAllPortfolios();
   },
   methods: {
+    handleDateChange(newDate) {
+      console.log('Date has changed:', newDate);
+    },
+    // remove stocks from the dropdown list
+    removeStock(stockName) {
+      if (this.selectedStocks) {
+        this.selectedStocks = this.selectedStocks.filter(stock => stock.name !== stockName);
+      }
+    },
+    getAllPortfolios() {
+      // need to get specific user from login
+      axios.get("/portfolio/get-all/1")
+      //axios.get("/portfolio/get-all/" + sessionStorage.getItem("user_id"))
+        .then((response) => {
+          if (response.status === 200) {
+            this.allPortolios = response.data.portfolios;
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        })
+    },
     getAllAvailStocks() {
       // need to get specific user from login
       axios.get("/stock/available-stocks")
@@ -176,45 +191,43 @@ export default {
           console.error(err);
         })
     },
-    getStockPrice(name, symbol, timestamp, index, setPrice = true) {
-      
+    getStockPrice(name, symbol, timestamp, index) {
       if (typeof timestamp !== 'undefined') {
-
         const date = new Date(timestamp);
         const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+        const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
         const formattedDate = `${year}-${month}-${day}`;
+        const stockParams = { "symbol": symbol, "timestamp": formattedDate };
 
-        const stockParams =  {"symbol": symbol, "timestamp": formattedDate}
-        // console.log(stockParams)
+        console.log(formattedDate);
+        
         axios.post("/stock/price", stockParams)
           .then((response) => {
             if (response.status === 200) {
               if (response.data == null) {
+                // null e.g. no stock data for this date e.g. closing price
                 this.showNotification(
-                "notification",
-                "Error",
-                `No price for ${name} on ${formattedDate}, please try a historical or custom price`,
-                "error");
-                this.selectedStocks[index].selectedPrice = 0;
-                this.selectedStocks[index].selectedQty = 0;
-              }
-              else {
-                if (setPrice) {
-                  this.selectedStocks[index].selectedPrice = response.data.close;
-                }
-                // Set customLow and customHigh when "Custom Price" is selected
-                if (this.selectedStocks[index].selectedPriceType === "Custom Price") {
-                  this.selectedStocks[index].customHigh = response.data.high;
-                  this.selectedStocks[index].customLow = response.data.low;
-                }
+                  "notification",
+                  "Error",
+                  `No price for ${name} on ${formattedDate}, please select a different date.`,
+                  "error"
+                );
+
+                // disable the fields
+                this.selectedStocks[index].disableFields = true;
+              } else {
+                // enable the fields because there is stock data for this date e.g. closing, high, and low price
+                this.selectedStocks[index].disableFields = false;
+                this.selectedStocks[index].selectedPrice = response.data.close;
+                // If you want to perform additional logic based on the response data, you can do it here.
+                // For example, setting the selectedPrice, customHigh, and customLow properties.
               }
             }
           })
           .catch((err) => {
             console.error(err);
-          })
+          });
       }
     },
     showNotification(group, title = "", text, type = "") {
@@ -229,33 +242,38 @@ export default {
 
       // Validate portfolio information
       if (!this.portfolioName) {
-        this.showNotification("notification", "Error", "Portfolio name is required", "error");
+        this.showNotification("notification", "Error", "Portfolio name is required.", "error");
+        return;
+      }
+
+      if (this.allPortolios[this.portfolioName]) {
+        this.showNotification("notification", "Error", "Portfolio name must be unique.", "error");
         return;
       }
 
       if (!this.portfolioDesc) {
-        this.showNotification("notification", "Error", "Portfolio description is required", "error");
+        this.showNotification("notification", "Error", "Portfolio description is required.", "error");
         return;
       }
 
       if (this.portfolioCapital <= 0) {
-        this.showNotification("notification", "Error", "Capital amount must be greater than 0", "error");
+        this.showNotification("notification", "Error", "Capital amount must be greater than 0.", "error");
         return;
       }
 
       // Validate selected stocks
       if (this.selectedStocks.length === 0) {
-        this.showNotification("notification", "Error", "Select at least one stock for your portfolio", "error");
+        this.showNotification("notification", "Error", "Select at least one stock for your portfolio.", "error");
         return;
       }
 
       for (const stock of this.selectedStocks) {
         if (stock.selectedQty <= 0) {
-          this.showNotification("notification", "Error", "Stock quantity cannot be 0", "error");
+          this.showNotification("notification", "Error", "Stock quantity cannot be 0.", "error");
           return;
         }
         
-        if (stock.selectedPriceType === "Custom Price" && (stock.selectedPrice < stock.customLow || stock.selectedPrice > stock.customHigh)) {
+        if (stock.selectedPrice == stock.close || (stock.selectedPrice < stock.customLow && stock.selectedPrice > stock.customHigh)) {
           this.showNotification("notification", "Error", `Invalid custom price. Custom price should be between ${stock.customLow} and ${stock.customHigh}.`, "error");
           return;
         }
@@ -305,6 +323,10 @@ export default {
 </script>
 
 <style scoped>
+.clickable {
+  cursor: pointer;
+}
+
 .textbox {
   border-radius: 15px;
   border: solid 1px !important;
