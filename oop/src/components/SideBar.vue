@@ -39,7 +39,7 @@ export default {
   methods: {
     logout() {
       this.$router.push("/");
-      sessionStorage.removeItem("token");
+      sessionStorage.clear();
     },
   },
 };

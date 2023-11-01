@@ -7,6 +7,12 @@
     <div class="spinner-border" role="status">
       <span class="sr-only"></span>
     </div>
+    <p> 
+      Alternatively, you can click the button below 
+      <button type="button" class="redirect_btn my-4 p-2" @click="Redirect()">
+        Back to Login
+      </button>
+    </p>
   </div>
 </template>
 
@@ -29,6 +35,10 @@ export default {
     });
   },
   methods: {
+    Redirect() {
+      this.redirectToLogin();
+    },
+
     startCountdown() {
       const countdownInterval = setInterval(() => {
         this.countdown--;
@@ -59,5 +69,12 @@ p {
   margin: auto;
   margin-top: 10%;
   border: 2px solid #7399c6;
+}
+
+.redirect_btn {
+  width: 100%;
+  background-color: #7399c6;
+  color: white;
+  border-radius: 5px;
 }
 </style>
