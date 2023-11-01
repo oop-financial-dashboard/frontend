@@ -40,6 +40,9 @@ export default {
     logout() {
       this.$router.push("/");
       sessionStorage.clear();
+      // sessionStorage.removeItem("user_id");
+      // sessionStorage.removeItem("portfolioId");
+      // sessionStorage.removeItem("portfolio");
     },
   },
 };

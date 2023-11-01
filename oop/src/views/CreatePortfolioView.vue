@@ -7,10 +7,10 @@
         <input class="textbox p-3" v-model="portfolioName" />
 
         <p class="mt-3"><b>Enter description (strategy):</b></p>
-        <textarea required class="textbox p-3" v-model="portfolioDesc"></textarea>
+        <textarea class="textbox p-3" v-model="portfolioDesc"></textarea>
 
         <p class="mt-3"><b>Specify capital amount (USD):</b></p>
-        <input required type="number" class="textbox p-3" v-model="portfolioCapital"/>
+        <input type="number" class="textbox p-3" v-model="portfolioCapital"/>
       </div>
       <div class="col">
         <p>
@@ -120,7 +120,6 @@ export default {
       portfolioName: '',
       portfolioDesc: '',
       portfolioCapital: 0,
-      selectedPriceType: null,
       selectedDate: null,
       startDate: ref(new Date(new Date().setDate(new Date().getDate() - 1))),
       maxDate: new Date(new Date().setDate(new Date().getDate() - 1)).toDateString(),
@@ -132,7 +131,6 @@ export default {
       closePrice: 0,
       selectedQty: 0,
       allPortolios: '',
-      nullErrMessages: {}
     };
   },
   computed: {
@@ -214,10 +212,6 @@ export default {
                 
                 this.showNotification("notification", "Error", nullErrMessage, "error");
 
-                if (!this.nullErrMessages[name]) {
-                  this.nullErrMessages[name] = nullErrMessage;
-                }
-
                 // disable the fields
                 this.selectedStocks[index].disableFields = true;
                 this.selectedStocks[index].defaultPrice = 0;
@@ -278,13 +272,9 @@ export default {
         var priceTotal = parseFloat(priceString.replace("$", ""));
 
         if (priceTotal > this.portfolioCapital) {
-          this.showNotification("notification", "Error", `Total price is more than capital price.`, "error");
+          this.showNotification("notification", "Error", `Total price cannot be more than capital price.`, "error");
           return; 
         }
-      }
-      else {
-        this.showNotification("notification", "Error", `Total price is still calculating, quantity should not be blank.`, "error");
-        return;
       }
 
       // Validate selected stocks
@@ -299,10 +289,10 @@ export default {
       for (let stock of this.selectedStocks) {
         let hasError = false;
 
-        if (stock.disableFields || stock.selectedQty <= 0) {
+        if (stock.disableFields || stock.selectedQty <= 0 || typeof stock.selectedQty === 'undefined') {
           hasError = true;
           errorMessages.push(hasError);
-          this.showNotification("notification", "Error", `Stock quantity for ${stock.name} cannot be 0.`, "error");
+          this.showNotification("notification", "Error", `Stock quantity for ${stock.name} cannot be empty, 0 or less.`, "error");
           return;
         } 
         else {
@@ -310,7 +300,6 @@ export default {
           errorMessages.push(hasError);
         }
 
-        console.log(stock.selectedPrice);
         if (stock.selectedPrice !== null && !isNaN(stock.selectedPrice) && stock.selectedPrice !== "") {
           if (stock.selectedPrice < stock.customLow || stock.selectedPrice > stock.customHigh) {
             hasError = true;
@@ -355,7 +344,7 @@ export default {
         };
 
         try {
-          console.log(portfolioData);
+          //console.log(portfolioData);
           const response = await axios.post("/portfolio/create", portfolioData);
           if (response.status === 200) {
             this.showNotification("notification", "Success", "Portfolio created successfully!", "success");

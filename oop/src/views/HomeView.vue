@@ -47,7 +47,7 @@
               <font-awesome-icon class="clickable" @click="deletePortfolio(key)" :icon="['fas', 'trash-can']" style="color: #dc3545"/>
             </td>
             <td>
-              <font-awesome-icon class="clickable" @click="navigateToEditPortfolio(portfolio, key)" :icon="['fas', 'pencil']" style="color: #007bff"/>
+              <font-awesome-icon class="clickable" @click="navigateToEditPortfolio(key, portfolio)" :icon="['fas', 'pencil']" style="color: #007bff"/>
             </td>
           </tr>
         </tbody>
@@ -63,6 +63,8 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { faTrashCan, faPencil } from "@fortawesome/free-solid-svg-icons";
 library.add(faTrashCan, faPencil)
 
+import { notify } from "@kyvg/vue3-notification";
+
 export default {
   data() {
     return {
@@ -72,7 +74,7 @@ export default {
   mounted() {
     // call the method when the component is mounted i.e. first thing is loaded
     this.getAllPortfolios();
-    // console.log(sessionStorage.getItem("user_id"));
+    console.log(sessionStorage.getItem("user_id"));
   },
   methods: {
     navigateToDetails(selectedPortfolio, portfolioId) {
@@ -85,8 +87,8 @@ export default {
     },
     getAllPortfolios() {
       // need to get specific user from login
-      //axios.get("/portfolio/get-all/1")
-      axios.get("/portfolio/get-all/" + sessionStorage.getItem("user_id"))
+      axios.get("/portfolio/get-all/1")
+      //axios.get("/portfolio/get-all/" + sessionStorage.getItem("user_id"))
         .then((response) => {
           if (response.status === 200) {
             this.portfolioList = response.data.portfolios;
@@ -100,7 +102,7 @@ export default {
       // Calculate and return the total value of stocks
       return totalValue.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
     },
-    navigateToEditPortfolio(selectedPortfolio, portfolioId) {
+    navigateToEditPortfolio(portfolioId,selectedPortfolio) {
       sessionStorage.setItem("portfolioId", portfolioId)
       sessionStorage.setItem("portfolio", JSON.stringify(selectedPortfolio))
       this.$router.push({name: `edit_portfolio_page`})
@@ -111,13 +113,24 @@ export default {
       axios.post("/portfolio/delete", deleteParams)
         .then((response) => {
           if (response.status === 200) {
-            // refresh the page
-            window.location.reload();
+            this.showNotification("notification", "Success", `Portfolio ${portfolioId} successfully deleted.`, "error");
+            setTimeout(() => {
+              location.reload();
+            }, 1500);
           }
         })
         .catch((err) => {
           console.error(err);
+          this.showNotification("notification", "Error", "Failed to delete the portfolio. Please try again later.", "error");
         })
+    },
+    showNotification(group, title = "", text, type = "") {
+      notify({
+        group,
+        title,
+        type,
+        text,
+      });
     },
     createPortfolio() {
       this.$router.push("/homepage/create_portfolio");
