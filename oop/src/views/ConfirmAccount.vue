@@ -18,6 +18,7 @@
 
 <script>
 import axios from "axios";
+import { notify } from "@kyvg/vue3-notification";
 
 export default {
   data() {
@@ -32,9 +33,27 @@ export default {
       if (response.status === 200) {
         this.startCountdown();
       }
+    })
+    .catch((error) => {
+      console.log(error);
+        this.show(
+          "notification",
+          "Error",
+          "Please contact the admin!",
+          "error"
+        );
     });
   },
   methods: {
+    show(group, title = "", text, type = "") {
+      notify({
+        group,
+        title,
+        type,
+        text,
+      });
+    },
+
     Redirect() {
       this.redirectToLogin();
     },
