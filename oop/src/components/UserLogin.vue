@@ -229,6 +229,12 @@
                             </div>
                           </div>
                         </div>
+                        <div v-if = "showSpinner">
+                          <div class="spinner-border spinner-border-sm" role="status">
+                            <span class="sr-only"></span> 
+                          </div> 
+                          Please wait, creating an account...
+                        </div>
 
                         <button
                           type="button"
@@ -277,6 +283,7 @@ export default {
       invalidEmailMessage: "",
       invalidPwdMessage: "",
       invalidMessages: ["This field cannot be empty", "Invalid email entered"],
+      showSpinner: false,
     };
   },
   methods: {
@@ -389,6 +396,8 @@ export default {
         return; // Do not proceed with registration if there are errors
       }
 
+      this.showSpinner = true;
+
       axios
         .post(`/auth/register`, {
           firstName: this.firstName,
@@ -479,6 +488,7 @@ export default {
       this.regPassword = "";
       this.passwordError = null;
       this.emailError = null;
+      this.showSpinner = false;
     },
   },
 };
