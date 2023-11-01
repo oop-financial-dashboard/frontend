@@ -85,8 +85,8 @@ export default {
     },
     getAllPortfolios() {
       // need to get specific user from login
-      axios.get("/portfolio/get-all/1")
-      //axios.get("/portfolio/get-all/" + sessionStorage.getItem("user_id"))
+      //axios.get("/portfolio/get-all/1")
+      axios.get("/portfolio/get-all/" + sessionStorage.getItem("user_id"))
         .then((response) => {
           if (response.status === 200) {
             this.portfolioList = response.data.portfolios;
