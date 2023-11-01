@@ -43,8 +43,19 @@
 
               <!-- calender to pick date: disabled for default -->
               <td>
-                <VueDatePicker @input="onDateChange(item, index)" :start-date="startDate" focus-start-date no-today :max-date="maxDate" :key="'selectedDate_' + index" type="date" v-model="item.selectedDate" :enable-time-picker="false"></VueDatePicker>
-                <!-- <VueDatePicker v-model="date" :start-date="startDate2" focus-start-date /> -->
+                <VueDatePicker
+                  :start-date="startDate" 
+                  focus-start-date 
+                  no-today 
+                  :max-date="maxDate"
+                  :unique-identifier="index" 
+                  :key="'selectedDate_' + index"
+                  type="date"
+                  v-model="item.selectedDate"
+                  :model-value="item.selectedDate"
+                  @update:model-value="updateDate(item, index, $event)"
+                  :enable-time-picker="false"
+                />
               </td>
 
               <!-- price -->
@@ -98,21 +109,9 @@ import { ref } from "vue";
 
 import { notify } from "@kyvg/vue3-notification";
 
-// import _ from 'lodash';
-
 export default {
   components: {
     MultiSelect, VueDatePicker
-  },
-  watch: {
-    'selectedStocks': {
-      deep: true, // this is causing the unnecessary loop
-      handler: (function (newVal) {
-        newVal.forEach((item) => {
-          this.getStockPrice(item.name, item.symbol, item.selectedDate, newVal.indexOf(item));
-        });
-      }),
-    },
   },
   data() {
     return {
@@ -160,25 +159,11 @@ export default {
   mounted() {
     this.getAllAvailStocks();
     this.getAllPortfolios();
-
-    // if (this.nullErrMessages) {
-    //   for (let stockName in this.nullErrMessages) {
-    //     const nullErrMessage = this.nullErrMessages[stockName];
-    //     this.showNotification("notification", "Error", nullErrMessage, "error");
-    //     // Assuming you want to remove the nullErrMessage from the list after displaying it
-    //     delete this.nullErrMessages[stockName];
-    //   }
-    // }
   },
   methods: {
-    onDateChange(item, index) {
-      // Call getStockPrice when the date is selected
-      console.log("IN");
-      this.getStockPrice(item.name, item.symbol, item.selectedDate, index);
-    },
-    // Update the user-edited price in the userEditedPrices object
-    updateUserEditedPrice(stockName, newPrice) {
-      this.userEditedPrices[stockName] = newPrice;
+    updateDate(item, index, modelData) {
+      // modelData refers to the selected/updated date
+      this.getStockPrice(item.name, item.symbol, modelData, index);
     },
     // remove stocks from the dropdown list
     removeStock(stockName) {
@@ -233,17 +218,6 @@ export default {
                   this.nullErrMessages[name] = nullErrMessage;
                 }
 
-                // let count = 0;
-                // for (let stockName in this.nullErrMessages) {
-                //   const nullErrMessage = this.nullErrMessages[stockName];
-                //   if (count = 0) {
-                //     this.showNotification("notification", "Error", nullErrMessage, "error");
-                //   } 
-                  
-                //   // Assuming you want to remove the nullErrMessage from the list after displaying it
-                //   delete this.nullErrMessages[stockName];
-                // }
-
                 // disable the fields
                 this.selectedStocks[index].disableFields = true;
                 this.selectedStocks[index].defaultPrice = 0;
@@ -294,66 +268,113 @@ export default {
         return;
       }
 
+      let totalPriceComputed = this.totalPriceComputed;
+      var priceMatch = totalPriceComputed.match(/\$\d+\.\d+/);
+      if (priceMatch) {
+        // Extracted price as a string, e.g., "$25.99"
+        var priceString = priceMatch[0];
+
+        // Remove the "$" sign and convert it to a double
+        var priceTotal = parseFloat(priceString.replace("$", ""));
+
+        if (priceTotal > this.portfolioCapital) {
+          this.showNotification("notification", "Error", `Total price is more than capital price.`, "error");
+          return; 
+        }
+      }
+      else {
+        this.showNotification("notification", "Error", `Total price is still calculating, quantity should not be blank.`, "error");
+        return;
+      }
+
       // Validate selected stocks
       if (this.selectedStocks.length === 0) {
         this.showNotification("notification", "Error", "Select at least one stock for your portfolio.", "error");
         return;
       }
 
-      for (const stock of this.selectedStocks) {
-        if (stock.selectedQty <= 0) {
-          this.showNotification("notification", "Error", "Stock quantity cannot be 0.", "error");
+      // Initialize an array to store valid stocks
+      const errorMessages = [];
+
+      for (let stock of this.selectedStocks) {
+        let hasError = false;
+
+        if (stock.disableFields || stock.selectedQty <= 0) {
+          hasError = true;
+          errorMessages.push(hasError);
+          this.showNotification("notification", "Error", `Stock quantity for ${stock.name} cannot be 0.`, "error");
           return;
+        } 
+        else {
+          hasError = false;
+          errorMessages.push(hasError);
         }
+
+        console.log(stock.selectedPrice);
+        if (stock.selectedPrice !== null && !isNaN(stock.selectedPrice) && stock.selectedPrice !== "") {
+          if (stock.selectedPrice < stock.customLow || stock.selectedPrice > stock.customHigh) {
+            hasError = true;
+            errorMessages.push(hasError);
+            this.showNotification(
+              "notification",
+              "Error",
+              `Invalid price. ${stock.name} Price should be between ${stock.customLow} and ${stock.customHigh}.`,
+              "error"
+            );
+            return;
+          }
+        }
+        else {
+          hasError = false;
+          errorMessages.push(hasError);
+        }
+      }
+
+      // All error messages are false, meaning there are no errors
+      if (errorMessages.every(errorMessage => errorMessage === false)) {
         
-        if ((stock.selectedPrice === null || isNaN(stock.selectedPrice)) && 
-            (stock.selectedPrice < stock.customLow || stock.selectedPrice > stock.customHigh)) {
-          this.showNotification("notification", "Error", `Invalid price. ${stock.name} Price should be ${stock.defaultPrice} or between ${stock.customLow} and ${stock.customHigh}.`, "error");
-          return;
-        }
-
-        if (this.totalPriceComputed > this.portfolioCapital) {
-          this.showNotification("notification", "Error", `Total price is more than capital price.`, "error");
-          return;
-        }
-
-        // formulate string
-        const date = new Date(); // get today date
+        // Format portfolioData and send the request
+        const date = new Date();
         const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
-        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
         const formattedDate = `${year}-${month}-${day}`;
-        
+
         const portfolioData = {
-          userId: sessionStorage.getItem("user_id"), 
+          userId: 1,
+          //userId: sessionStorage.getItem("user_id"),
           portfolioId: this.portfolioName,
           description: this.portfolioDesc,
           initialCapital: this.portfolioCapital,
           stocks: this.selectedStocks.map(stock => ({
-            symbol: stock.symbol,
-            quantity: stock.selectedQty,
-            dateAdded: stock.selectedDate,
-            price: stock.selectedPrice === null || isNaN(stock.selectedPrice)  ? stock.defaultPrice : stock.selectedPrice,
-          })),
-          createdAt: formattedDate, 
+              symbol: stock.symbol,
+              quantity: stock.selectedQty,
+              dateAdded: stock.selectedDate,
+              price: stock.selectedPrice === null || isNaN(stock.selectedPrice) || stock.selectedPrice === ""  ? stock.defaultPrice : stock.selectedPrice })),
+          createdAt: formattedDate,
         };
 
-        console.log(portfolioData);
-        
-        // try {
-        //   const response = await axios.post("/portfolio/create", portfolioData);
-        //   if (response.status === 200) {
-        //     this.showNotification("notification", "Success", "Portfolio created successfully!", "success");
-        //     // Reload the page to the homepage after 3 seconds
-        //     setTimeout(() => {
-        //       window.location.href = "/homepage";
-        //     }, 3000); 
-        //   }
-        // } catch (error) {
-        //   console.error(error);
-        //   this.showNotification("notification", "Error", "Failed to create the portfolio", "error");
-        // }
+        try {
+          console.log(portfolioData);
+          const response = await axios.post("/portfolio/create", portfolioData);
+          if (response.status === 200) {
+            this.showNotification("notification", "Success", "Portfolio created successfully!", "success");
+            // Delay navigating to the homepage by 1.5 seconds
+            setTimeout(() => {
+              window.location.href = "/homepage";
+            }, 1500);
+
+            // Delay reloading the homepage by 3 seconds (to give time for the redirect to complete)
+            setTimeout(() => {
+              location.reload();
+            }, 3000);
+          }
+        } catch (error) {
+          console.error(error);
+          this.showNotification("notification", "Error", "Failed to create the portfolio", "error");
+        }
       }
+
     }
   }
 };
