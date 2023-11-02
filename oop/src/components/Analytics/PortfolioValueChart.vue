@@ -21,7 +21,7 @@ export default {
       this.stockOptions.title.text = "AAPL";
     }
     fetchPortfolioData();
-  },
+ },
   data() {
     return {
       stockOptions: {
