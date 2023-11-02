@@ -399,7 +399,7 @@ export default {
       this.showSpinner = true;
 
       axios
-        .post(`https://azure-oop-smux-gateway.azuremicroservices.io/api/auth/register`, {
+        .post(`/auth/register`, {
           firstName: this.firstName,
           lastName: this.lastName,
           email: this.regEmail,

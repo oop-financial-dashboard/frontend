@@ -35,6 +35,7 @@
               <th class="table-heading" scope="col">Pick a Date</th>
               <th class="table-heading" scope="col">Price</th>
               <th class="table-heading" scope="col">Enter Quantity</th>
+              <th class="table-heading" scope="col">Capital %</th>
             </tr>
           </thead>
           <tbody>
@@ -69,6 +70,10 @@
               <!-- qty to purchase per stock -->
               <td>
                 <input :key="'selectedQty_' + index" v-model="item.selectedQty" :disabled="item.disableFields" type="number" class="table-input" />
+              </td>
+
+              <td>
+                {{ capitalPerComputed(item.selectedPrice === null || isNaN(item.selectedPrice) || item.selectedPrice === ""  ? item.defaultPrice : item.selectedPrice, item.selectedQty) }}
               </td>
 
               <td>
@@ -159,6 +164,13 @@ export default {
     this.getAllPortfolios();
   },
   methods: {
+    capitalPerComputed(price, quantity) {
+      let result = "N.A.";
+      if (this.portfolioCapital > 0) {
+        result = parseFloat(((price * quantity) / this.portfolioCapital) * 100).toFixed(2) + "%";
+      }
+      return result;
+    },
     updateDate(item, index, modelData) {
       // modelData refers to the selected/updated date
       this.getStockPrice(item.name, item.symbol, modelData, index);
@@ -170,9 +182,17 @@ export default {
       }
     },
     getAllPortfolios() {
+      const token = sessionStorage.getItem("token");
+      const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
       // need to get specific user from login
       //axios.get("/portfolio/get-all/1")
-      axios.get("/portfolio/get-all/" + sessionStorage.getItem("user_id"))
+      const user_id = sessionStorage.getItem("user_id");
+      axios.get(`/portfolio/get-all/${user_id}`, config)
         .then((response) => {
           if (response.status === 200) {
             this.allPortolios = response.data.portfolios;
@@ -183,8 +203,15 @@ export default {
         })
     },
     getAllAvailStocks() {
+      const token = sessionStorage.getItem("token");
+      const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
       // need to get specific user from login
-      axios.get("/stock/available-stocks")
+      axios.get("/stock/available-stocks", config)
         .then((response) => {
           if (response.status === 200) {
             this.stocks = ref(response.data);
@@ -195,6 +222,13 @@ export default {
         })
     },
     getStockPrice(name, symbol, timestamp, index) {
+      const token = sessionStorage.getItem("token");
+      const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
       if (typeof timestamp !== 'undefined') {
         const date = new Date(timestamp);
         const year = date.getFullYear();
@@ -203,7 +237,7 @@ export default {
         const formattedDate = `${year}-${month}-${day}`;
         const stockParams = { "symbol": symbol, "timestamp": formattedDate };
         
-        axios.post("/stock/price", stockParams)
+        axios.post("/stock/price", stockParams, config)
           .then((response) => {
             if (response.status === 200) {
               if (response.data == null) {
@@ -344,8 +378,15 @@ export default {
         };
 
         try {
+          const token = sessionStorage.getItem("token");
+          const config = {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            };
+
           //console.log(portfolioData);
-          const response = await axios.post("/portfolio/create", portfolioData);
+          const response = await axios.post("/portfolio/create", portfolioData, config);
           if (response.status === 200) {
             this.showNotification("notification", "Success", "Portfolio created successfully!", "success");
             // Delay navigating to the homepage by 1.5 seconds
@@ -389,6 +430,10 @@ export default {
 
 .table-input:hover {
   border: solid 1px #A0A5AE;
+}
+
+.table-input:disabled {
+  background-color: #F5F5F5;
 }
 
 .table-heading {

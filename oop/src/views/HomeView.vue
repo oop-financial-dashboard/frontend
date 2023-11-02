@@ -71,10 +71,9 @@ export default {
       portfolioList: [],
     }
   },
-  mounted() {
-    // call the method when the component is mounted i.e. first thing is loaded
-    this.getAllPortfolios();
-    console.log(sessionStorage.getItem("user_id"));
+  async created() {
+    // first thing when page is loaded
+    await this.getAllPortfolios();
   },
   methods: {
     navigateToDetails(selectedPortfolio, portfolioId) {
@@ -85,9 +84,18 @@ export default {
       
       // this.$router.push({ name: 'portfolio_detail_page', params: { portfolio: JSON.stringify(selectedPortfolio), portfolioId: portfolioId } });
     },
-    getAllPortfolios() {
+    async getAllPortfolios() {
+      const token = sessionStorage.getItem("token");
+      const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
       // need to get specific user from login
-      axios.get("/portfolio/get-all/1")
+      const user_id = sessionStorage.getItem("user_id");
+      axios.get(`/portfolio/get-all/${user_id}`, config)
+      //axios.get("/portfolio/get-all/" + sessionStorage.getItem("user_id"), config)
       //axios.get("/portfolio/get-all/" + sessionStorage.getItem("user_id"))
         .then((response) => {
           if (response.status === 200) {
@@ -108,12 +116,19 @@ export default {
       this.$router.push({name: `edit_portfolio_page`})
     },
     deletePortfolio(portfolioId) {
+      const token = sessionStorage.getItem("token");
+      const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
       const userId = sessionStorage.getItem("user_id");
       const deleteParams =  {"userId": userId, "portfolioId": portfolioId}
-      axios.post("/portfolio/delete", deleteParams)
+      axios.post("/portfolio/delete", deleteParams, config)
         .then((response) => {
           if (response.status === 200) {
-            this.showNotification("notification", "Success", `Portfolio ${portfolioId} successfully deleted.`, "error");
+            this.showNotification("notification", "Success", `Portfolio ${portfolioId} successfully deleted.`, "success");
             setTimeout(() => {
               location.reload();
             }, 1500);

@@ -34,6 +34,7 @@
               <th class="table-heading" scope="col">Pick a Date</th>
               <th class="table-heading" scope="col">Price</th>
               <th class="table-heading" scope="col">Enter Quantity</th>
+              <th class="table-heading" scope="col">Capital %</th>
             </tr>
           </thead>
           <tbody>
@@ -61,6 +62,10 @@
               <!-- qty to purchase per stock -->
               <td>
                 <input :key="'existingQty_' + index" v-model="item.quantity" @change="changeQty(item)" type="number" class="table-input" />
+              </td>
+
+              <td>
+                {{ capitalPerComputed(item.averagePrice, item.quantity) }}
               </td>
 
               <td>
@@ -97,6 +102,10 @@
               <!-- qty to purchase per stock -->
               <td>
                 <input :key="'selectedQty_' + index" v-model="item.selectedQty" :disabled="item.disableFields" type="number" class="table-input" />
+              </td>
+
+              <td>
+                {{ capitalPerComputed(item.selectedPrice === null || isNaN(item.selectedPrice) || item.selectedPrice === ""  ? item.defaultPrice : item.selectedPrice, item.selectedQty) }}
               </td>
 
               <td>
@@ -185,6 +194,29 @@ export default {
     this.updateOGQuantity();
   },
   methods: {
+    capitalPerComputed(price, quantity) {
+      let result = "N.A.";
+      if (this.portfolioCapital > 0) {
+        result = parseFloat(((price * quantity) / this.portfolioCapital) * 100).toFixed(2) + "%";
+      }
+      return result;
+    },
+    findDuplicateStocks(arr, propertyToCompare) {
+      const uniqueValues = new Set();
+      const duplicates = [];
+
+      for (const item of arr) {
+        const propertyValue = item[propertyToCompare];
+
+        if (uniqueValues.has(propertyValue)) {
+          duplicates.push(item);
+        } else {
+          uniqueValues.add(propertyValue);
+        }
+      }
+
+      return duplicates;
+    },
     updateOGQuantity() {
       this.existingStocks = JSON.parse(sessionStorage.getItem("portfolio")).stocks;
       this.existingStocks.forEach(stock => {
@@ -224,7 +256,7 @@ export default {
     changeQty(item) {
       if (item.quantity < item.ogQuantity) {
         this.showNotification("notification", "Error", `Edited quantity must be more than or equal to original quantity ${item.ogQuantity}.`, "error");
-      }
+      } 
     },
     updateDate(item, index, modelData) {
       // modelData refers to the selected/updated date
@@ -251,8 +283,15 @@ export default {
       }
     },
     getAllAvailStocks() {
+      const token = sessionStorage.getItem("token");
+      const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
       // need to get specific user from login
-      axios.get("/stock/available-stocks")
+      axios.get("/stock/available-stocks", config)
         .then((response) => {
           if (response.status === 200) {
             this.stocks = ref(response.data);
@@ -263,6 +302,13 @@ export default {
         })
     },
     getStockPrice(name, symbol, timestamp, index) {
+      const token = sessionStorage.getItem("token");
+      const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
       if (typeof timestamp !== 'undefined') {
         const date = new Date(timestamp);
         const year = date.getFullYear();
@@ -271,7 +317,7 @@ export default {
         const formattedDate = `${year}-${month}-${day}`;
         const stockParams = { "symbol": symbol, "timestamp": formattedDate };
         
-        axios.post("/stock/price", stockParams)
+        axios.post("/stock/price", stockParams, config)
           .then((response) => {
             if (response.status === 200) {
               if (response.data == null) {
@@ -399,9 +445,9 @@ export default {
       // All error messages are false, meaning there are no errors
       if (errorMessages.every(errorMessage => errorMessage === false)) {
 
-        console.log(this.existingStocks);
-        console.log(this.newSelectedStocks);
-        console.log(this.removeExistingStocks);
+        // console.log(this.existingStocks);
+        // console.log(this.newSelectedStocks);
+        // console.log(this.removeExistingStocks);
         
         // Format portfolioData and send the request
         const date = new Date();
@@ -435,21 +481,42 @@ export default {
           await this.updatePortfolioAPI(portfolioData, 'Remove');
         }
 
-        // Increase quantity of existing stocks
+        // Increase quantity of existing stocks and new stocks that are existing stocks
         if (this.existingStocks && this.existingStocks.length > 0) {
           portfolioData.action = 'Increase';
-          portfolioData.stocks = this.existingStocks.map(stock => ({
-            symbol: stock.symbol,
-            quantity: stock.quantity - stock.ogQuantity,
-            dateAdded: stock.dateAdded,
-            price: stock.averagePrice 
-          }));
+          const stocksWithQuantityChange = [];
 
-          //call the api
-          await this.updatePortfolioAPI(portfolioData, 'Increase');
+          // find existing stock (should be a value that appear twice in mergeStocks)
+          const duplicateStocks = this.findDuplicateStocks(this.mergeStocks(), "symbol");
+          duplicateStocks.forEach(stock => {
+            stocksWithQuantityChange.push({
+              symbol: stock.symbol,
+              quantity: stock.selectedQty,
+              dateAdded: stock.selectedDate,
+              price: stock.selectedPrice === null || isNaN(stock.selectedPrice) || stock.selectedPrice === ""  ? stock.defaultPrice : stock.selectedPrice
+            })
+          });
+
+          this.existingStocks.forEach(stock => {
+            const quantityChange = stock.quantity - stock.ogQuantity;
+            if (quantityChange !== 0) {
+              stocksWithQuantityChange.push({
+                symbol: stock.symbol,
+                quanity: quantityChange
+              });
+            }
+          });
+
+          // Check if any stocks had quantity changes
+          if (stocksWithQuantityChange.length > 0) {
+            portfolioData.stocks = stocksWithQuantityChange;
+
+            // Call the API to update the portfolio
+            await this.updatePortfolioAPI(portfolioData, 'Increase');
+          }
         }
 
-        // Add new stocks
+        // Add new stocks and does not exist in existing stocks
         if (this.newSelectedStocks && this.newSelectedStocks.length > 0) {
           portfolioData.action = 'Add';
           portfolioData.stocks = this.newSelectedStocks.map(stock => ({
@@ -463,18 +530,33 @@ export default {
           await this.updatePortfolioAPI(portfolioData, 'Add');
         }
 
-        // TO DO: if stocks in newSelectedStocks exist in existingStocks -> call increase API
-
         // Reload to the home page after all the api has executed
-        window.location.href = '/homepage';
+        // setTimeout(() => {
+        //   window.location.href = "/homepage";
+        // }, 3000);
       }
 
     },
     async updatePortfolioAPI(portfolioData, action) {
+      const token = sessionStorage.getItem("token");
+      const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
       try {
-        const response = await axios.post("/portfolio/update", portfolioData);
+        const response = await axios.post("/portfolio/update", portfolioData, config);
         if (response.status === 200) {
-          this.showNotification("notification", "Success", `${action} - Portfolio was updated successfully!`, "success");
+          if (action == "Increase") {
+            this.showNotification("notification", "Success", `Quantity was increased successfully!`, "success");
+          }
+          if (action == "Add") {
+            this.showNotification("notification", "Success", `Stocks was added to the portfolio successfully!`, "success");
+          }
+          if (action == "Remove") {
+            this.showNotification("notification", "Success", `Existing stocks was removed successfully.`, "success");
+          }
         }
       } catch (error) {
         console.error(error);
@@ -505,6 +587,10 @@ export default {
 
 .table-input:hover {
   border: solid 1px #A0A5AE;
+}
+
+.table-input:disabled {
+  background-color: #F5F5F5;
 }
 
 .table-heading {
