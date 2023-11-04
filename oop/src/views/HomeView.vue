@@ -71,9 +71,8 @@ export default {
       portfolioList: [],
     }
   },
-  async created() {
-    // first thing when page is loaded
-    await this.getAllPortfolios();
+  mounted() {
+    this.getAllPortfolios();
   },
   methods: {
     navigateToDetails(selectedPortfolio, portfolioId) {
@@ -84,7 +83,7 @@ export default {
       
       // this.$router.push({ name: 'portfolio_detail_page', params: { portfolio: JSON.stringify(selectedPortfolio), portfolioId: portfolioId } });
     },
-    async getAllPortfolios() {
+    getAllPortfolios() {
       const token = sessionStorage.getItem("token");
       const config = {
           headers: {
@@ -92,11 +91,12 @@ export default {
           },
         };
 
+      console.log(token);
+
       // need to get specific user from login
       const user_id = sessionStorage.getItem("user_id");
+      //console.log("id: " + user_id);
       axios.get(`/portfolio/get-all/${user_id}`, config)
-      //axios.get("/portfolio/get-all/" + sessionStorage.getItem("user_id"), config)
-      //axios.get("/portfolio/get-all/" + sessionStorage.getItem("user_id"))
         .then((response) => {
           if (response.status === 200) {
             this.portfolioList = response.data.portfolios;
@@ -104,6 +104,7 @@ export default {
         })
         .catch((err) => {
           console.error(err);
+          this.showNotification("notification", "Error", "Failed to retrieve portfolios. Please try again later.", "error");
         })
     },
     formatTotalValue(totalValue) {

@@ -511,6 +511,8 @@ export default {
           if (stocksWithQuantityChange.length > 0) {
             portfolioData.stocks = stocksWithQuantityChange;
 
+            console.log(portfolioData);
+
             // Call the API to update the portfolio
             await this.updatePortfolioAPI(portfolioData, 'Increase');
           }
@@ -560,7 +562,16 @@ export default {
         }
       } catch (error) {
         console.error(error);
-        this.showNotification("notification", "Error", "Failed to update the portfolio. Please try again later.", "error");
+        if (action == "Increase") {
+            this.showNotification("notification", "Error", `Failed to increase quantity. Please try again later.`, "error");
+          }
+          if (action == "Add") {
+            this.showNotification("notification", "Error", `Failed to add to the portfolio. Please try again later.`, "error");
+          }
+          if (action == "Remove") {
+            this.showNotification("notification", "Error", `Failed to remove existing stocks. Please try again later.`, "error");
+          }
+        //this.showNotification("notification", "Error", "Failed to update the portfolio. Please try again later.", "error");
       }
     }
   }

@@ -312,7 +312,7 @@ export default {
       }
 
       // Validate selected stocks
-      if (this.selectedStocks.length === 0) {
+      if (typeof this.selectedStocks === 'undefined' || this.selectedStocks.length === 0) {
         this.showNotification("notification", "Error", "Select at least one stock for your portfolio.", "error");
         return;
       }
@@ -364,8 +364,7 @@ export default {
         const formattedDate = `${year}-${month}-${day}`;
 
         const portfolioData = {
-          userId: 1,
-          //userId: sessionStorage.getItem("user_id"),
+          userId: sessionStorage.getItem("user_id"),
           portfolioId: this.portfolioName,
           description: this.portfolioDesc,
           initialCapital: this.portfolioCapital,
