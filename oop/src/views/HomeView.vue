@@ -4,9 +4,9 @@
       <h1>My Portfolio</h1>
     </div>
 
-    <div class="d-flex justify-content-end">
+    <!-- <div class="d-flex justify-content-end">
       <button class="btn btn-dark">Trade</button>
-    </div>
+    </div> -->
 
     <div class="profile mt-3 p-5">
       <p><b>Total Assets (SGD) *need API to populate this</b></p>
