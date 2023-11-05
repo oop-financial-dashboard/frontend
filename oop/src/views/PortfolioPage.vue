@@ -23,7 +23,7 @@
 
     <div class="time-series-graph data-box bg-white p-4">
       <!--      <header class="mb-1">Time Series Graph</header>-->
-      <portfolio-value-chart class="rounded" />
+      <portfolio-value-chart class="rounded" :portfolio-id="portfolioId" />
     </div>
 
     <div class="d-flex h-auto justify-content-between">

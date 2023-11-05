@@ -10,15 +10,23 @@
 <script>
 
 import Highcharts from "highcharts";
+import axios from "axios";
 
 export default {
   name: "PortfolioValueChart",
+  props: ['portfolioId'],
  created() {
+   const token = sessionStorage.getItem("token");
+   const config = {
+     headers: {
+       Authorization: `Bearer ${token}`,
+     },
+   };
     const fetchPortfolioData = async() => {
-      const data = await fetch('https://demo-live-data.highcharts.com/aapl-c.json')
-                          .then(response => response.json());
-      this.stockOptions.series[0].data = data;
-      this.stockOptions.title.text = "AAPL";
+      const data = await axios.get(`/portfolio/get-historicals/${this.portfolioId}`, config);
+      console.log("portfolio historical ----->", data.data.data[this.portfolioId]);
+      this.stockOptions.series[0].data = data.data.data[this.portfolioId];
+      this.stockOptions.title.text = `${this.portfolioId} Value`;
     }
     fetchPortfolioData();
  },
