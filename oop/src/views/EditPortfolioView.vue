@@ -194,6 +194,14 @@ export default {
     this.updateOGQuantity();
   },
   methods: {
+    formatDate(date) {
+      const originalDate = new Date(date);
+      const year = originalDate.getFullYear();
+      const month = (originalDate.getMonth() + 1).toString().padStart(2, '0');
+      const day = originalDate.getDate().toString().padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
+      return formattedDate;
+    },
     capitalPerComputed(price, quantity) {
       let result = "N.A.";
       if (this.portfolioCapital > 0) {
@@ -310,11 +318,8 @@ export default {
         };
 
       if (typeof timestamp !== 'undefined') {
-        const date = new Date(timestamp);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        const formattedDate = `${year}-${month}-${day}`;
+
+        const formattedDate = this.formatDate(timestamp);
         const stockParams = { "symbol": symbol, "timestamp": formattedDate };
         
         axios.post("/stock/price", stockParams, config)
@@ -454,17 +459,16 @@ export default {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, "0");
         const day = String(date.getDate()).padStart(2, "0");
-        const formattedDate = `${year}-${month}-${day}`;
+        const todayDate = `${year}-${month}-${day}`;
         
         const portfolioData = {
-          userId: 1,
-          //userId: sessionStorage.getItem("user_id"),
+          userId: sessionStorage.getItem("user_id"),
           portfolioId: this.portfolioName,
           action: null,
           stocks: null,
           description: this.portfolioDesc,
           initialCapital: this.portfolioCapital,
-          editedAt: formattedDate,
+          editedAt: todayDate,
         };
 
         // Remove existing stocks
@@ -492,7 +496,7 @@ export default {
             stocksWithQuantityChange.push({
               symbol: stock.symbol,
               quantity: stock.selectedQty,
-              dateAdded: stock.selectedDate,
+              dateAdded: this.formatDate(stock.selectedDate),
               price: stock.selectedPrice === null || isNaN(stock.selectedPrice) || stock.selectedPrice === ""  ? stock.defaultPrice : stock.selectedPrice
             })
           });
@@ -524,7 +528,7 @@ export default {
           portfolioData.stocks = this.newSelectedStocks.map(stock => ({
               symbol: stock.symbol,
               quantity: stock.selectedQty,
-              dateAdded: stock.selectedDate,
+              dateAdded: this.formatDate(stock.selectedDate),
               price: stock.selectedPrice === null || isNaN(stock.selectedPrice) || stock.selectedPrice === ""  ? stock.defaultPrice : stock.selectedPrice
           }));
 
@@ -548,6 +552,7 @@ export default {
         };
 
       try {
+        console.log(portfolioData);
         const response = await axios.post("/portfolio/update", portfolioData, config);
         if (response.status === 200) {
           if (action == "Increase") {
