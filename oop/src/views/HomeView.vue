@@ -30,8 +30,6 @@
             <th class="table-heading" scope="col"></th>
           </tr>
         </thead>
-        <div v-if="loading" class="loading">Loading...</div>
-        <div v-if="error" class="error">{{ error }}</div>
         <tbody>
           <tr v-for="(portfolio, key) in portfolioList" :key="key">
             <!-- key should link to view details -->
