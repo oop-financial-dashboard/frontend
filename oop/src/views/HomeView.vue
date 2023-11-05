@@ -4,10 +4,6 @@
       <h1>My Portfolio</h1>
     </div>
 
-    <!-- <div class="d-flex justify-content-end">
-      <button class="btn btn-dark">Trade</button>
-    </div> -->
-
     <div class="profile mt-3 p-5">
       <p><b>Total Assets (SGD) *need API to populate this</b></p>
       <p style="font-size: 30px">100,745</p>
@@ -34,6 +30,8 @@
             <th class="table-heading" scope="col"></th>
           </tr>
         </thead>
+        <div v-if="loading" class="loading">Loading...</div>
+        <div v-if="error" class="error">{{ error }}</div>
         <tbody>
           <tr v-for="(portfolio, key) in portfolioList" :key="key">
             <!-- key should link to view details -->
@@ -68,11 +66,12 @@ import { notify } from "@kyvg/vue3-notification";
 export default {
   data() {
     return {
-      portfolioList: [],
+      portfolioList: []
     }
   },
   mounted() {
-    this.getAllPortfolios();
+    //this.getAllPortfolios();
+    this.retrieveUserDetails();
   },
   methods: {
     navigateToDetails(selectedPortfolio, portfolioId) {
@@ -80,24 +79,51 @@ export default {
       sessionStorage.setItem("portfolioId", portfolioId)
       sessionStorage.setItem("portfolio", JSON.stringify(selectedPortfolio))
       this.$router.push({name: `portfolio_page`})
-      
-      // this.$router.push({ name: 'portfolio_detail_page', params: { portfolio: JSON.stringify(selectedPortfolio), portfolioId: portfolioId } });
     },
-    getAllPortfolios() {
+    async retrieveUserDetails() {
+      const data = {
+        email: sessionStorage.getItem("email")
+      };
+
       const token = sessionStorage.getItem("token");
       const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
 
-      console.log(token);
+      try {
+        const response = await axios.post(`/users/user-details`, data, config);
 
-      // need to get specific user from login
+        if (response.status === 200) {
+          sessionStorage.setItem("user_id", response.data.id);
+          console.log(sessionStorage.getItem("user_id"));
+          // Now that user-details API has completed, call getAllPortfolios
+          await this.getAllPortfolios();
+        }
+      } catch (error) {
+        console.error(error);
+        // Handle the error here
+        this.showNotification("notification", "Error", "Failed to retrieve user details. Please try again later.", "error");
+      }
+    },    
+    async getAllPortfolios() {
+
+      const token = sessionStorage.getItem("token");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
       const user_id = sessionStorage.getItem("user_id");
-      //console.log("id: " + user_id);
+
+      console.log("ID:" + user_id);
+
       axios.get(`/portfolio/get-all/${user_id}`, config)
         .then((response) => {
+          console.log(response);
           if (response.status === 200) {
             this.portfolioList = response.data.portfolios;
           }

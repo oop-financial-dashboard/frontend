@@ -537,9 +537,9 @@ export default {
         }
 
         // Reload to the home page after all the api has executed
-        // setTimeout(() => {
-        //   window.location.href = "/homepage";
-        // }, 3000);
+        setTimeout(() => {
+          window.location.href = "/homepage";
+        }, 3000);
       }
 
     },
