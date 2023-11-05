@@ -506,7 +506,9 @@ export default {
             if (quantityChange !== 0) {
               stocksWithQuantityChange.push({
                 symbol: stock.symbol,
-                quanity: quantityChange
+                quantity: quantityChange,
+                dateAdded: this.formatDate(stock.dateAdded),
+                price: stock.averagePrice
               });
             }
           });
@@ -515,7 +517,7 @@ export default {
           if (stocksWithQuantityChange.length > 0) {
             portfolioData.stocks = stocksWithQuantityChange;
 
-            console.log(portfolioData);
+            //console.log(portfolioData);
 
             // Call the API to update the portfolio
             await this.updatePortfolioAPI(portfolioData, 'Increase');
@@ -550,6 +552,8 @@ export default {
             Authorization: `Bearer ${token}`,
           },
         };
+
+     //console.log(token);
 
       try {
         console.log(portfolioData);
