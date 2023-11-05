@@ -35,6 +35,9 @@
       <assets-pie-chart class="rounded"></assets-pie-chart>
     </div>
     <!-- </div> -->
+    <div class="time-series-graph data-box bg-white p-4">
+      <attribution-chart/>
+    </div>
 
     <div class="stocks border data-box">
       <stocks-table class="rounded" />
@@ -54,15 +57,15 @@
                 <th class="table-heading" scope="col">Last Created/Updated</th>
             </tr>
           </thead>
-          <tbody>
-              <tr v-for="(stock, key) in portfolio.stocks" :key="key">
-                  <td>{{stock.symbol}}</td>
-                  <td>{{stock.quantity}}</td>
-                  <td>{{stock.averagePrice}}</td>
-                  <td>{{stock.value}}</td>
-                  <td>{{portfolio.createdAt}}</td>
-              </tr>
-          </tbody>
+<!--          <tbody>-->
+<!--              <tr v-for="(stock, key) in portfolio.stocks" :key="key">-->
+<!--                  <td>{{stock.symbol}}</td>-->
+<!--                  <td>{{stock.quantity}}</td>-->
+<!--                  <td>{{stock.averagePrice}}</td>-->
+<!--                  <td>{{stock.value}}</td>-->
+<!--                  <td>{{portfolio.createdAt}}</td>-->
+<!--              </tr>-->
+<!--          </tbody>-->
         </table>
       </div>
     </div>
@@ -75,6 +78,7 @@ import ExposureChart from "@/components/Analytics/ExposureChart.vue";
 import stocksTable from "@/components/Analytics/StocksTable.vue";
 import PortfolioValueChart from "@/components/Analytics/PortfolioValueChart.vue";
 import AssetsPieChart from "@/components/Analytics/AssetsPieChart.vue";
+import AttributionChart from "@/components/Analytics/AttributionChart.vue";
 
 export default {
   data() {
@@ -90,6 +94,7 @@ export default {
     };
   },
   components: {
+    AttributionChart,
     PortfolioValueChart,
     dataBox,
     ExposureChart,
