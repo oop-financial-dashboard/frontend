@@ -5,6 +5,19 @@
 <script>
 export default {
   name: "assetsPieChart",
+  props: {portfolio: Object},
+  created() {
+    const portfolioValue = this.portfolio.totalValue;
+    let assetProportionData = [];
+    this.portfolio.stocks.forEach(stock => {
+      const percentage = parseFloat((stock.value * 100/portfolioValue).toPrecision(4));
+      assetProportionData.push({
+        name: stock.symbol,
+        y: percentage
+      })
+    })
+    this.chartOptions.series[0].data = assetProportionData;
+  },
   data() {
     return {
       chartOptions: {
@@ -47,7 +60,7 @@ export default {
             ],
           },
         },
-        colors: ["#BAAFFF", "#BCE29E", "#FF9EC8", "#87E1FE", "#FFF59C"],
+        // colors: ["#BAAFFF", "#BCE29E", "#FF9EC8", "#87E1FE", "#FFF59C"],
         series: [
           {
             name: "Percentage",

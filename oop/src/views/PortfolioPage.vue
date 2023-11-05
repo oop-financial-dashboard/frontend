@@ -32,7 +32,7 @@
 
       <!-- <div class="bg-white data-box p-4"> -->
       <!-- <header class="mb-1">Assets Pie Chart</header> -->
-      <assets-pie-chart class="rounded"></assets-pie-chart>
+      <assets-pie-chart class="rounded" :portfolio="portfolio"/>
     </div>
     <!-- </div> -->
     <div class="time-series-graph data-box bg-white p-4">
