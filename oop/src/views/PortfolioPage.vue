@@ -28,7 +28,7 @@
 
     <div class="d-flex h-auto justify-content-between">
       <!-- this exposure chart should be part of the div for all the alignments and padding to apply -->
-      <exposure-chart class="rounded" />
+      <exposure-chart class="rounded" :portfolio-stocks="portfolio.stocks" />
 
       <!-- <div class="bg-white data-box p-4"> -->
       <!-- <header class="mb-1">Assets Pie Chart</header> -->
