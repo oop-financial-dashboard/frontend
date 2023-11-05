@@ -23,17 +23,14 @@ export default {
           .then(response => response.json());
       this.seriesData[0].data = data;
       this.chartOptions.series[0].data = data;
-      // this.chartOptions.title.text = "AAPL";
     }
     const fetchAppleVData = async() => {
       this.seriesData[1].data = await fetch('https://demo-live-data.highcharts.com/aapl-v.json')
           .then(response => response.json());
-      // this.chartOptions.title.text = "AAPL";
     }
     const fetchAppleOData = async() => {
       this.seriesData[2].data = await fetch('https://demo-live-data.highcharts.com/aapl-c.json')
           .then(response => response.json());
-      // this.chartOptions.title.text = "AAPL";
     }
     fetchAppleCData();
     fetchAppleVData();
@@ -93,7 +90,6 @@ export default {
   },
  watch: {
     seriesToShow(newValue) {
-      console.log("refreshing chart!")
       switch (newValue){
         case("allocation"):
           this.updateSeries(this.seriesData[1]);
