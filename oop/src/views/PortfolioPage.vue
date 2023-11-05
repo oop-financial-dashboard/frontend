@@ -1,7 +1,7 @@
 <template>
   <main>
     <div>
-      <h1>Portfolio 1</h1>
+      <h1>{{portfolioId}}</h1>
     </div>
 
     <div class="row-section d-flex justify-content-between">
@@ -52,6 +52,8 @@ import AssetsPieChart from "@/components/Analytics/AssetsPieChart.vue";
 export default {
   data() {
     return {
+      portfolioId: sessionStorage.getItem('portfolioId'),
+      portfolio: JSON.parse(sessionStorage.getItem('portfolio')),
       percentageData: -258,
       value: "$3,252,737.08",
       stdDev: 15.43,

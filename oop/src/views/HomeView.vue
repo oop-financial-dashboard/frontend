@@ -79,7 +79,7 @@ export default {
       // save the data
       sessionStorage.setItem("portfolioId", portfolioId)
       sessionStorage.setItem("portfolio", JSON.stringify(selectedPortfolio))
-      this.$router.push({name: `portfolio_detail_page`})
+      this.$router.push({name: `portfolio_page`})
       
       // this.$router.push({ name: 'portfolio_detail_page', params: { portfolio: JSON.stringify(selectedPortfolio), portfolioId: portfolioId } });
     },
