@@ -30,7 +30,7 @@
             <th class="table-heading" scope="col"></th>
           </tr>
         </thead>
-        <tbody>
+        <tbody v-if="this.display == true">
           <tr v-for="(portfolio, key) in portfolioList" :key="key">
             <!-- key should link to view details -->
             <td>
@@ -47,6 +47,9 @@
             </td>
           </tr>
         </tbody>
+        <div class="mt-3" v-else>
+          No portfolios, please start by creating!
+        </div>
       </table>
     </div>
   </main>
@@ -64,7 +67,8 @@ import { notify } from "@kyvg/vue3-notification";
 export default {
   data() {
     return {
-      portfolioList: []
+      portfolioList: [],
+      display: false
     }
   },
   mounted() {
@@ -72,6 +76,16 @@ export default {
     this.retrieveUserDetails();
   },
   methods: {
+    checkPortfolioExists(portfolios) {
+      // Check if at least one portfolio ID exists
+      const portfolioIds = Object.keys(portfolios);
+
+      if (portfolioIds.length > 0) {
+        this.display = true;
+      } else {
+        this.display = false;
+      }
+    },
     navigateToDetails(selectedPortfolio, portfolioId) {
       // save the data
       sessionStorage.setItem("portfolioId", portfolioId)
@@ -124,6 +138,7 @@ export default {
           console.log(response);
           if (response.status === 200) {
             this.portfolioList = response.data.portfolios;
+            this.checkPortfolioExists(this.portfolioList);
           }
         })
         .catch((err) => {

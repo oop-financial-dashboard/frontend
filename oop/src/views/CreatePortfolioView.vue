@@ -2,7 +2,7 @@
   <main class="aboutpage">
     <h1>Create portfolio</h1>
     <div class="row">
-      <div class="col">
+      <div class="col-5">
         <p><b>Enter portfolio name:</b></p>
         <input class="textbox p-3" v-model="portfolioName" />
 
@@ -12,7 +12,7 @@
         <p class="mt-3"><b>Specify capital amount (USD):</b></p>
         <input type="number" class="textbox p-3" v-model="portfolioCapital"/>
       </div>
-      <div class="col">
+      <div class="col-7">
         <p>
           <b>Select desired stocks (can select multiple):</b>
           <span style="float: right;">Total: {{totalPriceComputed}}</span>
@@ -61,10 +61,7 @@
 
               <!-- price -->
               <td>
-                <!-- <input :key="'selectedPrice_' + index" :disabled="item.disableFields" :value="item.selectedPrice" type="number" class="table-input" /> -->
-                <!-- <input :key="'selectedPrice_' + index" v-model="userEditedPrices[item.name]" :disabled="item.disableFields" type="number" class="table-input" /> -->
                 <input :key="'selectedPrice_' + index" :disabled="item.disableFields" v-model="item.selectedPrice" :placeholder="item.defaultPrice" type="number" class="table-input" />
-                <!-- <input type="text" v-model="item.selectedPrice" @focus="clearDefault" /> -->
               </td>
 
               <!-- qty to purchase per stock -->
@@ -297,15 +294,17 @@ export default {
       }
 
       let totalPriceComputed = this.totalPriceComputed;
-      var priceMatch = totalPriceComputed.match(/\$\d+\.\d+/);
+      var priceMatch = totalPriceComputed.match(/\$\d+(?:,\d{3})*(?:\.\d{2})?/); // match up to a billion e.g. $1,234,567,890.12
       if (priceMatch) {
+  
         // Extracted price as a string, e.g., "$25.99"
         var priceString = priceMatch[0];
 
-        // Remove the "$" sign and convert it to a double
-        var priceTotal = parseFloat(priceString.replace("$", ""));
-
-        if (priceTotal > this.portfolioCapital) {
+        // Remove the "$" and "," sign and convert it to a double
+        var priceTotal = priceString.replace("$", "");
+        priceTotal = priceTotal.replace(",", "");
+      
+        if (parseFloat(priceTotal) > this.portfolioCapital) {
           this.showNotification("notification", "Error", `Total price cannot be more than capital price.`, "error");
           return; 
         }

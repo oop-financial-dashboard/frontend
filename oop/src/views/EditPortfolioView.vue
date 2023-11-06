@@ -371,15 +371,17 @@ export default {
       }
 
       let totalPriceComputed = this.totalPriceComputed;
-      var priceMatch = totalPriceComputed.match(/\$\d+\.\d+/);
+      var priceMatch = totalPriceComputed.match(/\$\d+(?:,\d{3})*(?:\.\d{2})?/); // match up to a billion e.g. $1,234,567,890.12
       if (priceMatch) {
+  
         // Extracted price as a string, e.g., "$25.99"
         var priceString = priceMatch[0];
 
-        // Remove the "$" sign and convert it to a double
-        var priceTotal = parseFloat(priceString.replace("$", ""));
-
-        if (priceTotal > this.portfolioCapital) {
+        // Remove the "$" and "," sign and convert it to a double
+        var priceTotal = priceString.replace("$", "");
+        priceTotal = priceTotal.replace(",", "");
+      
+        if (parseFloat(priceTotal) > this.portfolioCapital) {
           this.showNotification("notification", "Error", `Total price cannot be more than capital price.`, "error");
           return; 
         }
@@ -490,6 +492,18 @@ export default {
           portfolioData.action = 'Increase';
           const stocksWithQuantityChange = [];
 
+          this.existingStocks.forEach(stock => {
+            const quantityChange = stock.quantity - stock.ogQuantity;
+            if (quantityChange !== 0) {
+              stocksWithQuantityChange.push({
+                symbol: stock.symbol,
+                quantity: quantityChange,
+                dateAdded: this.formatDate(stock.dateAdded),
+                price: stock.averagePrice
+              });
+            }
+          })
+
           // find existing stock (should be a value that appear twice in mergeStocks)
           const duplicateStocks = this.findDuplicateStocks(this.mergeStocks(), "symbol");
           duplicateStocks.forEach(stock => {
@@ -501,17 +515,19 @@ export default {
             })
           });
 
-          this.existingStocks.forEach(stock => {
-            const quantityChange = stock.quantity - stock.ogQuantity;
-            if (quantityChange !== 0) {
-              stocksWithQuantityChange.push({
+          // Add new stocks and does not exist in existing stocks
+          if (this.newSelectedStocks && this.newSelectedStocks.length > 0) {
+            portfolioData.action = 'Add';
+            portfolioData.stocks = this.newSelectedStocks.map(stock => ({
                 symbol: stock.symbol,
-                quantity: quantityChange,
-                dateAdded: this.formatDate(stock.dateAdded),
-                price: stock.averagePrice
-              });
-            }
-          });
+                quantity: stock.selectedQty,
+                dateAdded: this.formatDate(stock.selectedDate),
+                price: stock.selectedPrice === null || isNaN(stock.selectedPrice) || stock.selectedPrice === ""  ? stock.defaultPrice : stock.selectedPrice
+            }));
+
+            //call the api
+            await this.updatePortfolioAPI(portfolioData, 'Add');
+          }
 
           // Check if any stocks had quantity changes
           if (stocksWithQuantityChange.length > 0) {
@@ -524,24 +540,10 @@ export default {
           }
         }
 
-        // Add new stocks and does not exist in existing stocks
-        if (this.newSelectedStocks && this.newSelectedStocks.length > 0) {
-          portfolioData.action = 'Add';
-          portfolioData.stocks = this.newSelectedStocks.map(stock => ({
-              symbol: stock.symbol,
-              quantity: stock.selectedQty,
-              dateAdded: this.formatDate(stock.selectedDate),
-              price: stock.selectedPrice === null || isNaN(stock.selectedPrice) || stock.selectedPrice === ""  ? stock.defaultPrice : stock.selectedPrice
-          }));
-
-          //call the api
-          await this.updatePortfolioAPI(portfolioData, 'Add');
-        }
-
         // Reload to the home page after all the api has executed
-        setTimeout(() => {
-          window.location.href = "/homepage";
-        }, 3000);
+        // setTimeout(() => {
+        //   window.location.href = "/homepage";
+        // }, 3000);
       }
 
     },
