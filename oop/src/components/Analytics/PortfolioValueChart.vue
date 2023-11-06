@@ -17,13 +17,14 @@ export default {
   props: ['portfolioId'],
  created() {
    const token = sessionStorage.getItem("token");
+   const userId = sessionStorage.getItem("user_id");
    const config = {
      headers: {
        Authorization: `Bearer ${token}`,
      },
    };
     const fetchPortfolioData = async() => {
-      const data = await axios.get(`/portfolio/get-historicals/${this.portfolioId}`, config);
+      const data = await axios.get(`/portfolio/get-historicals/${userId}/${this.portfolioId}`, config);
       console.log("portfolio historical ----->", data.data.data[this.portfolioId]);
       this.stockOptions.series[0].data = data.data.data[this.portfolioId];
       this.stockOptions.title.text = `${this.portfolioId} Value`;
