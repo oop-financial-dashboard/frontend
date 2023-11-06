@@ -5,8 +5,8 @@
     </div>
 
     <div class="profile mt-3 p-5">
-      <p><b>Total Assets (SGD) *need API to populate this</b></p>
-      <p style="font-size: 30px">100,745</p>
+      <p><b>Total Assets You Have (USD)</b></p> 
+      <p style="font-size: 30px">{{formatTotalValue(totalAsset)}}</p>
       <button @click="openPortfolio" class="btn btn-dark">Open Portfolio Page</button>
     </div>
 
@@ -68,7 +68,8 @@ export default {
   data() {
     return {
       portfolioList: [],
-      display: false
+      display: false,
+      totalAsset: 0,
     }
   },
   mounted() {
@@ -139,6 +140,13 @@ export default {
           if (response.status === 200) {
             this.portfolioList = response.data.portfolios;
             this.checkPortfolioExists(this.portfolioList);
+
+            console.log(this.portfolioList);
+            console.log("incoming forloop");
+            for(const key in this.portfolioList){
+              console.log(this.portfolioList[key]);
+              this.totalAsset += this.portfolioList[key].totalValue;
+            }
           }
         })
         .catch((err) => {
