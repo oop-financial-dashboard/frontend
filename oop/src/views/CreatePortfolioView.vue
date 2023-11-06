@@ -10,7 +10,7 @@
         <textarea class="textbox p-3" v-model="portfolioDesc"></textarea>
 
         <p class="mt-3"><b>Specify capital amount (USD):</b></p>
-        <input type="number" class="textbox p-3" v-model="portfolioCapital"/>
+        <input type="number" min="0" class="textbox p-3" v-model="portfolioCapital"/>
       </div>
       <div class="col-8">
         <p>
@@ -61,12 +61,12 @@
 
               <!-- price -->
               <td>
-                <input :key="'selectedPrice_' + index" :disabled="item.disableFields" v-model="item.selectedPrice" :placeholder="item.defaultPrice" type="number" class="table-input" />
+                <input min="0" :key="'selectedPrice_' + index" :disabled="item.disableFields" v-model="item.selectedPrice" :placeholder="item.defaultPrice" type="number" class="table-input" />
               </td>
 
               <!-- qty to purchase per stock -->
               <td>
-                <input :key="'selectedQty_' + index" v-model="item.selectedQty" :disabled="item.disableFields" type="number" class="table-input" />
+                <input min="0" :key="'selectedQty_' + index" v-model="item.selectedQty" :disabled="item.disableFields" type="number" class="table-input" />
               </td>
 
               <td>
