@@ -83,7 +83,6 @@ export default {
       display: false,
       totalAsset: 0,
       popularStocks: [],
-      display: false
     }
   },
   mounted() {

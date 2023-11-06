@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-row my-2.5" style="height: 38px">
-    <img class="my-1.5" src="../assets/apple.svg" style="height: 30px;width: 30px" alt=""/>
+    <img class="my-1.5" :src="require(`@/assets/${symbol}.svg`)" style="height: 30px;width: 30px" alt=""/>
     <div class="flex-fill ml-1">
       <div class="flex flex-col space-y-0.5">
         <div class="d-flex flex-row justify-content-between min-h-min">
@@ -74,7 +74,8 @@ export default {
     calculcateChange(currentData, previousData) {
       const currentPrice = parseFloat(currentData.close);
       const previousPrice = parseFloat(previousData.close);
-      return Number((currentPrice-previousPrice)*100 / previousPrice).toFixed(2);
+      const change = Number((currentPrice-previousPrice)*100 / previousPrice).toFixed(2)
+      return change > 0 ? '+' + change : change;
     }
   }
 }
