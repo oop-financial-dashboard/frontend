@@ -1,21 +1,35 @@
 <template>
   <main class="aboutpage">
-    <h1>{{portfolioName}}</h1>
+    <h3>Edit portfolio</h3>
     <div class="row">
-      <div class="col-4">
+      <div
+        class="col p-4"
+        style="border-radius: 16px; background-color: white; margin-right: 20px"
+      >
+        <div class="mb-3">
+          <label class="form-label">Portfolio Name:</label>
+          <input class="form-control" v-model="portfolioName" disabled />
+        </div>
 
-        <p><b>Enter description (strategy):</b></p>
-        <textarea class="textbox p-3" v-model="portfolioDesc"></textarea>
+        <div class="mb-3">
+          <label class="form-label">Portfolio Description:</label>
+          <textarea class="form-control" v-model="portfolioDesc"></textarea>
+        </div>
 
-        <p class="mt-3"><b>Specify capital amount (USD):</b></p>
-        <input type="number" min="0" class="textbox p-3" v-model="portfolioCapital"/>
-
+        <div class="mb-3">
+          <label class="form-label"
+            >Specify Portfolio Capital Amount (USD):
+          </label>
+          <input
+            class="form-control"
+            type="number" min="0" 
+            v-model="portfolioCapital"
+          />
+        </div>
       </div>
-      <div class="col-8">
-        <p>
-          <b>Add existing/new stocks (can select multiple):</b>
-          <span style="float: right;">Total: {{totalPriceComputed}}</span>
-        </p>
+      <div class="col p-4" style="border-radius: 16px; background-color: white">
+        <label class="form-label">Select desired stock(s)</label>
+
         <MultiSelect
           id="multiselect"
           filter
@@ -24,9 +38,12 @@
           :options="stocks"
           optionLabel="name"
           placeholder="Select stocks"
-          class="textbox p-3"
-        />
-        
+          class="p-2 rounded border"
+          style="width: 100%"
+        /><span style="float: right" class="mt-4 mb-2"
+          >Total: {{ totalPriceComputed }}</span
+        >
+
         <table class="table mt-3">
           <thead>
             <tr>
@@ -46,11 +63,11 @@
               <td>
                 <VueDatePicker
                   disabled
-                  :unique-identifier="index" 
+                  :unique-identifier="index"
                   :key="'existingDate_' + index"
                   type="date"
                   v-model="item.dateAdded"
-                  :enable-time-picker="false"            
+                  :enable-time-picker="false"
                 />
               </td>
 
@@ -69,7 +86,11 @@
               </td>
 
               <td>
-                <font-awesome-icon class="clickable" @click="removeExistingStock(item.symbol, item)" :icon="['fas', 'x']"/>
+                <font-awesome-icon
+                  class="clickable"
+                  @click="removeExistingStock(item.symbol, item)"
+                  :icon="['fas', 'x']"
+                />
               </td>
             </tr>
 
@@ -80,11 +101,11 @@
               <!-- calender to pick date: disabled for default -->
               <td>
                 <VueDatePicker
-                  :start-date="startDate" 
-                  focus-start-date 
-                  no-today 
+                  :start-date="startDate"
+                  focus-start-date
+                  no-today
                   :max-date="maxDate"
-                  :unique-identifier="index" 
+                  :unique-identifier="index"
                   :key="'selectedDate_' + index"
                   type="date"
                   v-model="item.selectedDate"
@@ -105,11 +126,24 @@
               </td>
 
               <td>
-                {{ capitalPerComputed(item.selectedPrice === null || isNaN(item.selectedPrice) || item.selectedPrice === ""  ? item.defaultPrice : item.selectedPrice, item.selectedQty) }}
+                {{
+                  capitalPerComputed(
+                    item.selectedPrice === null ||
+                      isNaN(item.selectedPrice) ||
+                      item.selectedPrice === ""
+                      ? item.defaultPrice
+                      : item.selectedPrice,
+                    item.selectedQty
+                  )
+                }}
               </td>
 
               <td>
-                <font-awesome-icon class="clickable" @click="removeNewStock(item.name)" :icon="['fas', 'x']"/>
+                <font-awesome-icon
+                  class="clickable"
+                  @click="removeNewStock(item.name)"
+                  :icon="['fas', 'x']"
+                />
               </td>
             </tr>
           </tbody>
@@ -123,8 +157,14 @@
         </button>
       </div>
     </div>
-
-    </main>
+    <div class="fixed-container">
+      <div class="btn-container">
+        <button class="btn btn-dark" @click="submitPortfolio">
+          Edit portfolio
+        </button>
+      </div>
+    </div>
+  </main>
 </template>
 
 <script>
@@ -133,10 +173,10 @@ import axios from "axios";
 import MultiSelect from "primevue/multiselect";
 import "primevue/resources/themes/saga-blue/theme.css";
 
-import VueDatePicker from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css'
+import VueDatePicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
 
-import { library } from '@fortawesome/fontawesome-svg-core';
+import { library } from "@fortawesome/fontawesome-svg-core";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 library.add(faX);
 
@@ -146,7 +186,8 @@ import { notify } from "@kyvg/vue3-notification";
 
 export default {
   components: {
-    MultiSelect, VueDatePicker
+    MultiSelect,
+    VueDatePicker,
   },
   data() {
     return {
@@ -155,28 +196,38 @@ export default {
       // originalStocks: ref(JSON.parse(sessionStorage.getItem("portfolio")).stocks),
       existingStocks: ref(),
       portfolioName: sessionStorage.getItem("portfolioId"),
-      portfolioDesc: JSON.parse(sessionStorage.getItem("portfolio")).description,
-      portfolioCapital: JSON.parse(sessionStorage.getItem("portfolio")).initialCapital,
+      portfolioDesc: JSON.parse(sessionStorage.getItem("portfolio"))
+        .description,
+      portfolioCapital: JSON.parse(sessionStorage.getItem("portfolio"))
+        .initialCapital,
       selectedDate: null,
       startDate: ref(new Date(new Date().setDate(new Date().getDate() - 1))),
-      maxDate: new Date(new Date().setDate(new Date().getDate() - 1)).toDateString(),
+      maxDate: new Date(
+        new Date().setDate(new Date().getDate() - 1)
+      ).toDateString(),
       userEditedPrices: {}, // Object to hold user-edited prices by stock name
       selectedPrice: 0,
       defaultPrice: 0,
-      customHigh:0,
+      customHigh: 0,
       customLow: 0,
       closePrice: 0,
       selectedQty: 0,
       quantity: 0,
-      allPortolios: '',
-      removeExistingStocks: []
+      allPortolios: "",
+      removeExistingStocks: [],
     };
   },
   computed: {
     totalPriceComputed() {
       let total = 0;
-      let existingStocksTotal = this.calculateTotalForStocks(this.existingStocks, true);
-      let newSelectedStocksTotal = this.calculateTotalForStocks(this.newSelectedStocks, false);
+      let existingStocksTotal = this.calculateTotalForStocks(
+        this.existingStocks,
+        true
+      );
+      let newSelectedStocksTotal = this.calculateTotalForStocks(
+        this.newSelectedStocks,
+        false
+      );
 
       if (existingStocksTotal === null || isNaN(existingStocksTotal)) {
         existingStocksTotal = 0;
@@ -185,8 +236,13 @@ export default {
       if (newSelectedStocksTotal === null || isNaN(newSelectedStocksTotal)) {
         newSelectedStocksTotal = 0;
       }
-      total = existingStocksTotal + newSelectedStocksTotal
-      return total.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      total = existingStocksTotal + newSelectedStocksTotal;
+      return total.toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
     },
   },
   mounted() {
@@ -197,15 +253,18 @@ export default {
     formatDate(date) {
       const originalDate = new Date(date);
       const year = originalDate.getFullYear();
-      const month = (originalDate.getMonth() + 1).toString().padStart(2, '0');
-      const day = originalDate.getDate().toString().padStart(2, '0');
+      const month = (originalDate.getMonth() + 1).toString().padStart(2, "0");
+      const day = originalDate.getDate().toString().padStart(2, "0");
       const formattedDate = `${year}-${month}-${day}`;
       return formattedDate;
     },
     capitalPerComputed(price, quantity) {
       let result = "N.A.";
       if (this.portfolioCapital > 0) {
-        result = parseFloat(((price * quantity) / this.portfolioCapital) * 100).toFixed(2) + "%";
+        result =
+          parseFloat(
+            ((price * quantity) / this.portfolioCapital) * 100
+          ).toFixed(2) + "%";
       }
       return result;
     },
@@ -226,14 +285,16 @@ export default {
       return duplicates;
     },
     updateOGQuantity() {
-      this.existingStocks = JSON.parse(sessionStorage.getItem("portfolio")).stocks;
-      this.existingStocks.forEach(stock => {
+      this.existingStocks = JSON.parse(
+        sessionStorage.getItem("portfolio")
+      ).stocks;
+      this.existingStocks.forEach((stock) => {
         stock.ogQuantity = stock.quantity;
       });
     },
     getStockName(stockSymbol) {
       if (this.stocks) {
-        const stock = this.stocks.find(item => item.symbol === stockSymbol);
+        const stock = this.stocks.find((item) => item.symbol === stockSymbol);
 
         if (stock) {
           return stock.name;
@@ -247,8 +308,7 @@ export default {
           for (const stock of stockList) {
             total += stock.averagePrice * stock.quantity;
           }
-        }
-        else {
+        } else {
           for (const stock of stockList) {
             if (stock.selectedPrice === null || isNaN(stock.selectedPrice)) {
               // Use defaultPrice if selectedPrice is null
@@ -263,8 +323,13 @@ export default {
     },
     changeQty(item) {
       if (item.quantity < item.ogQuantity) {
-        this.showNotification("notification", "Error", `Edited quantity must be more than or equal to original quantity ${item.ogQuantity}.`, "error");
-      } 
+        this.showNotification(
+          "notification",
+          "Error",
+          `Edited quantity must be more than or equal to original quantity ${item.ogQuantity}.`,
+          "error"
+        );
+      }
     },
     updateDate(item, index, modelData) {
       // modelData refers to the selected/updated date
@@ -273,14 +338,18 @@ export default {
     // remove stocks from EXISTING stocks
     removeExistingStock(stockSymbol, removedStock) {
       if (this.existingStocks) {
-        this.existingStocks = this.existingStocks.filter(stock => stock.symbol !== stockSymbol);
+        this.existingStocks = this.existingStocks.filter(
+          (stock) => stock.symbol !== stockSymbol
+        );
         this.removeExistingStocks.push(removedStock);
       }
     },
     // remove stocks from NEWLY ADDED stocks
     removeNewStock(stockName) {
       if (this.newSelectedStocks) {
-        this.newSelectedStocks = this.newSelectedStocks.filter(stock => stock.name !== stockName);
+        this.newSelectedStocks = this.newSelectedStocks.filter(
+          (stock) => stock.name !== stockName
+        );
       }
     },
     mergeStocks() {
@@ -293,13 +362,14 @@ export default {
     getAllAvailStocks() {
       const token = sessionStorage.getItem("token");
       const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
 
       // need to get specific user from login
-      axios.get("/stock/available-stocks", config)
+      axios
+        .get("/stock/available-stocks", config)
         .then((response) => {
           if (response.status === 200) {
             this.stocks = ref(response.data);
@@ -307,29 +377,34 @@ export default {
         })
         .catch((err) => {
           console.error(err);
-        })
+        });
     },
     getStockPrice(name, symbol, timestamp, index) {
       const token = sessionStorage.getItem("token");
       const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
 
-      if (typeof timestamp !== 'undefined') {
-
+      if (typeof timestamp !== "undefined") {
         const formattedDate = this.formatDate(timestamp);
-        const stockParams = { "symbol": symbol, "timestamp": formattedDate };
-        
-        axios.post("/stock/price", stockParams, config)
+        const stockParams = { symbol: symbol, timestamp: formattedDate };
+
+        axios
+          .post("/stock/price", stockParams, config)
           .then((response) => {
             if (response.status === 200) {
               if (response.data == null) {
                 // null e.g. no stock data for this date e.g. closing price
                 const nullErrMessage = `No price for ${name} on ${formattedDate}, please select a different date.`; // Customize this error message as needed
-                
-                this.showNotification("notification", "Error", nullErrMessage, "error");
+
+                this.showNotification(
+                  "notification",
+                  "Error",
+                  nullErrMessage,
+                  "error"
+                );
 
                 // disable the fields
                 this.newSelectedStocks[index].disableFields = true;
@@ -338,9 +413,15 @@ export default {
               } else {
                 // enable the fields because there is stock data for this date e.g. closing, high, and low price
                 this.newSelectedStocks[index].disableFields = false;
-                this.newSelectedStocks[index].defaultPrice = parseFloat(response.data.close).toFixed(2); // set as placeholder
-                this.newSelectedStocks[index].customHigh = parseFloat(response.data.high).toFixed(2); 
-                this.newSelectedStocks[index].customLow = parseFloat(response.data.low).toFixed(2); 
+                this.newSelectedStocks[index].defaultPrice = parseFloat(
+                  response.data.close
+                ).toFixed(2); // set as placeholder
+                this.newSelectedStocks[index].customHigh = parseFloat(
+                  response.data.high
+                ).toFixed(2);
+                this.newSelectedStocks[index].customLow = parseFloat(
+                  response.data.low
+                ).toFixed(2);
               }
             }
           })
@@ -358,15 +439,24 @@ export default {
       });
     },
     async updatePortfolio() {
-
       // Validate portfolio information
       if (!this.portfolioDesc) {
-        this.showNotification("notification", "Error", "Portfolio description is required.", "error");
+        this.showNotification(
+          "notification",
+          "Error",
+          "Portfolio description is required.",
+          "error"
+        );
         return;
       }
 
       if (this.portfolioCapital <= 0) {
-        this.showNotification("notification", "Error", "Capital amount must be greater than 0.", "error");
+        this.showNotification(
+          "notification",
+          "Error",
+          "Capital amount must be greater than 0.",
+          "error"
+        );
         return;
       }
 
@@ -389,7 +479,12 @@ export default {
 
       // Validate quantity of stocks in a portfolio
       if (this.mergeStocks().length === 0) {
-        this.showNotification("notification", "Error", "Add at least one stock to your portfolio.", "error");
+        this.showNotification(
+          "notification",
+          "Error",
+          "Add at least one stock to your portfolio.",
+          "error"
+        );
         return;
       }
 
@@ -399,15 +494,23 @@ export default {
       if (this.existingStocks) {
         for (let stock of this.existingStocks) {
           let hasError = false;
-          
+
           // Check if user went ahead to leave qty field blank or 0 or less than ogQty despite the error message
-          if (typeof stock.quantity === 'undefined' || stock.quantity <= 0 || stock.quanity < stock.ogQuantity) {
+          if (
+            typeof stock.quantity === "undefined" ||
+            stock.quantity <= 0 ||
+            stock.quanity < stock.ogQuantity
+          ) {
             hasError = true;
             errorMessages.push(hasError);
-            this.showNotification("notification", "Error", `Invalid stock quantity, please check again.`, "error");
+            this.showNotification(
+              "notification",
+              "Error",
+              `Invalid stock quantity, please check again.`,
+              "error"
+            );
             return;
-          } 
-          else {
+          } else {
             hasError = false;
             errorMessages.push(hasError);
           }
@@ -418,19 +521,34 @@ export default {
         for (let stock of this.newSelectedStocks) {
           let hasError = false;
 
-          if (stock.disableFields || stock.selectedQty <= 0 || typeof stock.selectedQty === 'undefined') {
+          if (
+            stock.disableFields ||
+            stock.selectedQty <= 0 ||
+            typeof stock.selectedQty === "undefined"
+          ) {
             hasError = true;
             errorMessages.push(hasError);
-            this.showNotification("notification", "Error", `Stock quantity for ${stock.name} cannot be empty, 0 or less.`, "error");
+            this.showNotification(
+              "notification",
+              "Error",
+              `Stock quantity for ${stock.name} cannot be empty, 0 or less.`,
+              "error"
+            );
             return;
-          } 
-          else {
+          } else {
             hasError = false;
             errorMessages.push(hasError);
           }
 
-          if (stock.selectedPrice !== null && !isNaN(stock.selectedPrice) && stock.selectedPrice !== "") {
-            if (stock.selectedPrice < stock.customLow || stock.selectedPrice > stock.customHigh) {
+          if (
+            stock.selectedPrice !== null &&
+            !isNaN(stock.selectedPrice) &&
+            stock.selectedPrice !== ""
+          ) {
+            if (
+              stock.selectedPrice < stock.customLow ||
+              stock.selectedPrice > stock.customHigh
+            ) {
               hasError = true;
               errorMessages.push(hasError);
               this.showNotification(
@@ -441,8 +559,7 @@ export default {
               );
               return;
             }
-          }
-          else {
+          } else {
             hasError = false;
             errorMessages.push(hasError);
           }
@@ -450,19 +567,18 @@ export default {
       }
 
       // All error messages are false, meaning there are no errors
-      if (errorMessages.every(errorMessage => errorMessage === false)) {
-
+      if (errorMessages.every((errorMessage) => errorMessage === false)) {
         // console.log(this.existingStocks);
         // console.log(this.newSelectedStocks);
         // console.log(this.removeExistingStocks);
-        
+
         // Format portfolioData and send the request
         const date = new Date();
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, "0");
         const day = String(date.getDate()).padStart(2, "0");
         const todayDate = `${year}-${month}-${day}`;
-        
+
         const portfolioData = {
           userId: sessionStorage.getItem("user_id"),
           portfolioId: this.portfolioName,
@@ -475,16 +591,16 @@ export default {
 
         // Remove existing stocks
         if (this.removeExistingStocks && this.removeExistingStocks.length > 0) {
-          portfolioData.action = 'Remove';
-          portfolioData.stocks = this.removeExistingStocks.map(stock => ({
+          portfolioData.action = "Remove";
+          portfolioData.stocks = this.removeExistingStocks.map((stock) => ({
             symbol: stock.symbol,
             quantity: stock.ogQuantity,
             dateAdded: stock.dateAdded,
-            price: stock.averagePrice 
+            price: stock.averagePrice,
           }));
 
           // call the api
-          await this.updatePortfolioAPI(portfolioData, 'Remove');
+          await this.updatePortfolioAPI(portfolioData, "Remove");
         }
 
         // Increase quantity of existing stocks and new stocks that are existing stocks
@@ -522,8 +638,13 @@ export default {
               symbol: stock.symbol,
               quantity: stock.selectedQty,
               dateAdded: this.formatDate(stock.selectedDate),
-              price: stock.selectedPrice === null || isNaN(stock.selectedPrice) || stock.selectedPrice === ""  ? stock.defaultPrice : stock.selectedPrice
-            })
+              price:
+                stock.selectedPrice === null ||
+                isNaN(stock.selectedPrice) ||
+                stock.selectedPrice === ""
+                  ? stock.defaultPrice
+                  : stock.selectedPrice,
+            });
           });
 
           // Check if any stocks had quantity changes
@@ -561,17 +682,16 @@ export default {
           window.location.href = "/homepage";
         }, 3000);
       }
-
     },
     async updatePortfolioAPI(portfolioData, action) {
       const token = sessionStorage.getItem("token");
       const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
 
-     //console.log(token);
+      //console.log(token);
 
       try {
         //console.log(portfolioData);
@@ -584,10 +704,20 @@ export default {
             this.showNotification("notification", "Success", `Quantity for existing stocks increased successfully!`, "success");
           }
           if (action == "Add") {
-            this.showNotification("notification", "Success", `Stocks was added to the portfolio successfully!`, "success");
+            this.showNotification(
+              "notification",
+              "Success",
+              `Stocks was added to the portfolio successfully!`,
+              "success"
+            );
           }
           if (action == "Remove") {
-            this.showNotification("notification", "Success", `Existing stocks was removed successfully.`, "success");
+            this.showNotification(
+              "notification",
+              "Success",
+              `Existing stocks was removed successfully.`,
+              "success"
+            );
           }
         }
       } catch (error) {
@@ -606,8 +736,8 @@ export default {
         }
         //this.showNotification("notification", "Error", "Failed to update the portfolio. Please try again later.", "error");
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -624,17 +754,17 @@ export default {
 
 .table-input {
   border-radius: 5px;
-  border: solid 1px #D8D8D8;
+  border: solid 1px #d8d8d8;
   width: 100%;
   padding: 6px;
 }
 
 .table-input:hover {
-  border: solid 1px #A0A5AE;
+  border: solid 1px #a0a5ae;
 }
 
 .table-input:disabled {
-  background-color: #F5F5F5;
+  background-color: #f5f5f5;
 }
 
 .table-heading {
@@ -642,12 +772,23 @@ export default {
   font-weight: normal;
   font-size: small;
 }
-
+.fixed-container {
+  background-color: white;
+  width: 100%;
+  height: 12vh;
+  position: fixed;
+  bottom: 0px;
+  left: var(--sidebar-width);
+  z-index: 1;
+  box-shadow: 0px -5px 10px rgba(0, 0, 0, 0.05);
+}
 .btn-container {
   position: fixed;
   bottom: 32px;
   right: 32px;
   background-color: white;
 }
-
+.aboutpage {
+  background-color: #f5f7ff;
+}
 </style>

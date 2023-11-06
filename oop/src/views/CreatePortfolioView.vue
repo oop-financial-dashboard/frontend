@@ -1,96 +1,146 @@
 <template>
   <main class="aboutpage">
-    <h1>Create portfolio</h1>
-    <div class="row">
-      <div class="col-4">
-        <p><b>Enter portfolio name:</b></p>
-        <input class="textbox p-3" v-model="portfolioName" />
+    <h3>Create portfolio</h3>
+    <form>
+      <div class="row">
+        <div
+          class="col p-4"
+          style="
+            border-radius: 16px;
+            background-color: white;
+            margin-right: 20px;
+          "
+        >
+          <div class="mb-3">
+            <label class="form-label">Portfolio Name:</label>
+            <input class="form-control" v-model="portfolioName" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Portfolio Description:</label>
+            <textarea class="form-control" v-model="portfolioDesc"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label"
+              >Specify Portfolio Capital Amount (USD):
+            </label>
+            <input
+              class="form-control"
+              type="number"
+              v-model="portfolioCapital"
+            />
+          </div>
+        </div>
 
-        <p class="mt-3"><b>Enter description (strategy):</b></p>
-        <textarea class="textbox p-3" v-model="portfolioDesc"></textarea>
+        <div
+          class="col p-4"
+          style="border-radius: 16px; background-color: white"
+        >
+          <label class="form-label">Select desired stock(s)</label>
+          <MultiSelect
+            id="multiselect"
+            filter
+            :maxSelectedLabels="3"
+            v-model="selectedStocks"
+            :options="stocks"
+            optionLabel="name"
+            placeholder="Select stocks"
+            class="p-2 rounded border"
+            style="width: 100%"
+          />
 
-        <p class="mt-3"><b>Specify capital amount (USD):</b></p>
-        <input type="number" min="0" class="textbox p-3" v-model="portfolioCapital"/>
+          <span class="mt-4 mb-2" style="float: right"
+          >Total: {{ totalPriceComputed }}</span
+        >
+
+          <table class="table mt-3">
+            <thead>
+              <tr>
+                <th class="table-heading" scope="col">Stocks Selected</th>
+                <th class="table-heading" scope="col">Pick a Date</th>
+                <th class="table-heading" scope="col">Price</th>
+                <th class="table-heading" scope="col">Enter Quantity</th>
+                <th class="table-heading" scope="col">Capital %</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, index) in selectedStocks" :key="index">
+                <td>{{ item.name }}</td>
+
+                <!-- calender to pick date: disabled for default -->
+                <td>
+                  <VueDatePicker
+                    :start-date="startDate"
+                    focus-start-date
+                    no-today
+                    :max-date="maxDate"
+                    :unique-identifier="index"
+                    :key="'selectedDate_' + index"
+                    type="date"
+                    v-model="item.selectedDate"
+                    :model-value="item.selectedDate"
+                    @update:model-value="updateDate(item, index, $event)"
+                    :enable-time-picker="false"
+                  />
+                </td>
+
+                <!-- price -->
+                <td>
+                  <input
+                    min="0"
+                    :key="'selectedPrice_' + index"
+                    :disabled="item.disableFields"
+                    v-model="item.selectedPrice"
+                    :placeholder="item.defaultPrice"
+                    type="number"
+                    class="table-input"
+                  />
+                </td>
+
+                <!-- qty to purchase per stock -->
+                <td>
+                  <input
+                    min="0"
+                    :key="'selectedQty_' + index"
+                    v-model="item.selectedQty"
+                    :disabled="item.disableFields"
+                    type="number"
+                    class="table-input"
+                  />
+                </td>
+
+                <td>
+                  {{
+                    capitalPerComputed(
+                      item.selectedPrice === null ||
+                        isNaN(item.selectedPrice) ||
+                        item.selectedPrice === ""
+                        ? item.defaultPrice
+                        : item.selectedPrice,
+                      item.selectedQty
+                    )
+                  }}
+                </td>
+
+                <td>
+                  <font-awesome-icon
+                    class="clickable"
+                    @click="removeStock(item.name)"
+                    :icon="['fas', 'x']"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div class="col-8">
-        <p>
-          <b>Select desired stocks (can select multiple):</b>
-          <span style="float: right;">Total: {{totalPriceComputed}}</span>
-        </p>
-        <MultiSelect
-          id="multiselect"
-          filter
-          :maxSelectedLabels="3"
-          v-model="selectedStocks"
-          :options="stocks"
-          optionLabel="name"
-          placeholder="Select stocks"
-          class="textbox p-3"
-        />
-        
-        <table class="table mt-3">
-          <thead>
-            <tr>
-              <th class="table-heading" scope="col">Stocks Selected</th>
-              <th class="table-heading" scope="col">Pick a Date</th>
-              <th class="table-heading" scope="col">Price</th>
-              <th class="table-heading" scope="col">Enter Quantity</th>
-              <th class="table-heading" scope="col">Capital %</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(item, index) in selectedStocks" :key="index">
-              <td>{{ item.name }}</td>
-
-              <!-- calender to pick date: disabled for default -->
-              <td>
-                <VueDatePicker
-                  :start-date="startDate" 
-                  focus-start-date 
-                  no-today 
-                  :max-date="maxDate"
-                  :unique-identifier="index" 
-                  :key="'selectedDate_' + index"
-                  type="date"
-                  v-model="item.selectedDate"
-                  :model-value="item.selectedDate"
-                  @update:model-value="updateDate(item, index, $event)"
-                  :enable-time-picker="false"
-                />
-              </td>
-
-              <!-- price -->
-              <td>
-                <input min="0" :key="'selectedPrice_' + index" :disabled="item.disableFields" v-model="item.selectedPrice" :placeholder="item.defaultPrice" type="number" class="table-input" />
-              </td>
-
-              <!-- qty to purchase per stock -->
-              <td>
-                <input min="0" :key="'selectedQty_' + index" v-model="item.selectedQty" :disabled="item.disableFields" type="number" class="table-input" />
-              </td>
-
-              <td>
-                {{ capitalPerComputed(item.selectedPrice === null || isNaN(item.selectedPrice) || item.selectedPrice === ""  ? item.defaultPrice : item.selectedPrice, item.selectedQty) }}
-              </td>
-
-              <td>
-                <font-awesome-icon class="clickable" @click="removeStock(item.name)" :icon="['fas', 'x']"/>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    </form>
     <div class="fixed-container">
       <div class="btn-container">
-        <button class="btn btn-outline-dark" @click="submitPortfolio">
-          Submit
+        <button class="btn btn-dark" @click="submitPortfolio">
+          Create portfolio
         </button>
       </div>
     </div>
-    
-
-   
   </main>
 </template>
 
@@ -100,10 +150,10 @@ import axios from "axios";
 import MultiSelect from "primevue/multiselect";
 import "primevue/resources/themes/saga-blue/theme.css";
 
-import VueDatePicker from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css'
+import VueDatePicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
 
-import { library } from '@fortawesome/fontawesome-svg-core';
+import { library } from "@fortawesome/fontawesome-svg-core";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 library.add(faX);
 
@@ -113,26 +163,29 @@ import { notify } from "@kyvg/vue3-notification";
 
 export default {
   components: {
-    MultiSelect, VueDatePicker
+    MultiSelect,
+    VueDatePicker,
   },
   data() {
     return {
       stocks: ref(),
       selectedStocks: ref(),
-      portfolioName: '',
-      portfolioDesc: '',
+      portfolioName: "",
+      portfolioDesc: "",
       portfolioCapital: 0,
       selectedDate: null,
       startDate: ref(new Date(new Date().setDate(new Date().getDate() - 1))),
-      maxDate: new Date(new Date().setDate(new Date().getDate() - 1)).toDateString(),
+      maxDate: new Date(
+        new Date().setDate(new Date().getDate() - 1)
+      ).toDateString(),
       userEditedPrices: {}, // Object to hold user-edited prices by stock name
       selectedPrice: 0,
       defaultPrice: 0,
-      customHigh:0,
+      customHigh: 0,
       customLow: 0,
       closePrice: 0,
       selectedQty: 0,
-      allPortolios: '',
+      allPortolios: "",
     };
   },
   computed: {
@@ -152,9 +205,14 @@ export default {
       if (isNaN(total)) {
         return "Calculating...";
       } else {
-        return total.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        return total.toLocaleString("en-US", {
+          style: "currency",
+          currency: "USD",
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
       }
-    }
+    },
   },
   mounted() {
     this.getAllAvailStocks();
@@ -164,7 +222,10 @@ export default {
     capitalPerComputed(price, quantity) {
       let result = "N.A.";
       if (this.portfolioCapital > 0) {
-        result = parseFloat(((price * quantity) / this.portfolioCapital) * 100).toFixed(2) + "%";
+        result =
+          parseFloat(
+            ((price * quantity) / this.portfolioCapital) * 100
+          ).toFixed(2) + "%";
       }
       return result;
     },
@@ -175,21 +236,24 @@ export default {
     // remove stocks from the dropdown list
     removeStock(stockName) {
       if (this.selectedStocks) {
-        this.selectedStocks = this.selectedStocks.filter(stock => stock.name !== stockName);
+        this.selectedStocks = this.selectedStocks.filter(
+          (stock) => stock.name !== stockName
+        );
       }
     },
     getAllPortfolios() {
       const token = sessionStorage.getItem("token");
       const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
 
       // need to get specific user from login
       //axios.get("/portfolio/get-all/1")
       const user_id = sessionStorage.getItem("user_id");
-      axios.get(`/portfolio/get-all/${user_id}`, config)
+      axios
+        .get(`/portfolio/get-all/${user_id}`, config)
         .then((response) => {
           if (response.status === 200) {
             this.allPortolios = response.data.portfolios;
@@ -197,18 +261,19 @@ export default {
         })
         .catch((err) => {
           console.error(err);
-        })
+        });
     },
     getAllAvailStocks() {
       const token = sessionStorage.getItem("token");
       const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
 
       // need to get specific user from login
-      axios.get("/stock/available-stocks", config)
+      axios
+        .get("/stock/available-stocks", config)
         .then((response) => {
           if (response.status === 200) {
             this.stocks = ref(response.data);
@@ -216,32 +281,38 @@ export default {
         })
         .catch((err) => {
           console.error(err);
-        })
+        });
     },
     getStockPrice(name, symbol, timestamp, index) {
       const token = sessionStorage.getItem("token");
       const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
 
-      if (typeof timestamp !== 'undefined') {
+      if (typeof timestamp !== "undefined") {
         const date = new Date(timestamp);
         const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
         const formattedDate = `${year}-${month}-${day}`;
-        const stockParams = { "symbol": symbol, "timestamp": formattedDate };
-        
-        axios.post("/stock/price", stockParams, config)
+        const stockParams = { symbol: symbol, timestamp: formattedDate };
+
+        axios
+          .post("/stock/price", stockParams, config)
           .then((response) => {
             if (response.status === 200) {
               if (response.data == null) {
                 // null e.g. no stock data for this date e.g. closing price
                 const nullErrMessage = `No price for ${name} on ${formattedDate}, please select a different date.`; // Customize this error message as needed
-                
-                this.showNotification("notification", "Error", nullErrMessage, "error");
+
+                this.showNotification(
+                  "notification",
+                  "Error",
+                  nullErrMessage,
+                  "error"
+                );
 
                 // disable the fields
                 this.selectedStocks[index].disableFields = true;
@@ -250,10 +321,16 @@ export default {
               } else {
                 // enable the fields because there is stock data for this date e.g. closing, high, and low price
                 this.selectedStocks[index].disableFields = false;
-                this.selectedStocks[index].defaultPrice = parseFloat(response.data.close).toFixed(2); // set as placeholder
+                this.selectedStocks[index].defaultPrice = parseFloat(
+                  response.data.close
+                ).toFixed(2); // set as placeholder
                 // this.selectedStocks[index].selectedPrice = parseFloat(response.data.close).toFixed(2);
-                this.selectedStocks[index].customHigh = parseFloat(response.data.high).toFixed(2); 
-                this.selectedStocks[index].customLow = parseFloat(response.data.low).toFixed(2); 
+                this.selectedStocks[index].customHigh = parseFloat(
+                  response.data.high
+                ).toFixed(2);
+                this.selectedStocks[index].customLow = parseFloat(
+                  response.data.low
+                ).toFixed(2);
               }
             }
           })
@@ -271,48 +348,79 @@ export default {
       });
     },
     async submitPortfolio() {
-
       // Validate portfolio information
       if (!this.portfolioName) {
-        this.showNotification("notification", "Error", "Portfolio name is required.", "error");
+        this.showNotification(
+          "notification",
+          "Error",
+          "Portfolio name is required.",
+          "error"
+        );
         return;
       }
 
       if (this.allPortolios[this.portfolioName]) {
-        this.showNotification("notification", "Error", "Portfolio name must be unique.", "error");
+        this.showNotification(
+          "notification",
+          "Error",
+          "Portfolio name must be unique.",
+          "error"
+        );
         return;
       }
 
       if (!this.portfolioDesc) {
-        this.showNotification("notification", "Error", "Portfolio description is required.", "error");
+        this.showNotification(
+          "notification",
+          "Error",
+          "Portfolio description is required.",
+          "error"
+        );
         return;
       }
 
       if (this.portfolioCapital <= 0) {
-        this.showNotification("notification", "Error", "Capital amount must be greater than 0.", "error");
+        this.showNotification(
+          "notification",
+          "Error",
+          "Capital amount must be greater than 0.",
+          "error"
+        );
         return;
       }
 
       let totalPriceComputed = this.totalPriceComputed;
       var priceMatch = totalPriceComputed.match(/\$\d+(?:,\d{3})*(?:\.\d{2})?/); // match up to a billion e.g. $1,234,567,890.12
       if (priceMatch) {
-  
         // Extracted price as a string, e.g., "$25.99"
         var priceString = priceMatch[0];
 
         // Remove the "$" and "," sign and convert it to a double
         var priceTotal = priceString.replace("$", "");
         priceTotal = priceTotal.replace(",", "");
-      
+
         if (parseFloat(priceTotal) > this.portfolioCapital) {
-          this.showNotification("notification", "Error", `Total price cannot be more than capital price.`, "error");
-          return; 
+          this.showNotification(
+            "notification",
+            "Error",
+            `Total price cannot be more than capital price.`,
+            "error"
+          );
+          return;
         }
       }
 
       // Validate selected stocks
-      if (typeof this.selectedStocks === 'undefined' || this.selectedStocks.length === 0) {
-        this.showNotification("notification", "Error", "Select at least one stock for your portfolio.", "error");
+      if (
+        typeof this.selectedStocks === "undefined" ||
+        this.selectedStocks.length === 0
+      ) {
+        this.showNotification(
+          "notification",
+          "Error",
+          "Select at least one stock for your portfolio.",
+          "error"
+        );
         return;
       }
 
@@ -322,19 +430,34 @@ export default {
       for (let stock of this.selectedStocks) {
         let hasError = false;
 
-        if (stock.disableFields || stock.selectedQty <= 0 || typeof stock.selectedQty === 'undefined') {
+        if (
+          stock.disableFields ||
+          stock.selectedQty <= 0 ||
+          typeof stock.selectedQty === "undefined"
+        ) {
           hasError = true;
           errorMessages.push(hasError);
-          this.showNotification("notification", "Error", `Stock quantity for ${stock.name} cannot be empty, 0 or less.`, "error");
+          this.showNotification(
+            "notification",
+            "Error",
+            `Stock quantity for ${stock.name} cannot be empty, 0 or less.`,
+            "error"
+          );
           return;
-        } 
-        else {
+        } else {
           hasError = false;
           errorMessages.push(hasError);
         }
 
-        if (stock.selectedPrice !== null && !isNaN(stock.selectedPrice) && stock.selectedPrice !== "") {
-          if (stock.selectedPrice < stock.customLow || stock.selectedPrice > stock.customHigh) {
+        if (
+          stock.selectedPrice !== null &&
+          !isNaN(stock.selectedPrice) &&
+          stock.selectedPrice !== ""
+        ) {
+          if (
+            stock.selectedPrice < stock.customLow ||
+            stock.selectedPrice > stock.customHigh
+          ) {
             hasError = true;
             errorMessages.push(hasError);
             this.showNotification(
@@ -345,16 +468,14 @@ export default {
             );
             return;
           }
-        }
-        else {
+        } else {
           hasError = false;
           errorMessages.push(hasError);
         }
       }
 
       // All error messages are false, meaning there are no errors
-      if (errorMessages.every(errorMessage => errorMessage === false)) {
-        
+      if (errorMessages.every((errorMessage) => errorMessage === false)) {
         // Format portfolioData and send the request
         const date = new Date();
         const year = date.getFullYear();
@@ -367,26 +488,41 @@ export default {
           portfolioId: this.portfolioName,
           description: this.portfolioDesc,
           initialCapital: this.portfolioCapital,
-          stocks: this.selectedStocks.map(stock => ({
-              symbol: stock.symbol,
-              quantity: stock.selectedQty,
-              dateAdded: stock.selectedDate,
-              price: stock.selectedPrice === null || isNaN(stock.selectedPrice) || stock.selectedPrice === ""  ? stock.defaultPrice : stock.selectedPrice })),
+          stocks: this.selectedStocks.map((stock) => ({
+            symbol: stock.symbol,
+            quantity: stock.selectedQty,
+            dateAdded: stock.selectedDate,
+            price:
+              stock.selectedPrice === null ||
+              isNaN(stock.selectedPrice) ||
+              stock.selectedPrice === ""
+                ? stock.defaultPrice
+                : stock.selectedPrice,
+          })),
           createdAt: formattedDate,
         };
 
         try {
           const token = sessionStorage.getItem("token");
           const config = {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            };
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          };
 
           //console.log(portfolioData);
-          const response = await axios.post("/portfolio/create", portfolioData, config);
+          const response = await axios.post(
+            "/portfolio/create",
+            portfolioData,
+            config
+          );
           if (response.status === 200) {
-            this.showNotification("notification", "Success", "Portfolio created successfully!", "success");
+            this.showNotification(
+              "notification",
+              "Success",
+              "Portfolio created successfully!",
+              "success"
+            );
             // Delay navigating to the homepage by 1.5 seconds
             setTimeout(() => {
               window.location.href = "/homepage";
@@ -399,12 +535,16 @@ export default {
           }
         } catch (error) {
           console.error(error);
-          this.showNotification("notification", "Error", "Failed to create the portfolio", "error");
+          this.showNotification(
+            "notification",
+            "Error",
+            "Failed to create the portfolio",
+            "error"
+          );
         }
       }
-
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -421,17 +561,17 @@ export default {
 
 .table-input {
   border-radius: 5px;
-  border: solid 1px #D8D8D8;
+  border: solid 1px #d8d8d8;
   width: 100%;
   padding: 6px;
 }
 
 .table-input:hover {
-  border: solid 1px #A0A5AE;
+  border: solid 1px #a0a5ae;
 }
 
 .table-input:disabled {
-  background-color: #F5F5F5;
+  background-color: #f5f5f5;
 }
 
 .table-heading {
@@ -440,21 +580,24 @@ export default {
   font-size: small;
 }
 
-/* .fixed-container {
+.fixed-container {
   background-color: white;
   width: 100%;
   height: 12vh;
   position: fixed;
   bottom: 0px;
-  left: 0px;
+  left: var(--sidebar-width);
   z-index: 1;
-} */
+  box-shadow: 0px -5px 10px rgba(0, 0, 0, 0.05);
+}
 
 .btn-container {
   position: fixed;
   bottom: 32px;
   right: 32px;
-  background-color: white;
 }
 
+.aboutpage {
+  background-color: #f5f7ff;
+}
 </style>
