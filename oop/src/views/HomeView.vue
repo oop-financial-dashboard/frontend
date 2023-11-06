@@ -4,12 +4,19 @@
       <h1>My Portfolio</h1>
     </div>
 
-    <div class="profile mt-3 p-5">
-      <p><b>Total Assets (SGD) *need API to populate this</b></p>
-      <p style="font-size: 30px">100,745</p>
-      <button @click="openPortfolio" class="btn btn-dark">Open Portfolio Page</button>
+    <div class="d-flex flex-row mt-3">
+      <div class="profile p-5">
+        <p><b>Total Assets (SGD) *need API to populate this</b></p>
+        <p style="font-size: 30px">100,745</p>
+        <button @click="openPortfolio" class="btn btn-dark">Open Portfolio Page</button>
+      </div>
+
+      <div>
+        <stock-rate-chart />
+      </div>
     </div>
 
+    <portfolio-performance-card />
     <div class="mt-5">
       <div class="d-flex justify-content-between">
         <b>Click portfolio name to view portfolio details</b>
@@ -63,8 +70,11 @@ import { faTrashCan, faPencil } from "@fortawesome/free-solid-svg-icons";
 library.add(faTrashCan, faPencil)
 
 import { notify } from "@kyvg/vue3-notification";
+import PortfolioPerformanceCard from "@/components/PortfolioPerformanceCard.vue";
+import StockRateChart from "@/components/StockRateChart.vue";
 
 export default {
+  components: {StockRateChart, PortfolioPerformanceCard},
   data() {
     return {
       portfolioList: [],
