@@ -40,13 +40,13 @@
         <tbody v-if="this.display == true">
           <tr v-for="(portfolio, key) in portfolioList" :key="key">
             <!-- key should link to view details -->
-            <td>
+            <td><b>
               <a
                 href="#"
-                style="text-decoration: none"
+                style="text-decoration:none" class="text-primary"
                 @click="navigateToDetails(portfolio, key)"
                 >{{ key }}</a
-              >
+              ></b>
             </td>
             <td>{{ portfolio.stocks.length }}</td>
             <td>{{ formatTotalValue(portfolio.totalValue) }}</td>
