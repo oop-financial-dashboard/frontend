@@ -169,6 +169,7 @@ export default {
               console.log(this.portfolioList[key]);
               this.totalAsset += this.portfolioList[key].totalValue;
             }
+            sessionStorage.setItem("portfolioList", JSON.stringify(this.portfolioList));
           }
         })
         .catch((err) => {
