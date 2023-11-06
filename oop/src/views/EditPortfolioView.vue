@@ -2,7 +2,7 @@
   <main class="aboutpage">
     <h1>{{portfolioName}}</h1>
     <div class="row">
-      <div class="col">
+      <div class="col-4">
 
         <p><b>Enter description (strategy):</b></p>
         <textarea class="textbox p-3" v-model="portfolioDesc"></textarea>
@@ -11,7 +11,7 @@
         <input type="number" class="textbox p-3" v-model="portfolioCapital"/>
 
       </div>
-      <div class="col">
+      <div class="col-8">
         <p>
           <b>Add existing/new stocks (can select multiple):</b>
           <span style="float: right;">Total: {{totalPriceComputed}}</span>
