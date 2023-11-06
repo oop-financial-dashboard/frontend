@@ -1,7 +1,7 @@
 <template>
   <div class="reset_password p-3">
     <!-- Form -->
-    <form class="shadow-lg p-3 py-5">
+    <form class="p-3 py-5">
       <h4 class="pb-2">Change Password</h4>
       <p class="grey_text">Enter your passwords below</p>
 
@@ -109,7 +109,7 @@ export default {
       visible: "visibility",
       msg: "",
       currentPasswordError: null, // Error message for current password
-      newPasswordError: null,     // Error message for new password
+      newPasswordError: null, // Error message for new password
       confirmPasswordError: null, // Error message for confirm password
     };
   },
@@ -136,19 +136,33 @@ export default {
       const newpasswordValid = this.newpwValid(this.newPassword);
 
       if (this.newPassword === this.currentPassword) {
-      this.newPasswordError = "Current password cannot be the same as the new password.";
-      return;
-      } 
+        this.newPasswordError =
+          "Current password cannot be the same as the new password.";
+        return;
+      }
       const confirmpasswordValid = this.confirmpwValid(this.confirmPassword);
 
-      const matchpasswordValid = this.validateConfirmPassword(this.newPassword,this.confirmPassword);
-      console.log(currentpasswordValid, newpasswordValid, confirmpasswordValid, matchpasswordValid)
+      const matchpasswordValid = this.validateConfirmPassword(
+        this.newPassword,
+        this.confirmPassword
+      );
+      console.log(
+        currentpasswordValid,
+        newpasswordValid,
+        confirmpasswordValid,
+        matchpasswordValid
+      );
 
-      if (!currentpasswordValid || !newpasswordValid || !confirmpasswordValid || !matchpasswordValid) {
+      if (
+        !currentpasswordValid ||
+        !newpasswordValid ||
+        !confirmpasswordValid ||
+        !matchpasswordValid
+      ) {
         return; // Do not proceed with registration if there are errors
       }
 
-      console.log("helllo over here")
+      console.log("helllo over here");
 
       try {
         const config = {
@@ -175,7 +189,7 @@ export default {
                 "",
                 "success"
               );
-            this.$router.push("/");
+              this.$router.push("/");
             }
           })
           .catch((error) => {
@@ -244,7 +258,8 @@ export default {
     },
     currentpwValid(pw) {
       if (pw.length < 8 || pw.length > 25) {
-        this.currentPasswordError = "Password must be between 8 and 25 characters.";
+        this.currentPasswordError =
+          "Password must be between 8 and 25 characters.";
         return false;
       }
 
@@ -298,7 +313,8 @@ export default {
 
     confirmpwValid(pw) {
       if (pw.length < 8 || pw.length > 25) {
-        this.confirmPasswordError = "Password must be between 8 and 25 characters.";
+        this.confirmPasswordError =
+          "Password must be between 8 and 25 characters.";
         return false;
       }
 
@@ -346,7 +362,9 @@ export default {
 <style scoped>
 .reset_password {
   width: 100%;
+  background-color: #f5f7ff;
   height: 100vh;
+  z-index: 1;
 }
 
 p {
@@ -354,10 +372,10 @@ p {
 }
 
 form {
-  width: 30%;
-  background-color: var(--lighter-grey-alt);
+  width: 45%;
+  background-color: white;
   padding: 40px;
-  border-radius: 5px;
+  border-radius: 10px;
   text-align: center;
   margin: auto;
   margin-top: 10%;
@@ -368,8 +386,8 @@ form {
 }
 
 .reset_btn {
-  width: 100%;
-  background-color: #7399c6;
+  width: 70%;
+  background-color: #0A1B39;
   color: white;
   border-radius: 5px;
 }
@@ -382,6 +400,7 @@ form {
 .material-symbols-outlined {
   margin-left: -45px;
   padding: 8px;
+  cursor: pointer;
 }
 
 #incorrect_text {

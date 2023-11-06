@@ -112,6 +112,7 @@ img.logo2 {
   background-color: #36383b;
   border-left: 5px solid #a7cdff;
   position: relative;
+  z-index: 0;
 }
 
 img {
