@@ -284,4 +284,8 @@ export default {
 .clickable {
   cursor: pointer;
 }
+
+.table tr td {
+  vertical-align: middle;
+}
 </style>
