@@ -57,7 +57,7 @@
         />
       </div>
 
-      <button type="button" class="btn btn-dark mt-4 mb-2" @click="ChangePassword()">
+      <button class="btn btn-dark mt-4 mb-2" @click="ChangePassword()">
         Change Password
       </button>
     </div>

@@ -1,80 +1,85 @@
 <template>
   <main class="homepage">
     <div>
-      <h3>Welcome back!</h3>
+      <h3  class="m-2">Welcome back!</h3>
     </div>
 
     <div class="d-flex flex-row mt-3 justify-between">
-      <div class="profile p-5">
-        <!-- <p><b>Total Assets (SGD) *need API to populate this</b></p>
-        <p style="font-size: 30px">100,745</p> -->
-        <p><b>Total Assets You Have (USD)</b></p>
-        <p style="font-size: 30px">{{ formatTotalValue(totalAsset) }}</p>
-        <button @click="openPortfolio" class="btn btn-dark">
-          Open Portfolio Page
-        </button>
+      <div class="profile p-5 m-2">
+       
       </div>
 
       <div>
-        <stock-rate-chart :popular-stocks="popularStocks.slice(0, 5)" />
+        <stock-rate-chart  class="m-2" :popular-stocks="popularStocks.slice(0, 5)" />
       </div>
     </div>
 
-    <portfolio-performance-card />
-    <div class="mt-5">
-      <div class="d-flex justify-content-between">
-        <b>Click portfolio name to view portfolio details</b>
-      </div>
-    </div>
+    <portfolio-performance-card class="m-2"/>
 
-    <table class="table table-hover">
-      <thead class="bg-success" style="height: 45px">
-        <tr>
-          <th class="table-heading" scope="col">Portfolio Name</th>
-          <th class="table-heading" scope="col">Number of Stocks</th>
-          <th class="table-heading" scope="col">Total Stock Amount</th>
-          <th class="table-heading" scope="col" style="width: 250px">
-            Last Created/Updated
-          </th>
-          <th class="table-heading" scope="col" style="width: 80px"></th>
-          <th class="table-heading" scope="col" style="width: 80px"></th>
-          <th class="table-heading" scope="col" style="width: 160px"></th>
-        </tr>
-      </thead>
-      <tbody v-if="this.display == true">
-        <tr v-for="(portfolio, key) in portfolioList" :key="key">
-          <!-- key should link to view details -->
-          <td>
-            <a
-              href="#"
-              style="text-decoration: none"
-              @click="navigateToDetails(portfolio, key)"
-              >{{ key }}</a
-            >
-          </td>
-          <td>{{ portfolio.stocks.length }}</td>
-          <td>{{ formatTotalValue(portfolio.totalValue) }}</td>
-          <td>{{ portfolio.createdAt }}</td>
-          <td>
-            <font-awesome-icon
-              class="clickable"
-              @click="deletePortfolio(key)"
-              :icon="['fas', 'trash-can']"
-              style="color: #dc3545"
-            />
-          </td>
-          <td>
-            <font-awesome-icon
-              class="clickable"
-              @click="navigateToEditPortfolio(key, portfolio)"
-              :icon="['fas', 'pencil']"
-              style="color: #007bff"
-            />
-          </td>
-        </tr>
-      </tbody>
-      <div class="mt-3" v-else>No portfolios, please start by creating!</div>
-    </table>
+    <div style="background-color: white; border-radius: 10px" class="p-4 m-2">
+      <div style="display: flex">
+        <h5>My Portfolios</h5>
+        <button class="btn btn-dark" @click="createPortfolio">
+          Create Portfolio
+        </button>
+      </div>
+      <table class="table table-hover border">
+        <thead class="bg-success" style="height: 45px">
+          <tr>
+            <th class="table-heading" scope="col">Portfolio Name</th>
+            <th class="table-heading" scope="col">Number of Stocks</th>
+            <th class="table-heading" scope="col">Total Stock Amount</th>
+            <th class="table-heading" scope="col" style="width: 250px">
+              Last Created/Updated
+            </th>
+            <th class="table-heading" scope="col" style="width: 80px"></th>
+            <th class="table-heading" scope="col" style="width: 80px"></th>
+            <th class="table-heading" scope="col" style="width: 160px"></th>
+          </tr>
+        </thead>
+        <tbody v-if="this.display == true">
+          <tr v-for="(portfolio, key) in portfolioList" :key="key">
+            <!-- key should link to view details -->
+            <td>
+              <a
+                href="#"
+                style="text-decoration: none"
+                @click="navigateToDetails(portfolio, key)"
+                >{{ key }}</a
+              >
+            </td>
+            <td>{{ portfolio.stocks.length }}</td>
+            <td>{{ formatTotalValue(portfolio.totalValue) }}</td>
+            <td>{{ portfolio.createdAt }}</td>
+            <td>
+              <font-awesome-icon
+                class="clickable"
+                @click="deletePortfolio(key)"
+                :icon="['fas', 'trash-can']"
+                style="color: #dc3545"
+              />
+            </td>
+            <td>
+              <font-awesome-icon
+                class="clickable"
+                @click="navigateToEditPortfolio(key, portfolio)"
+                :icon="['fas', 'pencil']"
+                style="color: #007bff"
+              />
+            </td>
+            <td>
+              <button
+                @click="navigateToDetails(portfolio, key)"
+                class="btn btn-dark"
+              >
+                View Portfolio
+              </button>
+            </td>
+          </tr>
+        </tbody>
+        <div class="mt-3" v-else>No portfolios, please start by creating!</div>
+      </table>
+    </div>
   </main>
 </template>
 
@@ -278,7 +283,7 @@ export default {
   background-color: #f5f7ff;
 }
 .profile {
-  background-color: rgba(217, 217, 217, 0.4);
+  background-color: white;
   border-radius: 15px;
 }
 .clickable {

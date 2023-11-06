@@ -38,7 +38,7 @@
           :options="stocks"
           optionLabel="name"
           placeholder="Select stocks"
-          class="p-2 rounded"
+          class="p-2 rounded border"
           style="width: 100%"
         /><span style="float: right" class="mt-4 mb-2"
           >Total: {{ totalPriceComputed }}</span

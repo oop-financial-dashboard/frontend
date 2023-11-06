@@ -44,33 +44,13 @@
             :options="stocks"
             optionLabel="name"
             placeholder="Select stocks"
-            class="p-2 rounded"
+            class="p-2 rounded border"
             style="width: 100%"
           />
 
-          <p class="mt-3"><b>Specify capital amount (USD):</b></p>
-          <input
-            type="number"
-            min="0"
-            class="textbox p-3"
-            v-model="portfolioCapital"
-          />
-        </div>
-        <div class="col-8">
-          <p>
-            <b>Select desired stocks (can select multiple):</b>
-            <span style="float: right">Total: {{ totalPriceComputed }}</span>
-          </p>
-          <MultiSelect
-            id="multiselect"
-            filter
-            :maxSelectedLabels="3"
-            v-model="selectedStocks"
-            :options="stocks"
-            optionLabel="name"
-            placeholder="Select stocks"
-            class="textbox p-3"
-          />
+          <span class="mt-4 mb-2" style="float: right"
+          >Total: {{ totalPriceComputed }}</span
+        >
 
           <table class="table mt-3">
             <thead>
