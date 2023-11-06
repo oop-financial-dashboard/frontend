@@ -1,10 +1,7 @@
 <template>
   <main>
     <div>
-      <h1>{{portfolioId}}</h1>
-      <!-- <h1>{{ userid}}</h1>
-      <h1> {{ portfolioList }}</h1>
-      <h1> {{ priceReturn }}</h1> -->
+      <h1><b>Portfolio: {{portfolioId}}</b></h1>
     </div>
 
     <div class="row-section d-flex justify-content-between">
@@ -79,9 +76,9 @@ export default {
       benchMark: "S&P stock name info",
       userid: sessionStorage.getItem("user_id"),
       priceReturnList: [],
-      priceReturn:0,
+      priceReturn: null,
       portfolioList: JSON.parse(sessionStorage.getItem("portfolioList")),
-      initialPrice:0,
+      initialPrice: null,
     };
   },
   mounted(){
@@ -113,12 +110,10 @@ export default {
 
           for(const portfolio in this.portfolioList){
             if(portfolio == this.portfolioId){
-              console.log(portfolio, "here");
-              console.log(this.portfolioList[portfolio]);
-              this.initialPrice = this.portfolioList[portfolio].totalValue;
-              console.log(this.initialPrice);
+              this.initialPrice += this.portfolioList[portfolio].totalValue;
             }
           }
+          // (summing all individual stocks in the portfolio then subtracting the last stock price) -1 
           this.priceReturn = this.priceReturnList[this.priceReturnList.length-1][1];
           this.percentageData = Number(((this.priceReturn - this.initialPrice) - 1).toFixed(2));
           this.value = this.formatTotalValue(this.priceReturn - this.initialPrice);
