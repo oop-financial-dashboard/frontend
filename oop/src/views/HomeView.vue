@@ -4,7 +4,7 @@
       <h1>My Portfolio</h1>
     </div>
 
-    <div class="d-flex flex-row mt-3">
+    <div class="d-flex flex-row mt-3 justify-between">
       <div class="profile p-5">
         <!-- <p><b>Total Assets (SGD) *need API to populate this</b></p>
         <p style="font-size: 30px">100,745</p> -->
@@ -14,7 +14,7 @@
       </div>
 
       <div>
-        <stock-rate-chart />
+        <stock-rate-chart :popular-stocks="popularStocks.slice(0,5)"/>
       </div>
     </div>
 
@@ -82,6 +82,8 @@ export default {
       portfolioList: [],
       display: false,
       totalAsset: 0,
+      popularStocks: [],
+      display: false
     }
   },
   mounted() {
@@ -95,6 +97,18 @@ export default {
 
       if (portfolioIds.length > 0) {
         this.display = true;
+
+        let popularStocksInPortfoliosObj = {}
+        Object.values(portfolios).forEach(portfolio => {
+          portfolio.stocks.forEach(stock => {
+              if (stock.symbol in popularStocksInPortfoliosObj) {
+                popularStocksInPortfoliosObj[stock.symbol] += 1;
+              } else {
+                popularStocksInPortfoliosObj[stock.symbol] = 1;
+              }
+          })
+        })
+        this.popularStocks = Object.entries(popularStocksInPortfoliosObj).sort((a, b) => b[1] - a[1]);
       } else {
         this.display = false;
       }
