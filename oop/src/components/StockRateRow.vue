@@ -41,7 +41,6 @@ export default {
       this.price = parseFloat(currentDayInfo.data.close).toFixed(2);
       this.change = this.calculcateChange(currentDayInfo.data, previousDayInfo.data);
       this.name = stockDescription.data.name;
-      console.log(stockDescription.data);
     }));
   },
   data() {

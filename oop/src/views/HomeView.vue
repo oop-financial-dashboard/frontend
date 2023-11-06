@@ -14,8 +14,18 @@
       </div>
     </div>
 
-    <portfolio-performance-card class="m-2"/>
+    <div class="flex flex-row my-4 space-x-4">
+      <portfolios-statistics-card />
+      <portfolio-performance-card title="Best Performing Portfolio" />
+      <portfolio-performance-card title="Worst Performing Portfolio" />
+    </div>
 
+    <div class="mt-5">
+      <div class="d-flex justify-content-between">
+        <b>Click portfolio name to view portfolio details</b>
+      </div>
+    </div>
+    
     <div style="background-color: white; border-radius: 10px" class="p-4 m-2">
       <div style="display: flex">
         <h5>My Portfolios</h5>
@@ -91,11 +101,12 @@ import { faTrashCan, faPencil } from "@fortawesome/free-solid-svg-icons";
 library.add(faTrashCan, faPencil);
 
 import { notify } from "@kyvg/vue3-notification";
-import PortfolioPerformanceCard from "@/components/PortfolioPerformanceCard.vue";
+import PortfolioPerformanceCard from "@/components/PortfolioPerfomanceCard.vue";
 import StockRateChart from "@/components/StockRateChart.vue";
+import PortfoliosStatisticsCard from "@/components/PortfoliosStatisticsCard.vue";
 
 export default {
-  components: { StockRateChart, PortfolioPerformanceCard },
+  components: {PortfoliosStatisticsCard, StockRateChart, PortfolioPerformanceCard},
   data() {
     return {
       portfolioList: [],
