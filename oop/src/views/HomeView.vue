@@ -7,17 +7,19 @@
     </div>
 
     <div>
-      <h1 class="m-2">Latest News</h1>
+      <h1 class="font-bold m-2">Latest News</h1>
     </div>
+
 
     <div class="d-flex flex-row mt-3 justify-between">
       <div class="profile m-2">
+
         <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
           <div class="carousel-inner">
             <div class="carousel-item active">
               <img src="../assets/laptop.jpeg" class="d-block w-100" alt="...">
               <div class="carousel-caption center-caption">
-                <h3 class="caption-title mb-3">{{ articleTitles[0] }}</h3>
+                <h3 class="caption-title font-bold mb-3">{{ articleTitles[0] }}</h3>
                 <h5 class="caption-title truncated-summary mb-3">{{ articleSummary[0] }}</h5>
                 <!-- <a :href="articleURLs[0]" target="_blank">Read more</a> -->
                 <button @click="openArticle(articleURLs[0])" class="btn btn-primary btncolor">More Info</button>
@@ -26,7 +28,7 @@
             <div class="carousel-item">
               <img src="../assets/screen.jpeg" class="d-block w-100" alt="...">
               <div class="carousel-caption center-caption">
-                <h3 class="caption-title mb-3">{{ articleTitles[1] }}</h3>
+                <h3 class="caption-title font-bold mb-3">{{ articleTitles[1] }}</h3>
                 <h5 class="caption-title truncated-summary mb-3">{{ articleSummary[1] }}</h5>
                 <button @click="openArticle(articleURLs[1])" class="btn btn-primary btncolor">More Info</button>
               </div>
@@ -34,7 +36,7 @@
             <div class="carousel-item">
               <img src="../assets/bitcoin-to-usd.jpeg" class="d-block w-100" alt="...">
               <div class="carousel-caption center-caption">
-                <h3 class="caption-title mb-3">{{ articleTitles[2] }}</h3>
+                <h3 class="caption-title font-bold mb-3">{{ articleTitles[2] }}</h3>
                 <h5 class="caption-title truncated-summary mb-3">{{ articleSummary[2] }}</h5>
                 <button @click="openArticle(articleURLs[2])" class="btn btn-primary btncolor">More Info</button>
               </div>
@@ -51,12 +53,8 @@
           </button>
           
         </div>
-      </div>
-      <!-- <p class="text-xl font-bold m-2">Welcome back!</p> -->
-    </div>
 
-    <div class="d-flex flex-row mt-3 justify-between">
-      <div class="profile p-5 m-2"></div>
+      </div>
 
       <div>
         <stock-rate-chart
