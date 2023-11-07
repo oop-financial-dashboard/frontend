@@ -1,7 +1,7 @@
 <template>
-  <div class="reset_password p-3">
+  <div class="reset_password">
     <!-- Form -->
-    <form class="p-3 py-5">
+    <form class="">
       <p class="text-3xl font-bold" style="font-size:large">Change Password</p>
       <p class="grey_text">Enter your passwords below</p>
 
@@ -361,7 +361,7 @@ export default {
 
 <style scoped>
 .reset_password {
-  width: 100%;
+  width: 89.5%;
   background-color: #f5f7ff;
   height: 100vh;
   z-index: 1;
