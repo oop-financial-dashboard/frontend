@@ -16,7 +16,7 @@ User
         <td>{{stock.quantity}}</td>
         <td>${{formatPrice(stock.averagePrice)}}</td>
         <td>${{formatPrice(stock.value)}}</td>
-        <td :style="updateProfitLossColour(stock.pl)">{{ stock.pl }}%</td>
+        <td :style="updateProfitLossColour(stock.pl)">{{ stock.pl }}</td>
       </tr>
     </tbody>
   </table>
@@ -49,9 +49,16 @@ export default {
 
     // Loop through each stock in the portfolioStocks array
     this.stocks.forEach(stock => {
-      // Construct the timestamp dynamically based on the dateAdded
-      const dateAdded = new Date(stock.dateAdded);
-      const timestamp = `${dateAdded.getFullYear()}-${(dateAdded.getMonth() + 1).toString().padStart(2, '0')}-${dateAdded.getDate().toString().padStart(2, '0')}`;
+      // Construct the timestamp dynamically based on yesterday date and time
+      const today = new Date(); // Create a new Date instance with the current date and time
+      const yesterday = new Date(today);
+      yesterday.setDate(today.getDate() - 1); // Subtract one day
+
+      const year = yesterday.getFullYear();
+      const month = (yesterday.getMonth() + 1).toString().padStart(2, '0'); // Month is zero-based, so we add 1
+      const day = yesterday.getDate().toString().padStart(2, '0');
+
+      const timestamp = `${year}-${month}-${day}`;
 
       // Create an Axios request to fetch the closing price for each stock
       const closingPriceRequest = axios.post("/stock/price", { "symbol": stock.symbol, "timestamp": timestamp }, config);
@@ -61,28 +68,39 @@ export default {
       
       // Use Promise.all to handle the request for each stock
       stockDataPromises.push(
-        Promise.all([
+        Promise.allSettled([
           closingPriceRequest,
           getAvailableStocksRequest
         ]).then(responses => {
-          // Process the closing price for each stock here
-          const closePrice = responses[0].data.close;
 
           // Find the index of the stock based on its symbol
           const stockIndex = this.stocks.findIndex(s => s.symbol === stock.symbol);
 
           if (stockIndex !== -1) {
-            const initialPrice = this.stocks[stockIndex].averagePrice;
-            const profitLoss = this.calculateProfitLoss(initialPrice, closePrice);
-            let formattedNumber = (profitLoss > 0 ? '+' : '') + profitLoss;
-            this.stocks[stockIndex].pl = formattedNumber;
-            this.updateProfitLossColour(profitLoss);
+            
+            if (responses[1].status === 'fulfilled' && responses[1].value.data) {
+              const availableStocks = responses[1].value.data;
+              const stockSymbol = this.stocks[stockIndex].symbol;
+              const stockName = this.getStockName(availableStocks, stockSymbol);
+              console.log("STOCK NAME: " + stockName);
+              this.stocks[stockIndex].symbol = stockSymbol + " | " + stockName;
+            } else {
+              console.log("Failed to fetch available stocks or no data available.");
+            }
 
-            const availableStocks = responses[1].data;
-            // console.log(availableStocks);
-            const stockSymbol = this.stocks[stockIndex].symbol;
-            const stockName = this.getStockName(availableStocks, stockSymbol);
-            this.stocks[stockIndex].symbol = stockSymbol + " | " + stockName;
+            // Check if responses[0].data is null - no price available for yesterday closing price
+            if (typeof responses[0].data === 'undefined') {
+              this.stocks[stockIndex].pl = "N.A.";
+            } else {
+              // Process the closing price for each stock here
+              const closePrice = responses[0].data.close;
+              console.log("Close price:" + closePrice);
+              const initialPrice = this.stocks[stockIndex].averagePrice;
+              const profitLoss = this.calculateProfitLoss(initialPrice, closePrice);
+              let formattedNumber = (profitLoss > 0 ? '+' : '') + profitLoss;
+              this.stocks[stockIndex].pl = formattedNumber;
+              this.updateProfitLossColour(profitLoss);
+            }
           }
         })
       );
@@ -98,7 +116,6 @@ export default {
     getStockName(stockList, stockSymbol) {
       if (Array.isArray(stockList)) {
         const stock = stockList.find((item) => item.symbol === stockSymbol);
-
         if (stock) {
           return stock.name;
         }

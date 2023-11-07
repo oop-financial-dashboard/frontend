@@ -1,99 +1,102 @@
 <template>
-  <div class="reset_password p-3">
-    <!-- Form -->
-    <form class="p-3 py-5">
-      <p class="text-3xl font-bold" style="font-size:large">Change Password</p>
-      <p class="grey_text">Enter your passwords below</p>
+  <main class="resetpwd">
+    <div class="reset_password">
+      <!-- Form -->
+      <form class="">
+        <p class="text-3xl font-bold" style="font-size:large">Change Password</p>
+        <p class="grey_text">Enter your passwords below</p>
 
-      <!-- Old password input -->
-      <div class="form-outline mb-4">
-        <label class="form-label grey_text" for="formExample1"
-          >Current Password</label
-        >
-        <div class="d-flex">
-          <input
-            type="password"
-            id="formExample1"
-            class="form-control"
-            v-model="currentPassword"
-            placeholder="Password"
-          />
-          <span
-            class="material-symbols-outlined"
-            for="formExample1"
-            id="eye"
-            @click="ShowHide('formExample1', 'eye')"
-            >visibility</span
+        <!-- Old password input -->
+        <div class="form-outline mb-4">
+          <label class="form-label grey_text" for="formExample1"
+            >Current Password</label
           >
+          <div class="d-flex">
+            <input
+              type="password"
+              id="formExample1"
+              class="form-control"
+              v-model="currentPassword"
+              placeholder="Password"
+            />
+            <span
+              class="material-symbols-outlined"
+              for="formExample1"
+              id="eye"
+              @click="ShowHide('formExample1', 'eye')"
+              >visibility</span
+            >
+          </div>
+          <div v-if="currentPasswordError" class="text-danger">
+            {{ currentPasswordError }}
+          </div>
         </div>
-        <div v-if="currentPasswordError" class="text-danger">
-          {{ currentPasswordError }}
-        </div>
-      </div>
 
-      <!-- New password input -->
-      <div class="form-outline mb-4">
-        <label class="form-label grey_text" for="formExample2"
-          >New Password</label
-        >
-        <div class="d-flex">
-          <input
-            type="password"
-            id="formExample2"
-            class="form-control"
-            v-model="newPassword"
-            placeholder="Password"
-          />
-          <span
-            class="material-symbols-outlined"
-            for="formExample2"
-            id="eye1"
-            @click="ShowHide('formExample2', 'eye1')"
-            >visibility</span
+        <!-- New password input -->
+        <div class="form-outline mb-4">
+          <label class="form-label grey_text" for="formExample2"
+            >New Password</label
           >
+          <div class="d-flex">
+            <input
+              type="password"
+              id="formExample2"
+              class="form-control"
+              v-model="newPassword"
+              placeholder="Password"
+            />
+            <span
+              class="material-symbols-outlined"
+              for="formExample2"
+              id="eye1"
+              @click="ShowHide('formExample2', 'eye1')"
+              >visibility</span
+            >
+          </div>
+          <div v-if="newPasswordError" class="text-danger">
+            {{ newPasswordError }}
+          </div>
         </div>
-        <div v-if="newPasswordError" class="text-danger">
-          {{ newPasswordError }}
-        </div>
-      </div>
 
-      <!-- Confirm Password input -->
-      <div class="form-outline mb-4">
-        <label class="form-label grey_text" for="formExample3"
-          >Confirm New Password</label
-        >
-        <div class="d-flex">
-          <input
-            type="password"
-            id="formExample3"
-            class="form-control"
-            v-model="confirmPassword"
-            placeholder="Password"
-          />
-          <span
-            class="material-symbols-outlined"
-            for="formExample3"
-            id="eye2"
-            @click="ShowHide('formExample3', 'eye2')"
-            >visibility</span
+        <!-- Confirm Password input -->
+        <div class="form-outline mb-4">
+          <label class="form-label grey_text" for="formExample3"
+            >Confirm New Password</label
           >
+          <div class="d-flex">
+            <input
+              type="password"
+              id="formExample3"
+              class="form-control"
+              v-model="confirmPassword"
+              placeholder="Password"
+            />
+            <span
+              class="material-symbols-outlined"
+              for="formExample3"
+              id="eye2"
+              @click="ShowHide('formExample3', 'eye2')"
+              >visibility</span
+            >
+          </div>
+          <div v-if="confirmPasswordError" class="text-danger">
+            {{ confirmPasswordError }}
+          </div>
         </div>
-        <div v-if="confirmPasswordError" class="text-danger">
-          {{ confirmPasswordError }}
-        </div>
-      </div>
 
-      <!-- Submit button -->
-      <button
-        type="button"
-        class="reset_btn my-4 p-2"
-        @click="ChangePassword()"
-      >
-        Reset Password
-      </button>
-      <!-- <div id="incorrect_text"></div> -->
-    </form>
-  </div>
+        <!-- Submit button -->
+        <button
+          type="button"
+          class="reset_btn my-4 p-2"
+          @click="ChangePassword()"
+        >
+          Reset Password
+        </button>
+        <!-- <div id="incorrect_text"></div> -->
+      </form>
+    </div>
+  </main>
+  
 </template>
 
 <script>
@@ -360,12 +363,16 @@ export default {
 </script>
 
 <style scoped>
-.reset_password {
-  width: 100%;
+.resetpwd {
   background-color: #f5f7ff;
   height: 100vh;
   z-index: 1;
 }
+/* .reset_password {
+  background-color: #f5f7ff;
+  height: 100vh;
+  z-index: 1;
+} */
 
 p {
   font-size: 14px;
