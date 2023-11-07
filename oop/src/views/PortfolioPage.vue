@@ -1,7 +1,7 @@
 <template>
-  <main>
-    <div>
-      <h1><b>Portfolio: {{portfolioId}}</b></h1>
+  <main class="portfolioPage">
+    <div class="border rounded mb-2 bg-light" >
+      <p class="text-l font-medium m-1 pl-2">Portfolio Name: <b class="text-primary">{{portfolioId}}</b></p>
     </div>
 
     <div class="row-section d-flex justify-content-between">
@@ -114,7 +114,9 @@ export default {
             }
           }
           // (summing all individual stocks in the portfolio then subtracting the last stock price) -1 
-          this.priceReturn = this.priceReturnList[this.priceReturnList.length-1][1];
+
+          //TO DO : UNCOMMENT THIS OUT!!
+          // this.priceReturn = this.priceReturnList[this.priceReturnList.length-1][1];
           this.percentageData = Number(((this.priceReturn - this.initialPrice) - 1).toFixed(2));
           this.value = this.formatTotalValue(this.priceReturn - this.initialPrice);
         }
@@ -128,6 +130,9 @@ export default {
 </script>
 
 <style scoped>
+.portfolioPage{
+  background: #F5F7FF;
+}
 .data-box {
   margin: 10px 0 10px 0;
   padding: 5px;

@@ -48,6 +48,7 @@ export default {
   width: 300px;
   height: 100px;
   text-align: center;
+  background-color: white;
 }
 p {
   margin: 0;
