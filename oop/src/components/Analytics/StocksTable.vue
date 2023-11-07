@@ -79,7 +79,7 @@ export default {
             this.updateProfitLossColour(profitLoss);
 
             const availableStocks = responses[1].data;
-            console.log(availableStocks);
+            // console.log(availableStocks);
             const stockSymbol = this.stocks[stockIndex].symbol;
             const stockName = this.getStockName(availableStocks, stockSymbol);
             this.stocks[stockIndex].symbol = stockSymbol + " | " + stockName;
