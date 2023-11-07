@@ -260,7 +260,7 @@ export default {
 
       const user_id = sessionStorage.getItem("user_id");
 
-      console.log("ID:" + user_id);
+      //console.log("ID:" + user_id);
 
       axios
         .get(`/portfolio/get-all/${user_id}`, config)
