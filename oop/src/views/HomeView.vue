@@ -50,7 +50,7 @@
         </div>
         <!-- Statistics and Performance Cards -->
         <div class="flex flex-row my-4 space-x-4 ml-4">
-          <portfolios-statistics-card :portfolios="portfolioList" :key="portfolioList"/>
+          <portfolios-statistics-card :portfolios="portfolioList" :change="totalPercentageChange" :key="portfolioList"/>
           <portfolio-performance-card title="Best Performing Portfolio" :details="allPercentageChanges[0]" :value="bestPortfolioValue"  v-if="allPercentageChanges.length > 0 "/>
           <portfolio-performance-card title="Worst Performing Portfolio" :details="allPercentageChanges[allPercentageChanges.length-1]" :value="worstPortfolioValue" v-if="allPercentageChanges.length > 0 "/>
         </div>
@@ -408,6 +408,15 @@ export default {
           (a, b) => b[1] - a[1]
       );
       return portfoliosPercentageChange;
+    }
+  },
+  computed: {
+    totalPercentageChange() {
+      let sum = 0;
+      console.log(Object.values(this.allPercentageChanges));
+      Object.values(this.allPercentageChanges).forEach(change => { sum += change[1] });
+      console.log(sum);
+      return sum;
     }
   }
 };
