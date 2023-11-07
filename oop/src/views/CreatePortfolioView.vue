@@ -1,6 +1,6 @@
 <template>
   <main class="aboutpage">
-    <h3>Create portfolio</h3>
+    <p class="text-xl font-bold	my-2">Create Portfolio</p>
     <form>
       <div class="row">
         <div

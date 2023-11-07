@@ -1,6 +1,6 @@
 <template>
   <main class="aboutpage">
-    <h3>Edit portfolio</h3>
+    <p class="text-xl font-bold my-2">Edit Portfolio</p>
     <div class="row">
       <div
         class="col p-4"
@@ -22,7 +22,8 @@
           </label>
           <input
             class="form-control"
-            type="number" min="0" 
+            type="number"
+            min="0"
             v-model="portfolioCapital"
           />
         </div>
@@ -73,12 +74,26 @@
 
               <!-- price -->
               <td>
-                <input min="0" :key="'existingPrice_' + index" disabled v-model="item.averagePrice" type="number" class="table-input" />
+                <input
+                  min="0"
+                  :key="'existingPrice_' + index"
+                  disabled
+                  v-model="item.averagePrice"
+                  type="number"
+                  class="table-input"
+                />
               </td>
 
               <!-- qty to purchase per stock -->
               <td>
-                <input min="0" :key="'existingQty_' + index" v-model="item.quantity" @change="changeQty(item)" type="number" class="table-input" />
+                <input
+                  min="0"
+                  :key="'existingQty_' + index"
+                  v-model="item.quantity"
+                  @change="changeQty(item)"
+                  type="number"
+                  class="table-input"
+                />
               </td>
 
               <td>
@@ -117,12 +132,27 @@
 
               <!-- price -->
               <td>
-                <input min="0" :key="'selectedPrice_' + index" :disabled="item.disableFields" v-model="item.selectedPrice" :placeholder="item.defaultPrice" type="number" class="table-input" />
+                <input
+                  min="0"
+                  :key="'selectedPrice_' + index"
+                  :disabled="item.disableFields"
+                  v-model="item.selectedPrice"
+                  :placeholder="item.defaultPrice"
+                  type="number"
+                  class="table-input"
+                />
               </td>
 
               <!-- qty to purchase per stock -->
               <td>
-                <input min="0" :key="'selectedQty_' + index" v-model="item.selectedQty" :disabled="item.disableFields" type="number" class="table-input" />
+                <input
+                  min="0"
+                  :key="'selectedQty_' + index"
+                  v-model="item.selectedQty"
+                  :disabled="item.disableFields"
+                  type="number"
+                  class="table-input"
+                />
               </td>
 
               <td>
@@ -463,17 +493,21 @@ export default {
       let totalPriceComputed = this.totalPriceComputed;
       var priceMatch = totalPriceComputed.match(/\$\d+(?:,\d{3})*(?:\.\d{2})?/); // match up to a billion e.g. $1,234,567,890.12
       if (priceMatch) {
-  
         // Extracted price as a string, e.g., "$25.99"
         var priceString = priceMatch[0];
 
         // Remove the "$" and "," sign and convert it to a double
         var priceTotal = priceString.replace("$", "");
         priceTotal = priceTotal.replace(",", "");
-      
+
         if (parseFloat(priceTotal) > this.portfolioCapital) {
-          this.showNotification("notification", "Error", `Total price cannot be more than capital price.`, "error");
-          return; 
+          this.showNotification(
+            "notification",
+            "Error",
+            `Total price cannot be more than capital price.`,
+            "error"
+          );
+          return;
         }
       }
 
@@ -605,35 +639,38 @@ export default {
 
         // Increase quantity of existing stocks and new stocks that are existing stocks
         if (this.existingStocks && this.existingStocks.length > 0) {
-          portfolioData.action = 'Increase';
+          portfolioData.action = "Increase";
           const addNewExistingStocks = [];
 
           // if you increase the qty for an existing stock
-          this.existingStocks.forEach(stock => {
+          this.existingStocks.forEach((stock) => {
             const quantityChange = stock.quantity - stock.ogQuantity;
             if (quantityChange !== 0) {
               addNewExistingStocks.push({
                 symbol: stock.symbol,
                 quantity: quantityChange,
                 dateAdded: this.formatDate(stock.dateAdded),
-                price: stock.averagePrice
+                price: stock.averagePrice,
               });
             }
-          })
+          });
 
           // Check if any stocks had quantity changes
           if (addNewExistingStocks.length > 0) {
             portfolioData.stocks = addNewExistingStocks;
 
             // Call the API to update the portfolio
-            await this.updatePortfolioAPI(portfolioData, 'NewExistingIncrease');
+            await this.updatePortfolioAPI(portfolioData, "NewExistingIncrease");
           }
 
           // find existing stock (should be a value that appear twice in mergeStocks)
           // increase quantity if you add a new line below
           const stocksWithQuantityChange = [];
-          const duplicateStocks = this.findDuplicateStocks(this.mergeStocks(), "symbol");
-          duplicateStocks.forEach(stock => {
+          const duplicateStocks = this.findDuplicateStocks(
+            this.mergeStocks(),
+            "symbol"
+          );
+          duplicateStocks.forEach((stock) => {
             stocksWithQuantityChange.push({
               symbol: stock.symbol,
               quantity: stock.selectedQty,
@@ -652,28 +689,35 @@ export default {
             portfolioData.stocks = stocksWithQuantityChange;
 
             // Call the API to update the portfolio
-            await this.updatePortfolioAPI(portfolioData, 'ExistingIncrease');
+            await this.updatePortfolioAPI(portfolioData, "ExistingIncrease");
           }
         }
 
         // Add new stocks that do not exist in existing stocks
         if (this.newSelectedStocks && this.newSelectedStocks.length > 0) {
-          const newStocksToAdd = this.newSelectedStocks.filter(newStock => {
+          const newStocksToAdd = this.newSelectedStocks.filter((newStock) => {
             // Check if the new stock with the same symbol exists in existing stocks
-            return !this.existingStocks.some(existingStock => existingStock.symbol === newStock.symbol);
+            return !this.existingStocks.some(
+              (existingStock) => existingStock.symbol === newStock.symbol
+            );
           });
 
           if (newStocksToAdd.length > 0) {
-            portfolioData.action = 'Add';
-            portfolioData.stocks = newStocksToAdd.map(stock => ({
+            portfolioData.action = "Add";
+            portfolioData.stocks = newStocksToAdd.map((stock) => ({
               symbol: stock.symbol,
               quantity: stock.selectedQty,
               dateAdded: this.formatDate(stock.selectedDate),
-              price: stock.selectedPrice === null || isNaN(stock.selectedPrice) || stock.selectedPrice === "" ? stock.defaultPrice : stock.selectedPrice
+              price:
+                stock.selectedPrice === null ||
+                isNaN(stock.selectedPrice) ||
+                stock.selectedPrice === ""
+                  ? stock.defaultPrice
+                  : stock.selectedPrice,
             }));
 
             // Call the API only if there are new stocks to add
-            await this.updatePortfolioAPI(portfolioData, 'Add');
+            await this.updatePortfolioAPI(portfolioData, "Add");
           }
         }
 
@@ -695,13 +739,27 @@ export default {
 
       try {
         //console.log(portfolioData);
-        const response = await axios.post("/portfolio/update", portfolioData, config);
+        const response = await axios.post(
+          "/portfolio/update",
+          portfolioData,
+          config
+        );
         if (response.status === 200) {
           if (action == "NewExistingIncrease") {
-            this.showNotification("notification", "Success", `Quantity for newly added existing stocks was increased successfully!`, "success");
+            this.showNotification(
+              "notification",
+              "Success",
+              `Quantity for newly added existing stocks was increased successfully!`,
+              "success"
+            );
           }
           if (action == "ExistingIncrease") {
-            this.showNotification("notification", "Success", `Quantity for existing stocks increased successfully!`, "success");
+            this.showNotification(
+              "notification",
+              "Success",
+              `Quantity for existing stocks increased successfully!`,
+              "success"
+            );
           }
           if (action == "Add") {
             this.showNotification(
@@ -723,16 +781,36 @@ export default {
       } catch (error) {
         console.error(error);
         if (action == "NewExistingIncrease") {
-          this.showNotification("notification", "Error", `Failed to increase quantity for newly added existing stocks. Please try again later.`, "error");
+          this.showNotification(
+            "notification",
+            "Error",
+            `Failed to increase quantity for newly added existing stocks. Please try again later.`,
+            "error"
+          );
         }
         if (action == "ExistingIncrease") {
-          this.showNotification("notification", "Error", `Failed to increase quantity for existing stocks. Please try again later.`, "error");
+          this.showNotification(
+            "notification",
+            "Error",
+            `Failed to increase quantity for existing stocks. Please try again later.`,
+            "error"
+          );
         }
         if (action == "Add") {
-          this.showNotification("notification", "Error", `Failed to add to the portfolio. Please try again later.`, "error");
+          this.showNotification(
+            "notification",
+            "Error",
+            `Failed to add to the portfolio. Please try again later.`,
+            "error"
+          );
         }
         if (action == "Remove") {
-          this.showNotification("notification", "Error", `Failed to remove existing stocks. Please try again later.`, "error");
+          this.showNotification(
+            "notification",
+            "Error",
+            `Failed to remove existing stocks. Please try again later.`,
+            "error"
+          );
         }
         //this.showNotification("notification", "Error", "Failed to update the portfolio. Please try again later.", "error");
       }

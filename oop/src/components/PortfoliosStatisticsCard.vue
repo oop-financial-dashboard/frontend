@@ -1,5 +1,5 @@
 <template>
-  <div class="card w-68 h-56 bg-white border-1 min-h-min shadow-xl shadow-slate-400">
+  <div class="card w-68 h-56 bg-white rounded-xl min-h-min">
     <div class="card-body flex flex-col space-y-3">
       <p class="text-lg font-bold">Overall Portfolio Statistics</p>
 
@@ -22,17 +22,14 @@
         <p>Total PnL</p>
         <p>123,456</p>
       </div>
-
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "PortfoliosStatisticsCard"
-}
+  name: "PortfoliosStatisticsCard",
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

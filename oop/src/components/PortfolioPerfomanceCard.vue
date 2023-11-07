@@ -1,5 +1,5 @@
 <template>
-  <div class="card w-68 h-56 bg-white border-1 min-h-min shadow-xl shadow-slate-400">
+  <div class="card w-68 h-56 bg-white border-1 min-h-min rounded-xl">
     <div class="card-body flex flex-col space-y-3">
       <p class="text-lg font-bold">{{ title }}</p>
       <p class="text-lg ">Portfolio Name</p>

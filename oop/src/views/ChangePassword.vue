@@ -2,7 +2,7 @@
   <div class="reset_password p-3">
     <!-- Form -->
     <form class="p-3 py-5">
-      <h4 class="pb-2">Change Password</h4>
+      <p class="text-3xl font-bold" style="font-size:large">Change Password</p>
       <p class="grey_text">Enter your passwords below</p>
 
       <!-- Old password input -->
@@ -387,7 +387,7 @@ form {
 
 .reset_btn {
   width: 70%;
-  background-color: #0A1B39;
+  background-color: #0a1b39;
   color: white;
   border-radius: 5px;
 }
