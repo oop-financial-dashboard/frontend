@@ -15,10 +15,10 @@
       </div>
     </div>
 
-    <div class="flex flex-row my-4 space-x-4 ml-2">
-      <portfolios-statistics-card class="border"/>
-      <portfolio-performance-card class="border" title="Best Performing Portfolio" />
-      <portfolio-performance-card class="border" title="Worst Performing Portfolio" />
+    <div class="flex flex-row my-4 space-x-4 ml-4">
+      <portfolios-statistics-card :portfolios="portfolioList" :key="portfolioList"/>
+      <portfolio-performance-card title="Best Performing Portfolio" />
+      <portfolio-performance-card title="Worst Performing Portfolio" />
     </div>
 
 
@@ -127,11 +127,12 @@ export default {
       display: false,
       totalAsset: 0,
       popularStocks: [],
+      isDataLoaded: true
     };
   },
-  mounted() {
+  async created() {
     // this.getAllPortfolios();
-    this.retrieveUserDetails();
+    await this.retrieveUserDetails();
   },
   methods: {
     checkPortfolioExists(portfolios) {
@@ -299,6 +300,12 @@ export default {
     openPortfolio() {
       this.$router.push("/homepage/portfolio_page");
     },
+  },
+  computed: {
+    getPortfolioList() {
+      console.log("Computing portfolio list length ---->", this.portfolioList);
+      return this.portfolioList;
+    }
   },
 };
 </script>

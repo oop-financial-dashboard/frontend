@@ -5,22 +5,22 @@
 
       <div class="flex flex-row justify-between">
         <p class="">Total Value</p>
-        <p class="font-medium">$123,456,789</p>
+        <p class="font-medium">${{ totalValue }}</p>
       </div>
 
       <div class="flex flex-row justify-between">
-        <p>Number of Portfolio</p>
-        <p>18</p>
+        <p>Number of Portfolios</p>
+        <p>{{ numOfPortfolios }}</p>
       </div>
 
       <div class="flex flex-row justify-between">
         <p>% Change</p>
-        <p>2.54</p>
+        <p>{{ percentageChange }}</p>
       </div>
 
       <div class="flex flex-row justify-between">
         <p>Total PnL</p>
-        <p>123,456</p>
+        <p>{{ totalPnL }}</p>
       </div>
     </div>
   </div>
@@ -29,7 +29,33 @@
 <script>
 export default {
   name: "PortfoliosStatisticsCard",
-};
+  props: {
+    portfolios: Object
+  },
+  data() {
+    return {
+      totalValue: 0,
+      numOfPortfolios: 0,
+      percentageChange: 0,
+      totalPnL: 0
+    }
+  },
+  created() {
+    this.numOfPortfolios = Object.entries(this.portfolios).length;
+    this.setTotalValue(this.portfolios);
+  },
+  methods: {
+    setTotalValue(portfolios) {
+      const portfoliosData = Object.values(portfolios);
+      let value = 0;
+      portfoliosData.forEach(data => {
+        value += data.totalValue;
+      });
+      value = Number((value).toFixed(0));
+      this.totalValue = (value).toLocaleString();
+    }
+  }
+}
 </script>
 
 <style scoped></style>
