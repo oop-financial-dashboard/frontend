@@ -307,7 +307,11 @@ export default {
         const response = await axios.post(`/users/user-details`, data, config);
 
         if (response.status === 200) {
+          console.log("CHECK HOMEVIEW RESPONSE FROM USER", response.data)
           sessionStorage.setItem("user_id", response.data.id);
+          sessionStorage.setItem("firstname", response.data.firstname);
+          sessionStorage.setItem("lastname", response.data.lastname);
+          sessionStorage.setItem("role", response.data.role);
           console.log(sessionStorage.getItem("user_id"));
           // Now that the user-details API has completed, call getAllPortfolios
           await this.getAllPortfolios();

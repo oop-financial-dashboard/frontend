@@ -19,7 +19,7 @@
         <input
           class="form-control"
           type="text"
-          value="Disabled readonly input"
+          :value="firstname"
           aria-label="Disabled input example"
           disabled
           readonly
@@ -30,7 +30,7 @@
         <input
           class="form-control"
           type="text"
-          value="Disabled readonly input"
+          :value="lastname"
           aria-label="Disabled input example"
           disabled
           readonly
@@ -41,7 +41,18 @@
         <input
           class="form-control"
           type="text"
-          value="Disabled readonly input"
+          :value="userID"
+          aria-label="Disabled input example"
+          disabled
+          readonly
+        />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Role:</label>
+        <input
+          class="form-control"
+          type="text"
+          :value="role"
           aria-label="Disabled input example"
           disabled
           readonly
@@ -52,7 +63,7 @@
         <input
           class="form-control"
           type="text"
-          value="Disabled readonly input"
+          :value="email"
           aria-label="Disabled input example"
           disabled
           readonly
@@ -67,44 +78,21 @@
 </template>
 
 <script>
-import axios from "axios";
+// import axios from "axios";
 export default {
+  data() {
+    return {
+      email: sessionStorage.getItem("email"),
+      userID : sessionStorage.getItem("user_id"),
+      firstname: sessionStorage.getItem("firstname"),
+      lastname: sessionStorage.getItem("lastname"),
+      role: sessionStorage.getItem("role"),
+    };
+  },
+
   methods: {
     ChangePassword() {
       this.$router.push("/ChangePassword");
-    },
-    async retrieveUserDetails() {
-      const data = {
-        email: sessionStorage.getItem("email"),
-      };
-
-      const token = sessionStorage.getItem("token");
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
-      try {
-        const response = await axios.post(`/users/user-details`, data, config);
-
-        if (response.status === 200) {
-          sessionStorage.setItem("user_id", response.data.id);
-          console.log(sessionStorage.getItem("user_id"));
-          // Now that user-details API has completed, call getAllPortfolios
-          await this.getAllPortfolios();
-        }
-      } catch (error) {
-        console.error(error);
-        // Handle the error here
-        this.showNotification(
-          "notification",
-          "Error",
-          "Failed to retrieve user details. Please try again later.",
-          "error"
-        );
-      }
     },
   },
 };
