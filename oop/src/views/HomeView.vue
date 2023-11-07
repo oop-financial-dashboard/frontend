@@ -118,9 +118,10 @@
         </div>
         <!-- Statistics and Performance Cards -->
         <div class="flex flex-row my-4 space-x-4 ml-4">
-          <portfolios-statistics-card :portfolios="portfolioList" :change="totalPercentageChange" :key="portfolioList" class="border"/>
-          <portfolio-performance-card title="Best Performing Portfolio" :details="allPercentageChanges[0]" :value="bestPortfolioValue"  v-if="allPercentageChanges.length > 0 " class="border"/>
-          <portfolio-performance-card title="Worst Performing Portfolio" :details="allPercentageChanges[allPercentageChanges.length-1]" :value="worstPortfolioValue" v-if="allPercentageChanges.length > 0 " class="border"/>
+          <portfolios-statistics-card :portfolios="portfolioList" :change="totalPercentageChange" :key="portfolioList" v-if="allPercentageChanges.length > 0" class="border"/>
+          <blank-component class="border" v-else/>
+          <portfolio-performance-card title="Best Performing Portfolio" :details="allPercentageChanges[0]" :value="bestPortfolioValue"  v-if="allPercentageChanges.length > 0" class="border"/>
+          <portfolio-performance-card title="Worst Performing Portfolio" :details="allPercentageChanges[allPercentageChanges.length-1]" :value="worstPortfolioValue" v-if="allPercentageChanges.length > 1" class="border"/>
         </div>
       </div>
       <!-- Container of Stock Rate Chart -->
@@ -230,9 +231,11 @@ import { notify } from "@kyvg/vue3-notification";
 import PortfolioPerformanceCard from "@/components/PortfolioPerfomanceCard.vue";
 import StockRateChart from "@/components/StockRateChart.vue";
 import PortfoliosStatisticsCard from "@/components/PortfoliosStatisticsCard.vue";
+import BlankComponent from "@/components/Analytics/BlankComponent.vue";
 
 export default {
   components: {
+    BlankComponent,
     PortfoliosStatisticsCard,
     StockRateChart,
     PortfolioPerformanceCard,

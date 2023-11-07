@@ -4,10 +4,10 @@
       <p class="text-lg font-bold">{{ title }}</p>
       <p v-if="details" class="text-lg">{{ name }}</p>
 
-      <hr
-        class="mb-0 mt-0 rounded header-line"
-        :style="{ borderColor: getTitleColor() }"
-      />
+<!--      <hr-->
+<!--        class="mb-0 mt-0 rounded header-line"-->
+<!--        :style="{ borderColor: getTitleColor() }"-->
+<!--      />-->
       <p class="text-lg">Portfolio Name</p>
       <div class="flex flex-row justify-between">
         <p class="text-blue-600">${{ portfolioValue }}</p>
@@ -32,7 +32,7 @@ export default {
   props: {
     title: String,
     details: Array,
-    value: Number,
+    value: String
   },
   created() {
     this.name = this.details[0];
@@ -48,8 +48,6 @@ export default {
   },
   methods: {
     displayPortfolioValue(value) {
-      // value = Number((value).toFixed(0));
-      // this.portfolioValue = (value).toLocaleString();
       this.portfolioValue = value;
     },
   },
@@ -62,16 +60,16 @@ export default {
       // portfolio: Object;
     },
     methods: {
-      getTitleColor() {
-        if (this.title === "Best Performing Portfolio") {
-          return "#29CC97"; // Green color
-        } else if (this.title === "Worst Performing Portfolio") {
-          return "#FF616B"; // Red color
-        } else {
-          // Default color if neither of the conditions is met
-          return "#000000"; // Black color
-        }
-      },
+      // getTitleColor() {
+      //   if (this.title === "Best Performing Portfolio") {
+      //     return "#29CC97"; // Green color
+      //   } else if (this.title === "Worst Performing Portfolio") {
+      //     return "#FF616B"; // Red color
+      //   } else {
+      //     // Default color if neither of the conditions is met
+      //     return "#000000"; // Black color
+      //   }
+      // },
     },
   },
 };
