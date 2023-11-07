@@ -15,7 +15,7 @@
 
       <div class="flex flex-row justify-between">
         <p>Change</p>
-        <p :class="[change > 0 ? 'text-green-600' : 'text-red-600']">{{ percentageChange }}%</p>
+        <p :class="[change > 0 ? 'text-green-600' : 'text-red-600']">{{ setPercentageChange }}%</p>
       </div>
 
       <div class="flex flex-row justify-between">
@@ -44,7 +44,7 @@ export default {
   created() {
     this.numOfPortfolios = Object.entries(this.portfolios).length;
     this.setTotalValue(this.portfolios);
-    this.setPercentageChange(this.change);
+    // this.setPercentageChange(this.change);
   },
   methods: {
     setTotalValue(portfolios) {
@@ -55,12 +55,16 @@ export default {
       });
       value = Number((value).toFixed(0));
       this.totalValue = (value).toLocaleString();
-    },
-    setPercentageChange(value) {
-      if (value > 0) {
-        this.percentageChange = '+' + Number((value).toFixed(2));
+    }
+  },
+  computed: {
+    setPercentageChange() {
+      console.log(this.change);
+      if (this.change > 0) {
+       return '+' + Number((this.change).toFixed(2));
+      } else {
+        return Number((this.change).toFixed(2));
       }
-      this.percentageChange = '+' + Number((value).toFixed(2));
     }
   }
 }

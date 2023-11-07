@@ -413,9 +413,9 @@ export default {
   computed: {
     totalPercentageChange() {
       let sum = 0;
-      console.log(Object.values(this.allPercentageChanges));
+      // console.log(Object.values(this.allPercentageChanges));
       Object.values(this.allPercentageChanges).forEach(change => { sum += change[1] });
-      console.log(sum);
+      // console.log(sum);
       return sum;
     }
   }
