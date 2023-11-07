@@ -1,6 +1,49 @@
 <template>
   <main class="homepage">
     <div>
+      <h1>Latest News</h1>
+    </div>
+    <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <img src="../assets/laptop.jpeg" class="d-block w-100" alt="...">
+          <div class="carousel-caption center-caption">
+            <h3 class="caption-title">{{ articleTitles[0] }}</h3>
+            <h5 class="caption-title truncated-summary">{{ articleSummary[0] }}</h5>
+            <!-- <a :href="articleURLs[0]" target="_blank">Read more</a> -->
+            <button @click="openArticle(articleURLs[0])" class="btn btn-primary btncolor">More Info</button>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img src="../assets/screen.jpeg" class="d-block w-100" alt="...">
+          <div class="carousel-caption center-caption">
+            <h3 class="caption-title">{{ articleTitles[1] }}</h3>
+            <h5 class="caption-title truncated-summary">{{ articleSummary[1] }}</h5>
+            <button @click="openArticle(articleURLs[1])" class="btn btn-primary btncolor">More Info</button>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img src="../assets/bitcoin-to-usd.jpeg" class="d-block w-100" alt="...">
+          <div class="carousel-caption center-caption">
+            <h3 class="caption-title">{{ articleTitles[2] }}</h3>
+            <h5 class="caption-title truncated-summary">{{ articleSummary[2] }}</h5>
+            <button @click="openArticle(articleURLs[2])" class="btn btn-primary btncolor">More Info</button>
+          </div>
+        </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+        
+      </button>
+      
+    </div>
+
+    <div>
       <h1>My Portfolio</h1>
     </div>
 
@@ -64,12 +107,16 @@ import { notify } from "@kyvg/vue3-notification";
 export default {
   data() {
     return {
-      portfolioList: []
+      portfolioList: [],
+      articleTitles: [],
+      articleURLs: [],
+      articleSummary: [],
     }
   },
   mounted() {
     //this.getAllPortfolios();
     this.retrieveUserDetails();
+    this.populateCarousel();
   },
   methods: {
     navigateToDetails(selectedPortfolio, portfolioId) {
@@ -177,7 +224,40 @@ export default {
     },
     openPortfolio(){
       this.$router.push("/homepage/portfolio_page");
-    }
+    },
+
+    async populateCarousel() {
+      axios.get(`https://www.alphavantage.co/query?function=NEWS_SENTIMENT&financial_markets&sort=LATEST&apikey=769DTIWCBUJZZAYW`)
+      .then((response) => {
+          console.log(response);
+          if (response.status === 200) {
+            this.data = response.data.feed;
+            // console.log(this.data[0]); // array of articles
+            // console.log(this.data[0].title); // title of first article
+            // console.log(this.data[0].url); //url of first article
+            // Extract the top 3 articles
+            this.articleTitles = this.data.slice(0, 3).map((article) => article.title);
+            this.articleURLs = this.data.slice(0, 3).map((article) => article.url);
+            this.articleSummary = this.data.slice(0, 3).map((article) => article.summary);
+
+            console.log(this.articleTitles);
+            console.log(this.articleURLs);
+            console.log(this.articleSummary);
+
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          // this.showNotification("notification", "Error", "Failed to retrieve portfolios. Please try again later.", "error");
+        })
+    },
+
+    openArticle(articleURL) {
+      // Open the article URL in a new tab or window
+      window.open(articleURL, '_blank');
+    },
+
+
   },
 };
 </script>
@@ -194,5 +274,34 @@ export default {
 }
 .clickable {
   cursor: pointer;
+}
+
+.center-caption {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 70%;
+}
+
+.caption-title {
+  color: black; /* Set the text color to black */
+}
+
+/* Add a class to style truncated article summaries */
+.truncated-summary {
+  max-height: 2.8em; /* Adjust as needed to allow 2 lines of text */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Number of lines to display */
+  -webkit-box-orient: vertical;
+  color: #2b2b2b;
+}
+
+.btncolor{
+  background-color: #1c2b36;
+  border-color: #1c2b36;
 }
 </style>
