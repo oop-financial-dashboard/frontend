@@ -51,8 +51,8 @@
         <!-- Statistics and Performance Cards -->
         <div class="flex flex-row my-4 space-x-4 ml-4">
           <portfolios-statistics-card :portfolios="portfolioList" :key="portfolioList"/>
-          <portfolio-performance-card title="Best Performing Portfolio" />
-          <portfolio-performance-card title="Worst Performing Portfolio" />
+          <portfolio-performance-card title="Best Performing Portfolio" :details="allPercentageChanges[0]" :value="bestPortfolioValue"  v-if="allPercentageChanges.length > 0 "/>
+          <portfolio-performance-card title="Worst Performing Portfolio" :details="allPercentageChanges[allPercentageChanges.length-1]" :value="worstPortfolioValue" v-if="allPercentageChanges.length > 0 "/>
         </div>
       </div>
       <!-- Container of Stock Rate Chart -->
@@ -174,9 +174,12 @@ export default {
       display: false,
       totalAsset: 0,
       popularStocks: [],
-      isDataLoaded: true
+      allPercentageChanges: [],
+      bestPortfolioValue: 0,
+      worstPortfolioValue: 0
     };
   },
+ // The code snippet calls the function "populateCarousel" and then waits for the function "retrieveUserDetails" to finish executing before moving on.
   async created() {
     // this.getAllPortfolios();
     // this.retrieveUserDetails();
@@ -261,19 +264,25 @@ export default {
 
       axios
         .get(`/portfolio/get-all/${user_id}`, config)
-        .then((response) => {
-          console.log(response);
+        .then(async (response) => {
           if (response.status === 200) {
+            console.log(response.data.portfolios);
+            let portfoliosInitialValues = {};
             this.portfolioList = response.data.portfolios;
             this.checkPortfolioExists(this.portfolioList);
             for (const key in this.portfolioList) {
-              console.log(this.portfolioList[key]);
               this.totalAsset += this.portfolioList[key].totalValue;
+              portfoliosInitialValues[key] = this.portfolioList[key].totalValue;
             }
             sessionStorage.setItem(
-              "portfolioList",
-              JSON.stringify(this.portfolioList)
+                "portfolioList",
+                JSON.stringify(this.portfolioList)
             );
+            //   TODO: Call function here to get portfolio latest prices
+            const portfolioLatestPrices = await this.getAllPortfoliosLatestPrice(this.portfolioList, user_id);
+            this.allPercentageChanges = this.calculateAllPortfoliosPercentageChange(portfoliosInitialValues, portfolioLatestPrices);
+            this.bestPortfolioValue = Number(portfolioLatestPrices[this.allPercentageChanges[0][0]][1].toFixed(0)).toLocaleString();
+            this.worstPortfolioValue = Number(portfolioLatestPrices[this.allPercentageChanges[this.allPercentageChanges.length-1][0]][1].toFixed(0)).toLocaleString();
           }
         })
         .catch((err) => {
@@ -353,7 +362,6 @@ export default {
     async populateCarousel() {
       axios.get(`https://www.alphavantage.co/query?function=NEWS_SENTIMENT&financial_markets&sort=LATEST&apikey=769DTIWCBUJZZAYW`)
       .then((response) => {
-          console.log(response);
           if (response.status === 200) {
             this.data = response.data.feed;
             // console.log(this.data[0]); // array of articles
@@ -363,11 +371,6 @@ export default {
             this.articleTitles = this.data.slice(0, 3).map((article) => article.title);
             this.articleURLs = this.data.slice(0, 3).map((article) => article.url);
             this.articleSummary = this.data.slice(0, 3).map((article) => article.summary);
-
-            console.log(this.articleTitles);
-            console.log(this.articleURLs);
-            console.log(this.articleSummary);
-
           }
         })
         .catch((err) => {
@@ -380,15 +383,33 @@ export default {
       // Open the article URL in a new tab or window
       window.open(articleURL, '_blank');
     },
-
-
-  },
-  computed: {
-    getPortfolioList() {
-      console.log("Computing portfolio list length ---->", this.portfolioList);
-      return this.portfolioList;
+    async getAllPortfoliosLatestPrice(portfolios, userID) {
+      const portfolioIds = Object.keys(portfolios);
+      const allPortfoliosHistoricalValues = await Promise.allSettled(portfolioIds.map(pId => axios(`/portfolio/get-historicals/${userID}/${pId}`).then( ({data}) => data) ));
+      let allPortfoliosLatestPrice = {};
+      for (let i=0; i < portfolioIds.length; i++) {
+        const portfolioId = portfolioIds[i];
+        let portfolioHistoricalPrices = allPortfoliosHistoricalValues[i].value.data[portfolioId];
+        let latestPrice = portfolioHistoricalPrices[portfolioHistoricalPrices.length-1];
+        allPortfoliosLatestPrice[portfolioId] = latestPrice;
+      }
+      return allPortfoliosLatestPrice;
+    },
+    calculateAllPortfoliosPercentageChange(initialPrices, latestPrices) {
+      let portfoliosPercentageChange = {};
+      Object.entries(latestPrices).forEach(entry => {
+        const id = entry[0];
+        const latestPrice = entry[1][1];
+        const initalPrice = initialPrices[id];
+        const change = ((latestPrice-initalPrice)*100)/initalPrice;
+        portfoliosPercentageChange[id] = change;
+      })
+      portfoliosPercentageChange = Object.entries(portfoliosPercentageChange).sort(
+          (a, b) => b[1] - a[1]
+      );
+      return portfoliosPercentageChange;
     }
-  },
+  }
 };
 </script>
 

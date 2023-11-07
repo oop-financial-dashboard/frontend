@@ -30,7 +30,7 @@
 export default {
   name: "PortfoliosStatisticsCard",
   props: {
-    portfolios: Object
+    portfolios: Object,
   },
   data() {
     return {
