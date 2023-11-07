@@ -1,6 +1,8 @@
 <template>
   <main class="aboutpage">
-    <h3>Settings</h3>
+    <div>
+      <p class="text-xl font-bold m-2">Settings</p>
+    </div>
 
     <div
       class="col p-4"

@@ -1,38 +1,73 @@
 <template>
-  <div class="card w-68 h-56 bg-white border-1 min-h-min shadow-xl shadow-slate-400">
+  <div class="card w-68 h-56 bg-white rounded-xl min-h-min">
     <div class="card-body flex flex-col space-y-3">
       <p class="text-lg font-bold">Overall Portfolio Statistics</p>
 
       <div class="flex flex-row justify-between">
         <p class="">Total Value</p>
-        <p class="font-medium">$123,456,789</p>
+        <p class="font-medium">${{ totalValue }}</p>
       </div>
 
       <div class="flex flex-row justify-between">
-        <p>Number of Portfolio</p>
-        <p>18</p>
+        <p>Number of Portfolios</p>
+        <p>{{ numOfPortfolios }}</p>
       </div>
 
       <div class="flex flex-row justify-between">
-        <p>% Change</p>
-        <p>2.54</p>
+        <p>Change</p>
+        <p :class="[change > 0 ? 'text-green-600' : 'text-red-600']">{{ setPercentageChange }}%</p>
       </div>
 
       <div class="flex flex-row justify-between">
         <p>Total PnL</p>
-        <p>123,456</p>
+        <p>{{ totalPnL }}</p>
       </div>
-
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "PortfoliosStatisticsCard"
+  name: "PortfoliosStatisticsCard",
+  props: {
+    portfolios: Object,
+    change: Number,
+  },
+  data() {
+    return {
+      totalValue: 0,
+      numOfPortfolios: 0,
+      percentageChange: 0,
+      totalPnL: 0
+    }
+  },
+  created() {
+    this.numOfPortfolios = Object.entries(this.portfolios).length;
+    this.setTotalValue(this.portfolios);
+    // this.setPercentageChange(this.change);
+  },
+  methods: {
+    setTotalValue(portfolios) {
+      const portfoliosData = Object.values(portfolios);
+      let value = 0;
+      portfoliosData.forEach(data => {
+        value += data.totalValue;
+      });
+      value = Number((value).toFixed(0));
+      this.totalValue = (value).toLocaleString();
+    }
+  },
+  computed: {
+    setPercentageChange() {
+      console.log(this.change);
+      if (this.change > 0) {
+       return '+' + Number((this.change).toFixed(2));
+      } else {
+        return Number((this.change).toFixed(2));
+      }
+    }
+  }
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

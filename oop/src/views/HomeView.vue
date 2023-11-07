@@ -3,124 +3,109 @@
 
     <div>
       <!-- <h1>My Portfolio</h1> -->
-      <h3 class="m-2">Welcome back!</h3>
+      <h3 class="text-xl font-bold m-3">Welcome back!</h3>
     </div>
 
-    <div>
-      <h1 class="m-2">Latest News</h1>
-    </div>
-
-    <div class="d-flex flex-row mt-3 justify-between">
-      <div class="profile m-2">
-        <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
-          <div class="carousel-inner">
-            <div class="carousel-item active">
-              <img src="../assets/laptop.jpeg" class="d-block w-100" alt="...">
-              <div class="carousel-caption center-caption">
-                <h3 class="caption-title mb-3">{{ articleTitles[0] }}</h3>
-                <h5 class="caption-title truncated-summary mb-3">{{ articleSummary[0] }}</h5>
-                <!-- <a :href="articleURLs[0]" target="_blank">Read more</a> -->
-                <button @click="openArticle(articleURLs[0])" class="btn btn-primary btncolor">More Info</button>
+    <div class="flex flex-row">
+      <!-- Container of News + Information Cards -->
+      <div class="flex flex-col space-y-4 w-2/3">
+        <div class="mx-3 rounded-xl">
+          <div id="carouselExampleAutoplaying" class="carousel slide rounded-xl" data-bs-ride="carousel">
+            <div class="carousel-inner rounded-xl">
+              <div class="carousel-item active rounded-xl">
+                <img src="../assets/laptop.jpeg" class="d-block w-100 rounded-xl" alt="...">
+                <div class="carousel-caption center-caption">
+                  <h3 class="caption-title font-bold mb-3">{{ articleTitles[0] }}</h3>
+                  <h5 class="caption-title truncated-summary mb-3">{{ articleSummary[0] }}</h5>
+                  <!-- <a :href="articleURLs[0]" target="_blank">Read more</a> -->
+                  <button @click="openArticle(articleURLs[0])" class="btn btn-primary btncolor">More Info</button>
+                </div>
+              </div>
+              <div class="carousel-item">
+                <img src="../assets/screen.jpeg" class="d-block w-100" alt="...">
+                <div class="carousel-caption center-caption">
+                  <h3 class="caption-title font-bold mb-3">{{ articleTitles[1] }}</h3>
+                  <h5 class="caption-title truncated-summary mb-3">{{ articleSummary[1] }}</h5>
+                  <button @click="openArticle(articleURLs[1])" class="btn btn-primary btncolor">More Info</button>
+                </div>
+              </div>
+              <div class="carousel-item">
+                <img src="../assets/bitcoin-to-usd.jpeg" class="d-block w-100" alt="...">
+                <div class="carousel-caption center-caption">
+                  <h3 class="caption-title font-bold mb-3">{{ articleTitles[2] }}</h3>
+                  <h5 class="caption-title truncated-summary mb-3">{{ articleSummary[2] }}</h5>
+                  <button @click="openArticle(articleURLs[2])" class="btn btn-primary btncolor">More Info</button>
+                </div>
               </div>
             </div>
-            <div class="carousel-item">
-              <img src="../assets/screen.jpeg" class="d-block w-100" alt="...">
-              <div class="carousel-caption center-caption">
-                <h3 class="caption-title mb-3">{{ articleTitles[1] }}</h3>
-                <h5 class="caption-title truncated-summary mb-3">{{ articleSummary[1] }}</h5>
-                <button @click="openArticle(articleURLs[1])" class="btn btn-primary btncolor">More Info</button>
-              </div>
-            </div>
-            <div class="carousel-item">
-              <img src="../assets/bitcoin-to-usd.jpeg" class="d-block w-100" alt="...">
-              <div class="carousel-caption center-caption">
-                <h3 class="caption-title mb-3">{{ articleTitles[2] }}</h3>
-                <h5 class="caption-title truncated-summary mb-3">{{ articleSummary[2] }}</h5>
-                <button @click="openArticle(articleURLs[2])" class="btn btn-primary btncolor">More Info</button>
-              </div>
-            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
           </div>
-          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-            
-          </button>
-          
+        </div>
+        <!-- Statistics and Performance Cards -->
+        <div class="flex flex-row my-4 space-x-4 ml-4">
+          <portfolios-statistics-card :portfolios="portfolioList" :change="totalPercentageChange" :key="portfolioList"/>
+          <portfolio-performance-card title="Best Performing Portfolio" :details="allPercentageChanges[0]" :value="bestPortfolioValue"  v-if="allPercentageChanges.length > 0 "/>
+          <portfolio-performance-card title="Worst Performing Portfolio" :details="allPercentageChanges[allPercentageChanges.length-1]" :value="worstPortfolioValue" v-if="allPercentageChanges.length > 0 "/>
         </div>
       </div>
-
-      <div>
-        <stock-rate-chart  class="m-2" :popular-stocks="popularStocks.slice(0, 5)" />
+      <!-- Container of Stock Rate Chart -->
+      <div class="w-1/3">
+          <stock-rate-chart
+              class="border ml-2"
+              :popular-stocks="popularStocks.slice(0, 8)"
+          />
       </div>
     </div>
 
-    <div class="flex flex-row my-4 space-x-4">
-      <portfolios-statistics-card />
-      <portfolio-performance-card title="Best Performing Portfolio" />
-      <portfolio-performance-card title="Worst Performing Portfolio" />
-    </div>
 
-    <div class="mt-5">
-      <div class="d-flex justify-content-between">
-        <b>Click portfolio name to view portfolio details</b>
-      </div>
-    </div>
-    
-    <div style="background-color: white; border-radius: 10px" class="p-4 m-2">
-      <div style="display: flex">
-        <h5>My Portfolios</h5>
+    <div style="background-color: white; border-radius: 10px" class="p-4 mx-3 border">
+      <div class="d-flex justify-content-between mb-3">
+
+        <p class="text-xl font-bold my-2">My Portfolios</p>
+
         <button class="btn btn-dark" @click="createPortfolio">
           Create Portfolio
         </button>
       </div>
+
       <table class="table table-hover border">
         <thead class="bg-success" style="height: 45px">
           <tr>
             <th class="table-heading" scope="col">Portfolio Name</th>
             <th class="table-heading" scope="col">Number of Stocks</th>
             <th class="table-heading" scope="col">Total Stock Amount</th>
-            <th class="table-heading" scope="col" style="width: 250px">
+            <th class="table-heading" scope="col" style="width: 230px">
               Last Created/Updated
             </th>
-            <th class="table-heading" scope="col" style="width: 80px"></th>
-            <th class="table-heading" scope="col" style="width: 80px"></th>
             <th class="table-heading" scope="col" style="width: 160px"></th>
+            <th class="table-heading" scope="col" style="width: 50px"></th>
+            <th class="table-heading" scope="col" style="width: 50px"></th>
           </tr>
         </thead>
         <tbody v-if="this.display == true">
           <tr v-for="(portfolio, key) in portfolioList" :key="key">
             <!-- key should link to view details -->
-            <td><b>
-              <a
-                href="#"
-                style="text-decoration:none" class="text-primary"
-                @click="navigateToDetails(portfolio, key)"
-                >{{ key }}</a
-              ></b>
+            <td>
+              <b>
+                <a
+                  href="#"
+                  style="text-decoration: none"
+                  class="text-primary"
+                  @click="navigateToDetails(portfolio, key)"
+                  >{{ key }}</a
+                ></b
+              >
             </td>
             <td>{{ portfolio.stocks.length }}</td>
             <td>{{ formatTotalValue(portfolio.totalValue) }}</td>
             <td>{{ portfolio.createdAt }}</td>
-            <td>
-              <font-awesome-icon
-                class="clickable"
-                @click="deletePortfolio(key)"
-                :icon="['fas', 'trash-can']"
-                style="color: #dc3545"
-              />
-            </td>
-            <td>
-              <font-awesome-icon
-                class="clickable"
-                @click="navigateToEditPortfolio(key, portfolio)"
-                :icon="['fas', 'pencil']"
-                style="color: #007bff"
-              />
-            </td>
             <td>
               <button
                 @click="navigateToDetails(portfolio, key)"
@@ -129,11 +114,36 @@
                 View Portfolio
               </button>
             </td>
+            <td class="text-center">
+              <font-awesome-icon
+              class="clickable"
+              @click="navigateToEditPortfolio(key, portfolio)"
+              :icon="['fas', 'pencil']"
+              style="color: #007bff"
+              />
+            </td>
+            <td class="text-center">
+              <font-awesome-icon
+                class="clickable"
+                @click="deletePortfolio(key)"
+                :icon="['fas', 'trash-can']"
+                style="color: #dc3545"
+              />
+            </td>
+       
           </tr>
         </tbody>
-        <div class="mt-3" v-else>No portfolios, please start by creating!</div>
+        
       </table>
-    </div>
+      <div class="my-5" v-if="display === false">
+        <div class="text-center">
+          <img src="@/assets/emptyState.svg" class="mx-auto" style="width: 100px;" alt="" />
+        </div>
+        <div class="text-center text-lg font-normal" style="color:#BAB9B9">
+          No portfolios, please start by creating!
+        </div>
+      </div>
+      </div>
   </main>
 </template>
 
@@ -150,7 +160,11 @@ import StockRateChart from "@/components/StockRateChart.vue";
 import PortfoliosStatisticsCard from "@/components/PortfoliosStatisticsCard.vue";
 
 export default {
-  components: {PortfoliosStatisticsCard, StockRateChart, PortfolioPerformanceCard},
+  components: {
+    PortfoliosStatisticsCard,
+    StockRateChart,
+    PortfolioPerformanceCard,
+  },
   data() {
     return {
       portfolioList: [],
@@ -160,12 +174,17 @@ export default {
       display: false,
       totalAsset: 0,
       popularStocks: [],
+      allPercentageChanges: [],
+      bestPortfolioValue: 0,
+      worstPortfolioValue: 0
     };
   },
-  mounted() {
+ // The code snippet calls the function "populateCarousel" and then waits for the function "retrieveUserDetails" to finish executing before moving on.
+  async created() {
     // this.getAllPortfolios();
-    this.retrieveUserDetails();
+    // this.retrieveUserDetails();
     this.populateCarousel();
+    await this.retrieveUserDetails();
   },
   methods: {
     checkPortfolioExists(portfolios) {
@@ -245,19 +264,25 @@ export default {
 
       axios
         .get(`/portfolio/get-all/${user_id}`, config)
-        .then((response) => {
-          console.log(response);
+        .then(async (response) => {
           if (response.status === 200) {
+            console.log(response.data.portfolios);
+            let portfoliosInitialValues = {};
             this.portfolioList = response.data.portfolios;
             this.checkPortfolioExists(this.portfolioList);
             for (const key in this.portfolioList) {
-              console.log(this.portfolioList[key]);
               this.totalAsset += this.portfolioList[key].totalValue;
+              portfoliosInitialValues[key] = this.portfolioList[key].totalValue;
             }
             sessionStorage.setItem(
-              "portfolioList",
-              JSON.stringify(this.portfolioList)
+                "portfolioList",
+                JSON.stringify(this.portfolioList)
             );
+            //   TODO: Call function here to get portfolio latest prices
+            const portfolioLatestPrices = await this.getAllPortfoliosLatestPrice(this.portfolioList, user_id);
+            this.allPercentageChanges = this.calculateAllPortfoliosPercentageChange(portfoliosInitialValues, portfolioLatestPrices);
+            this.bestPortfolioValue = Number(portfolioLatestPrices[this.allPercentageChanges[0][0]][1].toFixed(0)).toLocaleString();
+            this.worstPortfolioValue = Number(portfolioLatestPrices[this.allPercentageChanges[this.allPercentageChanges.length-1][0]][1].toFixed(0)).toLocaleString();
           }
         })
         .catch((err) => {
@@ -337,7 +362,6 @@ export default {
     async populateCarousel() {
       axios.get(`https://www.alphavantage.co/query?function=NEWS_SENTIMENT&financial_markets&sort=LATEST&apikey=769DTIWCBUJZZAYW`)
       .then((response) => {
-          console.log(response);
           if (response.status === 200) {
             this.data = response.data.feed;
             // console.log(this.data[0]); // array of articles
@@ -347,11 +371,6 @@ export default {
             this.articleTitles = this.data.slice(0, 3).map((article) => article.title);
             this.articleURLs = this.data.slice(0, 3).map((article) => article.url);
             this.articleSummary = this.data.slice(0, 3).map((article) => article.summary);
-
-            console.log(this.articleTitles);
-            console.log(this.articleURLs);
-            console.log(this.articleSummary);
-
           }
         })
         .catch((err) => {
@@ -364,9 +383,42 @@ export default {
       // Open the article URL in a new tab or window
       window.open(articleURL, '_blank');
     },
-
-
+    async getAllPortfoliosLatestPrice(portfolios, userID) {
+      const portfolioIds = Object.keys(portfolios);
+      const allPortfoliosHistoricalValues = await Promise.allSettled(portfolioIds.map(pId => axios(`/portfolio/get-historicals/${userID}/${pId}`).then( ({data}) => data) ));
+      let allPortfoliosLatestPrice = {};
+      for (let i=0; i < portfolioIds.length; i++) {
+        const portfolioId = portfolioIds[i];
+        let portfolioHistoricalPrices = allPortfoliosHistoricalValues[i].value.data[portfolioId];
+        let latestPrice = portfolioHistoricalPrices[portfolioHistoricalPrices.length-1];
+        allPortfoliosLatestPrice[portfolioId] = latestPrice;
+      }
+      return allPortfoliosLatestPrice;
+    },
+    calculateAllPortfoliosPercentageChange(initialPrices, latestPrices) {
+      let portfoliosPercentageChange = {};
+      Object.entries(latestPrices).forEach(entry => {
+        const id = entry[0];
+        const latestPrice = entry[1][1];
+        const initalPrice = initialPrices[id];
+        const change = ((latestPrice-initalPrice)*100)/initalPrice;
+        portfoliosPercentageChange[id] = change;
+      })
+      portfoliosPercentageChange = Object.entries(portfoliosPercentageChange).sort(
+          (a, b) => b[1] - a[1]
+      );
+      return portfoliosPercentageChange;
+    }
   },
+  computed: {
+    totalPercentageChange() {
+      let sum = 0;
+      // console.log(Object.values(this.allPercentageChanges));
+      Object.values(this.allPercentageChanges).forEach(change => { sum += change[1] });
+      // console.log(sum);
+      return sum;
+    }
+  }
 };
 </script>
 
