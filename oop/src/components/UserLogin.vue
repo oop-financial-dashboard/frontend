@@ -1,11 +1,11 @@
 <template>
   <div class="login">
     <form>
-      <div class="logo">
+      <div class="logo flex justify-content-center">
         <img src="../assets/GSLogo.png" alt="Vue" class="app_logo" />
       </div>
 
-      <h3>Welcome Back</h3>
+      <h3 class="fw-semibold text-xl" >Welcome Back</h3>
       <p class="grey_text">Enter your email and password below</p>
       <!-- Email input -->
       <div class="form-outline mb-4">
@@ -501,9 +501,6 @@ export default {
   height: 100vh;
   background-image: url("../assets/client-centric-banking.jpg");
   background-size: cover;
-  /* background: var(--primary); */
-  /* background-color: #7399C6; */
-  /* background-color: rgba(115, 153, 198, 0.5) */
 }
 
 .logo {
@@ -511,6 +508,7 @@ export default {
 }
 .app_logo {
   width: 80px;
+  margin: auto;
 }
 p {
   font-size: 14px;
