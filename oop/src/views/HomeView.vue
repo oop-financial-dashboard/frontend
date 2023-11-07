@@ -3,7 +3,7 @@
 
     <div>
       <!-- <h1>My Portfolio</h1> -->
-      <h3 class="m-2">Welcome back!</h3>
+      <h3 class="text-xl font-bold m-2">Welcome back!</h3>
     </div>
 
     <div>
@@ -52,31 +52,37 @@
           
         </div>
       </div>
+      <!-- <p class="text-xl font-bold m-2">Welcome back!</p> -->
+    </div>
+
+    <div class="d-flex flex-row mt-3 justify-between">
+      <div class="profile p-5 m-2"></div>
 
       <div>
-        <stock-rate-chart  class="m-2" :popular-stocks="popularStocks.slice(0, 5)" />
+        <stock-rate-chart
+          class="m-2 border mr-2"
+          :popular-stocks="popularStocks.slice(0, 5)"
+        />
       </div>
     </div>
 
-    <div class="flex flex-row my-4 space-x-4">
-      <portfolios-statistics-card />
+    <div class="flex flex-row my-4 space-x-4 ml-4">
+      <portfolios-statistics-card :portfolios="portfolioList" :key="portfolioList"/>
       <portfolio-performance-card title="Best Performing Portfolio" />
       <portfolio-performance-card title="Worst Performing Portfolio" />
     </div>
 
-    <div class="mt-5">
-      <div class="d-flex justify-content-between">
-        <b>Click portfolio name to view portfolio details</b>
-      </div>
-    </div>
-    
-    <div style="background-color: white; border-radius: 10px" class="p-4 m-2">
-      <div style="display: flex">
-        <h5>My Portfolios</h5>
+
+    <div style="background-color: white; border-radius: 10px" class="p-4 m-2 border">
+      <div class="d-flex justify-content-between mb-3">
+
+        <p class="text-xl font-bold my-2">My Portfolios</p>
+
         <button class="btn btn-dark" @click="createPortfolio">
           Create Portfolio
         </button>
       </div>
+
       <table class="table table-hover border">
         <thead class="bg-success" style="height: 45px">
           <tr>
@@ -94,13 +100,16 @@
         <tbody v-if="this.display == true">
           <tr v-for="(portfolio, key) in portfolioList" :key="key">
             <!-- key should link to view details -->
-            <td><b>
-              <a
-                href="#"
-                style="text-decoration:none" class="text-primary"
-                @click="navigateToDetails(portfolio, key)"
-                >{{ key }}</a
-              ></b>
+            <td>
+              <b>
+                <a
+                  href="#"
+                  style="text-decoration: none"
+                  class="text-primary"
+                  @click="navigateToDetails(portfolio, key)"
+                  >{{ key }}</a
+                ></b
+              >
             </td>
             <td>{{ portfolio.stocks.length }}</td>
             <td>{{ formatTotalValue(portfolio.totalValue) }}</td>
@@ -131,9 +140,17 @@
             </td>
           </tr>
         </tbody>
-        <div class="mt-3" v-else>No portfolios, please start by creating!</div>
+        
       </table>
-    </div>
+      <div class="my-5" v-if="display === false">
+        <div class="text-center">
+          <img src="@/assets/emptyState.svg" class="mx-auto" style="width: 100px;" alt="" />
+        </div>
+        <div class="text-center text-lg font-normal" style="color:#BAB9B9">
+          No portfolios, please start by creating!
+        </div>
+      </div>
+      </div>
   </main>
 </template>
 
@@ -150,7 +167,11 @@ import StockRateChart from "@/components/StockRateChart.vue";
 import PortfoliosStatisticsCard from "@/components/PortfoliosStatisticsCard.vue";
 
 export default {
-  components: {PortfoliosStatisticsCard, StockRateChart, PortfolioPerformanceCard},
+  components: {
+    PortfoliosStatisticsCard,
+    StockRateChart,
+    PortfolioPerformanceCard,
+  },
   data() {
     return {
       portfolioList: [],
@@ -160,12 +181,14 @@ export default {
       display: false,
       totalAsset: 0,
       popularStocks: [],
+      isDataLoaded: true
     };
   },
-  mounted() {
+  async created() {
     // this.getAllPortfolios();
-    this.retrieveUserDetails();
+    // this.retrieveUserDetails();
     this.populateCarousel();
+    await this.retrieveUserDetails();
   },
   methods: {
     checkPortfolioExists(portfolios) {
@@ -366,6 +389,12 @@ export default {
     },
 
 
+  },
+  computed: {
+    getPortfolioList() {
+      console.log("Computing portfolio list length ---->", this.portfolioList);
+      return this.portfolioList;
+    }
   },
 };
 </script>
