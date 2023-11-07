@@ -68,21 +68,22 @@ export default {
     return {
       portfolioId: sessionStorage.getItem('portfolioId'),
       portfolio: JSON.parse(sessionStorage.getItem('portfolio')),
-      percentageData: null,
-      value: null,
+      percentageData: 0,
+      value: 0,
       stdDev: 15.43,
       sharpeRatio: 2.5,
       activeReturn: 159,
       benchMark: "S&P stock name info",
       userid: sessionStorage.getItem("user_id"),
       priceReturnList: [],
-      priceReturn: null,
+      priceReturn: 0,
       portfolioList: JSON.parse(sessionStorage.getItem("portfolioList")),
-      initialPrice: null,
+      initialPrice: 0,
     };
   },
   mounted(){
     this.calculatePriceReturn();
+    this.calculateSD();
   },
   methods:{
     formatTotalValue(totalValue) {
@@ -116,11 +117,14 @@ export default {
           // (summing all individual stocks in the portfolio then subtracting the last stock price) -1 
 
           //TO DO : UNCOMMENT THIS OUT!!
-          // this.priceReturn = this.priceReturnList[this.priceReturnList.length-1][1];
+          this.priceReturn = this.priceReturnList[this.priceReturnList.length-1][1];
           this.percentageData = Number(((this.priceReturn - this.initialPrice) - 1).toFixed(2));
           this.value = this.formatTotalValue(this.priceReturn - this.initialPrice);
         }
       })
+    },
+
+    calculateSD(){
 
     }
   }
