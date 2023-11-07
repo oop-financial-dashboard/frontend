@@ -23,6 +23,7 @@ library.add(faChevronRight);
 import HighchartsVue from 'highcharts-vue'
 import Highcharts from 'highcharts'
 import stockInit from 'highcharts/modules/stock'
+import './index.css'
 
 stockInit(Highcharts)
 

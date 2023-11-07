@@ -1,7 +1,7 @@
 <template>
   <main>
     <div>
-      <h1>{{portfolioId}}</h1>
+      <h1><b>Portfolio: {{portfolioId}}</b></h1>
     </div>
 
     <div class="row-section d-flex justify-content-between">
@@ -53,20 +53,9 @@ import stocksTable from "@/components/Analytics/StocksTable.vue";
 import PortfolioValueChart from "@/components/Analytics/PortfolioValueChart.vue";
 import AssetsPieChart from "@/components/Analytics/AssetsPieChart.vue";
 import AttributionChart from "@/components/Analytics/AttributionChart.vue";
+import axios from "axios";
 
 export default {
-  data() {
-    return {
-      portfolioId: sessionStorage.getItem('portfolioId'),
-      portfolio: JSON.parse(sessionStorage.getItem('portfolio')),
-      percentageData: -258,
-      value: "$3,252,737.08",
-      stdDev: 15.43,
-      sharpeRatio: 2.5,
-      activeReturn: 159,
-      benchMark: "S&P stock name info",
-    };
-  },
   components: {
     AttributionChart,
     PortfolioValueChart,
@@ -75,6 +64,66 @@ export default {
     stocksTable,
     AssetsPieChart,
   },
+  data() {
+    return {
+      portfolioId: sessionStorage.getItem('portfolioId'),
+      portfolio: JSON.parse(sessionStorage.getItem('portfolio')),
+      percentageData: null,
+      value: null,
+      stdDev: 15.43,
+      sharpeRatio: 2.5,
+      activeReturn: 159,
+      benchMark: "S&P stock name info",
+      userid: sessionStorage.getItem("user_id"),
+      priceReturnList: [],
+      priceReturn: null,
+      portfolioList: JSON.parse(sessionStorage.getItem("portfolioList")),
+      initialPrice: null,
+    };
+  },
+  mounted(){
+    this.calculatePriceReturn();
+  },
+  methods:{
+    formatTotalValue(totalValue) {
+      return totalValue.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    },
+
+    calculatePriceReturn(){
+      const token = sessionStorage.getItem("token");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      
+      axios.get(`/portfolio/get-historicals/${this.userid}/${this.portfolioId}`, config)
+      .then((response) => {
+        if (response.status === 200) {
+          this.priceReturnList = response.data;  
+          for(const key in response.data){
+            console.log(response.data[key]);
+            for(const k in response.data[key]){
+              this.priceReturnList = response.data[key][k]
+            }
+          }
+
+          for(const portfolio in this.portfolioList){
+            if(portfolio == this.portfolioId){
+              this.initialPrice += this.portfolioList[portfolio].totalValue;
+            }
+          }
+          // (summing all individual stocks in the portfolio then subtracting the last stock price) -1 
+          this.priceReturn = this.priceReturnList[this.priceReturnList.length-1][1];
+          this.percentageData = Number(((this.priceReturn - this.initialPrice) - 1).toFixed(2));
+          this.value = this.formatTotalValue(this.priceReturn - this.initialPrice);
+        }
+      })
+
+    }
+  }
+
+  
 };
 </script>
 

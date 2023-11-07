@@ -22,6 +22,7 @@ import SideBar from "./components/SideBar.vue";
   --light-grey: #9FA2B4;
   --lighter-grey: #DDE2FF;
   --lighter-grey-alt: #F7F8FC;
+  --background-colour: #F5F7FF;;
   --sidebar-width: 200px;
 }
 * {
@@ -32,7 +33,8 @@ import SideBar from "./components/SideBar.vue";
 }
 
 body {
-  background: var(--lighter-grey-alt);
+  /* background: var(--background-colour); */
+  background: var(--background-colour);
 }
 .app {
   display: flex;

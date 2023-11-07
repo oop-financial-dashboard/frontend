@@ -13,35 +13,32 @@ import Highcharts from "highcharts";
 import axios from "axios";
 
 export default {
-  name: "PortfolioValueChart",
+  name: "PortfolioPerformanceChart",
   props: ['portfolioId'],
- created() {
-   const token = sessionStorage.getItem("token");
-   const userId = sessionStorage.getItem("user_id");
-   const config = {
-     headers: {
-       Authorization: `Bearer ${token}`,
-     },
-   };
+  created() {
+    const token = sessionStorage.getItem("token");
+    const userId = sessionStorage.getItem("user_id");
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
     const fetchPortfolioData = async() => {
       const data = await axios.get(`/portfolio/get-historicals/${userId}/${this.portfolioId}`, config);
       console.log("portfolio historical ----->", data.data.data[this.portfolioId]);
       this.stockOptions.series[0].data = data.data.data[this.portfolioId];
-      this.stockOptions.title.text = `${this.portfolioId} Value`;
     }
     fetchPortfolioData();
- },
+  },
   data() {
     return {
       stockOptions: {
-        title: {
-          text: "Portfolio Name"
-        },
         plotOptions: {
           series: {
             animation: {
               duration: 3000
-            }
+            },
+            enableMouseTracking: false
           }
         },
         navigator: {
@@ -52,9 +49,6 @@ export default {
           data: null,
           type: 'area',
           threshold: null,
-          tooltip: {
-            valueDecimals: 2
-          },
           fillColor: {
             linearGradient: {
               x1: 0,
@@ -67,12 +61,52 @@ export default {
               [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
             ]
           }
-        }]
+        }],
+        responsive: {
+          rules: [{
+            condition: {
+              maxWidth: 100
+            },
+            chartOptions: {
+              chart: {
+                height: 300
+              },
+              subtitle: {
+                text: null
+              },
+              navigator: {
+                enabled: false
+              }
+            }
+          }]
+        },
+        xAxis: {
+          visible: false
+        },
+        yAxis: {
+          visible: false
+        },
+        scrollbar: {
+          enabled: false
+        },
+        rangeSelector: {
+          enabled: false
+        },
+        chart : {
+          zooming: {
+            mouseWheel: false
+          },
+          setSize: 200
+        },
+        tooltip: {
+          enabled: false
+        },
       }
     }
   }
 }
 </script>
+
 <style scoped>
 
 </style>
