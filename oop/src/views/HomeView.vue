@@ -1,6 +1,6 @@
 <template>
-  <main class="homepage">
 
+  <main class="homepage">
     <div>
       <!-- <h1>My Portfolio</h1> -->
       <h3 class="text-xl font-bold m-3">Welcome back!</h3>
@@ -8,66 +8,135 @@
 
     <div class="flex flex-row">
       <!-- Container of News + Information Cards -->
-      <div class="flex flex-col space-y-4 w-2/3">
+      <div class="flex flex-col space-y-4 " style="width:824px">
         <div class="mx-3 rounded-xl">
-          <div id="carouselExampleAutoplaying" class="carousel slide rounded-xl" data-bs-ride="carousel">
+          <div
+            id="carouselExampleAutoplaying"
+            class="carousel slide rounded-xl"
+            data-bs-ride="carousel"
+          >
             <div class="carousel-inner rounded-xl">
-              <div class="carousel-item active rounded-xl">
-                <img src="../assets/laptop.jpeg" class="d-block w-100 rounded-xl" alt="...">
-                <div class="carousel-caption center-caption">
-                  <h3 class="caption-title font-bold mb-3">{{ articleTitles[0] }}</h3>
-                  <h5 class="caption-title truncated-summary mb-3">{{ articleSummary[0] }}</h5>
+              <div
+                class="carousel-item active rounded-xl"
+                data-bs-interval="5000"
+              >
+                <img
+                  src="../assets/laptop.jpeg"
+                  class="d-block w-100 rounded-xl"
+                  alt="..."
+                />
+                <div class="carousel-caption text-start" >
+                  <h3
+                    class="caption-title truncated-title font-bold text-3xl mb-2"
+                  >
+                    {{ articleTitles[0] }}
+                  </h3>
+                  <h5 class="caption-title truncated-summary mb-3 w-2/3" >
+                    {{ articleSummary[0] }}
+                  </h5>
                   <!-- <a :href="articleURLs[0]" target="_blank">Read more</a> -->
-                  <button @click="openArticle(articleURLs[0])" class="btn btn-primary btncolor">More Info</button>
+                  <button
+                    @click="openArticle(articleURLs[0])"
+                    class="btn btn-light"
+                  >
+                    View Article
+                  </button>
                 </div>
               </div>
-              <div class="carousel-item">
-                <img src="../assets/screen.jpeg" class="d-block w-100" alt="...">
-                <div class="carousel-caption center-caption">
-                  <h3 class="caption-title font-bold mb-3">{{ articleTitles[1] }}</h3>
-                  <h5 class="caption-title truncated-summary mb-3">{{ articleSummary[1] }}</h5>
-                  <button @click="openArticle(articleURLs[1])" class="btn btn-primary btncolor">More Info</button>
+              <div class="carousel-item" data-bs-interval="5000">
+                <img
+                  src="../assets/screen.jpeg"
+                  class="d-block w-100"
+                  alt="..."
+                />
+                <div class="carousel-caption text-start">
+                  <h3
+                    class="caption-title truncated-title font-bold text-3xl mb-2"
+                  >
+                    {{ articleTitles[1] }}
+                  </h3>
+                  <h5 class="caption-title truncated-summary mb-3 w-2/3">
+                    {{ articleSummary[1] }}
+                  </h5>
+                  <button
+                    @click="openArticle(articleURLs[1])"
+                    class="btn btn-light"
+                  >
+                    View Article
+                  </button>
                 </div>
               </div>
-              <div class="carousel-item">
-                <img src="../assets/bitcoin-to-usd.jpeg" class="d-block w-100" alt="...">
-                <div class="carousel-caption center-caption">
-                  <h3 class="caption-title font-bold mb-3">{{ articleTitles[2] }}</h3>
-                  <h5 class="caption-title truncated-summary mb-3">{{ articleSummary[2] }}</h5>
-                  <button @click="openArticle(articleURLs[2])" class="btn btn-primary btncolor">More Info</button>
+              <div class="carousel-item" data-bs-interval="5000">
+                <img
+                  src="../assets/bitcoin-to-usd.jpeg"
+                  class="d-block w-100"
+                  alt="..."
+                />
+                <div class="carousel-caption text-start">
+                  <h3
+                    class="caption-title truncated-title font-bold text-3xl mb-2"
+                  >
+                    {{ articleTitles[2] }}
+                  </h3>
+                  <h5 class="caption-title truncated-summary mb-3 w-2/3">
+                    {{ articleSummary[2] }}
+                  </h5>
+                  <button
+                    @click="openArticle(articleURLs[2])"
+                    class="btn btn-light"
+                  >
+                    View Article
+                  </button>
                 </div>
               </div>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <button
+              class="carousel-control-prev"
+              type="button"
+              data-bs-target="#carouselExampleAutoplaying"
+              data-bs-slide="prev"
+            >
+              <span
+                class="carousel-control-prev-icon"
+                aria-hidden="true"
+              ></span>
               <span class="visually-hidden">Previous</span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <button
+              class="carousel-control-next"
+              type="button"
+              data-bs-target="#carouselExampleAutoplaying"
+              data-bs-slide="next"
+            >
+              <span
+                class="carousel-control-next-icon"
+                aria-hidden="true"
+              ></span>
               <span class="visually-hidden">Next</span>
             </button>
           </div>
         </div>
         <!-- Statistics and Performance Cards -->
         <div class="flex flex-row my-4 space-x-4 ml-4">
-          <portfolios-statistics-card :portfolios="portfolioList" :change="totalPercentageChange" :key="portfolioList"/>
-          <portfolio-performance-card title="Best Performing Portfolio" :details="allPercentageChanges[0]" :value="bestPortfolioValue"  v-if="allPercentageChanges.length > 0 "/>
-          <portfolio-performance-card title="Worst Performing Portfolio" :details="allPercentageChanges[allPercentageChanges.length-1]" :value="worstPortfolioValue" v-if="allPercentageChanges.length > 0 "/>
+          <portfolios-statistics-card :portfolios="portfolioList" :change="totalPercentageChange" :key="portfolioList" class="border"/>
+          <portfolio-performance-card title="Best Performing Portfolio" :details="allPercentageChanges[0]" :value="bestPortfolioValue"  v-if="allPercentageChanges.length > 0 " class="border"/>
+          <portfolio-performance-card title="Worst Performing Portfolio" :details="allPercentageChanges[allPercentageChanges.length-1]" :value="worstPortfolioValue" v-if="allPercentageChanges.length > 0 " class="border"/>
         </div>
       </div>
       <!-- Container of Stock Rate Chart -->
       <div class="w-1/3">
-          <stock-rate-chart
-              class="border ml-2"
-              :popular-stocks="popularStocks.slice(0, 8)"
-          />
+        <stock-rate-chart
+          class="border ml-2"
+          :popular-stocks="popularStocks.slice(0, 8)"
+        />
       </div>
     </div>
 
-
-    <div style="background-color: white; border-radius: 10px" class="p-4 mx-3 border">
+    <div
+      style="background-color: white; border-radius: 10px"
+      class="p-4 mx-3 border"
+    >
       <div class="d-flex justify-content-between mb-3">
-
         <p class="text-xl font-bold my-2">My Portfolios</p>
 
         <button class="btn btn-dark" @click="createPortfolio">
@@ -116,10 +185,10 @@
             </td>
             <td class="text-center">
               <font-awesome-icon
-              class="clickable"
-              @click="navigateToEditPortfolio(key, portfolio)"
-              :icon="['fas', 'pencil']"
-              style="color: #007bff"
+                class="clickable"
+                @click="navigateToEditPortfolio(key, portfolio)"
+                :icon="['fas', 'pencil']"
+                style="color: #007bff"
               />
             </td>
             <td class="text-center">
@@ -130,20 +199,23 @@
                 style="color: #dc3545"
               />
             </td>
-       
           </tr>
         </tbody>
-        
       </table>
       <div class="my-5" v-if="display === false">
         <div class="text-center">
-          <img src="@/assets/emptyState.svg" class="mx-auto" style="width: 100px;" alt="" />
+          <img
+            src="@/assets/emptyState.svg"
+            class="mx-auto"
+            style="width: 100px"
+            alt=""
+          />
         </div>
-        <div class="text-center text-lg font-normal" style="color:#BAB9B9">
+        <div class="text-center text-lg font-normal" style="color: #bab9b9">
           No portfolios, please start by creating!
         </div>
       </div>
-      </div>
+    </div>
   </main>
 </template>
 
@@ -176,7 +248,8 @@ export default {
       popularStocks: [],
       allPercentageChanges: [],
       bestPortfolioValue: 0,
-      worstPortfolioValue: 0
+      worstPortfolioValue: 0,
+      isDataLoaded: true,
     };
   },
  // The code snippet calls the function "populateCarousel" and then waits for the function "retrieveUserDetails" to finish executing before moving on.
@@ -365,7 +438,7 @@ export default {
           if (response.status === 200) {
             this.data = response.data.feed;
             // console.log(this.data[0]); // array of articles
-            // console.log(this.data[0].title); // title of first article
+            console.log(this.data[0].title); // title of first article
             // console.log(this.data[0].url); //url of first article
             // Extract the top 3 articles
             this.articleTitles = this.data.slice(0, 3).map((article) => article.title);
@@ -376,12 +449,12 @@ export default {
         .catch((err) => {
           console.error(err);
           // this.showNotification("notification", "Error", "Failed to retrieve portfolios. Please try again later.", "error");
-        })
+        });
     },
 
     openArticle(articleURL) {
       // Open the article URL in a new tab or window
-      window.open(articleURL, '_blank');
+      window.open(articleURL, "_blank");
     },
     async getAllPortfoliosLatestPrice(portfolios, userID) {
       const portfolioIds = Object.keys(portfolios);
@@ -457,10 +530,14 @@ export default {
   -webkit-box-orient: vertical;
   color: #2b2b2b;
 }
-
-.btncolor{
-  background-color: #1c2b36;
-  border-color: #1c2b36;
+.truncated-title {
+  max-height: 2.8em; /* Adjust as needed to allow 2 lines of text */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1; /* Number of lines to display */
+  -webkit-box-orient: vertical;
+  color: #2b2b2b;
 }
 
 .table tr td {

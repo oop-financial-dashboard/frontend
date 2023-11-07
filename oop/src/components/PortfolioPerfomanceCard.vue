@@ -4,6 +4,8 @@
       <p class="text-lg font-bold">{{ title }}</p>
       <p v-if="details" class="text-lg ">{{ name }}</p>
 
+      <hr class="mb-0 mt-0 rounded header-line" :style="{ borderColor: getTitleColor() }"/>
+      <p class="text-lg ">Portfolio Name</p>
       <div class="flex flex-row justify-between">
         <p class="text-blue-600">${{ portfolioValue }}</p>
         <p v-if="details" :class="[change > 0 ? 'text-green-600' : 'text-red-600']">{{ displayPercentageChange }}</p>
@@ -49,11 +51,27 @@ export default {
         return '+' + this.change.toFixed(2) + '%';
       }
       return this.change.toFixed(2) + '%';
+    portfolio: Object
+  },
+  methods: {
+    getTitleColor() {
+      if (this.title === "Best Performing Portfolio") {
+        return "#29CC97"; // Green color
+      } else if (this.title === "Worst Performing Portfolio") {
+        return "#FF616B"; // Red color
+      } else {
+        // Default color if neither of the conditions is met
+        return "#000000"; // Black color
+      }
     }
   }
 }
 </script>
 
 <style scoped>
-
+.header-line {
+  width: 40px;
+  border-top: 3px solid;
+  opacity: 1;
+}
 </style>

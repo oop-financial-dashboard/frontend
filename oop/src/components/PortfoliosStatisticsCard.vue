@@ -1,7 +1,8 @@
 <template>
   <div class="card w-68 h-56 bg-white rounded-xl min-h-min">
     <div class="card-body flex flex-col space-y-3">
-      <p class="text-lg font-bold">Overall Portfolio Statistics</p>
+      <p class="text-lg font-medium">Overall Portfolio Statistics</p>
+      <hr class="mb-0 mt-0 rounded header-line" />
 
       <div class="flex flex-row justify-between">
         <p class="">Total Value</p>
@@ -38,8 +39,8 @@ export default {
       totalValue: 0,
       numOfPortfolios: 0,
       percentageChange: 0,
-      totalPnL: 0
-    }
+      totalPnL: 0,
+    };
   },
   created() {
     this.numOfPortfolios = Object.entries(this.portfolios).length;
@@ -50,7 +51,7 @@ export default {
     setTotalValue(portfolios) {
       const portfoliosData = Object.values(portfolios);
       let value = 0;
-      portfoliosData.forEach(data => {
+      portfoliosData.forEach((data) => {
         value += data.totalValue;
       });
       value = Number((value).toFixed(0));
@@ -70,4 +71,10 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.header-line {
+  width: 40px;
+  border-top: 3px solid #5e6eff;
+  opacity: 1;
+}
+</style>
