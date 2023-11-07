@@ -3,17 +3,17 @@
 
     <div>
       <!-- <h1>My Portfolio</h1> -->
-      <h3 class="text-xl font-bold m-2">Welcome back!</h3>
+      <h3 class="text-xl font-bold m-3">Welcome back!</h3>
     </div>
 
     <div class="flex flex-row">
       <!-- Container of News + Information Cards -->
       <div class="flex flex-col space-y-4 w-2/3">
-        <div class="profile m-2">
-          <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner">
-              <div class="carousel-item active">
-                <img src="../assets/laptop.jpeg" class="d-block w-100" alt="...">
+        <div class="mx-3 rounded-xl">
+          <div id="carouselExampleAutoplaying" class="carousel slide rounded-xl" data-bs-ride="carousel">
+            <div class="carousel-inner rounded-xl">
+              <div class="carousel-item active rounded-xl">
+                <img src="../assets/laptop.jpeg" class="d-block w-100 rounded-xl" alt="...">
                 <div class="carousel-caption center-caption">
                   <h3 class="caption-title font-bold mb-3">{{ articleTitles[0] }}</h3>
                   <h5 class="caption-title truncated-summary mb-3">{{ articleSummary[0] }}</h5>
@@ -58,14 +58,14 @@
       <!-- Container of Stock Rate Chart -->
       <div class="w-1/3">
           <stock-rate-chart
-              class="border mr-2 ml-4"
-              :popular-stocks="popularStocks.slice(0, 9)"
+              class="border ml-2"
+              :popular-stocks="popularStocks.slice(0, 8)"
           />
       </div>
     </div>
 
 
-    <div style="background-color: white; border-radius: 10px" class="p-4 m-2 border">
+    <div style="background-color: white; border-radius: 10px" class="p-4 mx-3 border">
       <div class="d-flex justify-content-between mb-3">
 
         <p class="text-xl font-bold my-2">My Portfolios</p>
