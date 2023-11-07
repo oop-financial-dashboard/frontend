@@ -89,12 +89,12 @@
             <th class="table-heading" scope="col">Portfolio Name</th>
             <th class="table-heading" scope="col">Number of Stocks</th>
             <th class="table-heading" scope="col">Total Stock Amount</th>
-            <th class="table-heading" scope="col" style="width: 250px">
+            <th class="table-heading" scope="col" style="width: 230px">
               Last Created/Updated
             </th>
-            <th class="table-heading" scope="col" style="width: 80px"></th>
-            <th class="table-heading" scope="col" style="width: 80px"></th>
             <th class="table-heading" scope="col" style="width: 160px"></th>
+            <th class="table-heading" scope="col" style="width: 50px"></th>
+            <th class="table-heading" scope="col" style="width: 50px"></th>
           </tr>
         </thead>
         <tbody v-if="this.display == true">
@@ -115,22 +115,6 @@
             <td>{{ formatTotalValue(portfolio.totalValue) }}</td>
             <td>{{ portfolio.createdAt }}</td>
             <td>
-              <font-awesome-icon
-                class="clickable"
-                @click="deletePortfolio(key)"
-                :icon="['fas', 'trash-can']"
-                style="color: #dc3545"
-              />
-            </td>
-            <td>
-              <font-awesome-icon
-                class="clickable"
-                @click="navigateToEditPortfolio(key, portfolio)"
-                :icon="['fas', 'pencil']"
-                style="color: #007bff"
-              />
-            </td>
-            <td>
               <button
                 @click="navigateToDetails(portfolio, key)"
                 class="btn btn-dark"
@@ -138,6 +122,23 @@
                 View Portfolio
               </button>
             </td>
+            <td class="text-center">
+              <font-awesome-icon
+              class="clickable"
+              @click="navigateToEditPortfolio(key, portfolio)"
+              :icon="['fas', 'pencil']"
+              style="color: #007bff"
+              />
+            </td>
+            <td class="text-center">
+              <font-awesome-icon
+                class="clickable"
+                @click="deletePortfolio(key)"
+                :icon="['fas', 'trash-can']"
+                style="color: #dc3545"
+              />
+            </td>
+       
           </tr>
         </tbody>
         
