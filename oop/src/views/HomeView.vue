@@ -1,56 +1,56 @@
 <template>
   <main class="homepage">
+
     <div>
-      <h1>Latest News</h1>
-    </div>
-    <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
-      <div class="carousel-inner">
-        <div class="carousel-item active">
-          <img src="../assets/laptop.jpeg" class="d-block w-100" alt="...">
-          <div class="carousel-caption center-caption">
-            <h3 class="caption-title">{{ articleTitles[0] }}</h3>
-            <h5 class="caption-title truncated-summary">{{ articleSummary[0] }}</h5>
-            <!-- <a :href="articleURLs[0]" target="_blank">Read more</a> -->
-            <button @click="openArticle(articleURLs[0])" class="btn btn-primary btncolor">More Info</button>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <img src="../assets/screen.jpeg" class="d-block w-100" alt="...">
-          <div class="carousel-caption center-caption">
-            <h3 class="caption-title">{{ articleTitles[1] }}</h3>
-            <h5 class="caption-title truncated-summary">{{ articleSummary[1] }}</h5>
-            <button @click="openArticle(articleURLs[1])" class="btn btn-primary btncolor">More Info</button>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <img src="../assets/bitcoin-to-usd.jpeg" class="d-block w-100" alt="...">
-          <div class="carousel-caption center-caption">
-            <h3 class="caption-title">{{ articleTitles[2] }}</h3>
-            <h5 class="caption-title truncated-summary">{{ articleSummary[2] }}</h5>
-            <button @click="openArticle(articleURLs[2])" class="btn btn-primary btncolor">More Info</button>
-          </div>
-        </div>
-      </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-        
-      </button>
-      
+      <!-- <h1>My Portfolio</h1> -->
+      <h3 class="m-2">Welcome back!</h3>
     </div>
 
     <div>
-      <h1>My Portfolio</h1>
-      <h3  class="m-2">Welcome back!</h3>
+      <h1 class="m-2">Latest News</h1>
     </div>
 
     <div class="d-flex flex-row mt-3 justify-between">
-      <div class="profile p-5 m-2">
-       
+      <div class="profile m-2">
+        <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <img src="../assets/laptop.jpeg" class="d-block w-100" alt="...">
+              <div class="carousel-caption center-caption">
+                <h3 class="caption-title mb-3">{{ articleTitles[0] }}</h3>
+                <h5 class="caption-title truncated-summary mb-3">{{ articleSummary[0] }}</h5>
+                <!-- <a :href="articleURLs[0]" target="_blank">Read more</a> -->
+                <button @click="openArticle(articleURLs[0])" class="btn btn-primary btncolor">More Info</button>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <img src="../assets/screen.jpeg" class="d-block w-100" alt="...">
+              <div class="carousel-caption center-caption">
+                <h3 class="caption-title mb-3">{{ articleTitles[1] }}</h3>
+                <h5 class="caption-title truncated-summary mb-3">{{ articleSummary[1] }}</h5>
+                <button @click="openArticle(articleURLs[1])" class="btn btn-primary btncolor">More Info</button>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <img src="../assets/bitcoin-to-usd.jpeg" class="d-block w-100" alt="...">
+              <div class="carousel-caption center-caption">
+                <h3 class="caption-title mb-3">{{ articleTitles[2] }}</h3>
+                <h5 class="caption-title truncated-summary mb-3">{{ articleSummary[2] }}</h5>
+                <button @click="openArticle(articleURLs[2])" class="btn btn-primary btncolor">More Info</button>
+              </div>
+            </div>
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+            
+          </button>
+          
+        </div>
       </div>
 
       <div>
@@ -388,7 +388,7 @@ export default {
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
-  width: 70%;
+  width: 40%;
 }
 
 .caption-title {
