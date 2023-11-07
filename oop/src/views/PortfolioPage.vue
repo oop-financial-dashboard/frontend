@@ -206,6 +206,23 @@ export default {
               console.log("data length", response.data.length);
               this.stockMeans.push(meanClose);
               counter += 1;
+
+              // calculate the portfolio SD when all data is collected
+              // summation of (x - mean / n-1)
+              // SD of 1 stock this.Histclosingprice - mean / this.Histclosingprice.length - 1 (?)              
+
+              // if (counter === this.symbolArray.length) {
+              //   let sumOfVariance = 0;
+              //   for (const mean of this.stockMeans) {
+              //     const variance = mean - this.priceReturn; // this shouldnt be priceReturn, should be the historical closing price
+              //     const squaredVariance = variance ** 2;
+              //     sumOfVariance += squaredVariance;
+              //   }
+              //   const sampleStandardDeviation = Math.sqrt(
+              //     sumOfVariance / (this.stockMeans.length - 1)
+              //   );
+              //   this.stdDev = sampleStandardDeviation.toFixed(2);
+              // }
             }
           });
         axios
