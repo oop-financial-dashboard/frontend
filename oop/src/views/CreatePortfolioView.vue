@@ -135,10 +135,16 @@
       </div>
     </form>
     <div class="fixed-container">
-      <div class="btn-container">
+      <div class="btn-container" v-if="!showSpinner">
         <button class="btn btn-dark" @click="submitPortfolio">
           Create portfolio
         </button>
+      </div>
+      <div class="btn-container flex mb-1" v-else>
+        <div class="spinner-border spinner-border-sm mr-3 text-primary mt-0.5" role="status">
+          <span class="p-3"></span> 
+        </div> 
+        <p class="fw-medium">Creating Portfolio...</p>
       </div>
     </div>
   </main>
@@ -186,6 +192,7 @@ export default {
       closePrice: 0,
       selectedQty: 0,
       allPortolios: "",
+      showSpinner : false,
     };
   },
   computed: {
@@ -388,7 +395,6 @@ export default {
         );
         return;
       }
-
       let totalPriceComputed = this.totalPriceComputed;
       var priceMatch = totalPriceComputed.match(/\$\d+(?:,\d{3})*(?:\.\d{2})?/); // match up to a billion e.g. $1,234,567,890.12
       if (priceMatch) {
@@ -503,6 +509,8 @@ export default {
         };
 
         try {
+          this.showSpinner = true;
+
           const token = sessionStorage.getItem("token");
           const config = {
             headers: {
@@ -517,6 +525,7 @@ export default {
             config
           );
           if (response.status === 200) {
+            this.showSpinner = false;
             this.showNotification(
               "notification",
               "Success",

@@ -180,16 +180,16 @@
         </table>
       </div>
     </div>
-    <div class="fixed-container">
+    <!-- <div class="fixed-container">
       <div class="btn-container">
         <button class="btn btn-outline-dark" @click="updatePortfolio">
           Update
         </button>
       </div>
-    </div>
+    </div> -->
     <div class="fixed-container">
       <div class="btn-container">
-        <button class="btn btn-dark" @click="submitPortfolio">
+        <button class="btn btn-dark" @click="updatePortfolio">
           Edit portfolio
         </button>
       </div>

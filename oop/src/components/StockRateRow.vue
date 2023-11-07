@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row my-2.5" style="height: 38px">
+  <div class="flex flex-row my-2.5 " style="height: 38px">
     <img class="my-1.5" :src="require(`@/assets/${symbol}.svg`)" style="height: 30px;width: 30px" alt=""/>
     <div class="flex-fill ml-1">
       <div class="flex flex-col space-y-0.5">
