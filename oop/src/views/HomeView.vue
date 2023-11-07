@@ -6,68 +6,62 @@
       <h3 class="text-xl font-bold m-2">Welcome back!</h3>
     </div>
 
-    <div>
-      <h1 class="font-bold m-2">Latest News</h1>
-    </div>
-
-
-    <div class="d-flex flex-row mt-3 justify-between">
-      <div class="profile m-2">
-
-        <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
-          <div class="carousel-inner">
-            <div class="carousel-item active">
-              <img src="../assets/laptop.jpeg" class="d-block w-100" alt="...">
-              <div class="carousel-caption center-caption">
-                <h3 class="caption-title font-bold mb-3">{{ articleTitles[0] }}</h3>
-                <h5 class="caption-title truncated-summary mb-3">{{ articleSummary[0] }}</h5>
-                <!-- <a :href="articleURLs[0]" target="_blank">Read more</a> -->
-                <button @click="openArticle(articleURLs[0])" class="btn btn-primary btncolor">More Info</button>
+    <div class="flex flex-row">
+      <!-- Container of News + Information Cards -->
+      <div class="flex flex-col space-y-4 w-2/3">
+        <div class="profile m-2">
+          <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                <img src="../assets/laptop.jpeg" class="d-block w-100" alt="...">
+                <div class="carousel-caption center-caption">
+                  <h3 class="caption-title font-bold mb-3">{{ articleTitles[0] }}</h3>
+                  <h5 class="caption-title truncated-summary mb-3">{{ articleSummary[0] }}</h5>
+                  <!-- <a :href="articleURLs[0]" target="_blank">Read more</a> -->
+                  <button @click="openArticle(articleURLs[0])" class="btn btn-primary btncolor">More Info</button>
+                </div>
+              </div>
+              <div class="carousel-item">
+                <img src="../assets/screen.jpeg" class="d-block w-100" alt="...">
+                <div class="carousel-caption center-caption">
+                  <h3 class="caption-title font-bold mb-3">{{ articleTitles[1] }}</h3>
+                  <h5 class="caption-title truncated-summary mb-3">{{ articleSummary[1] }}</h5>
+                  <button @click="openArticle(articleURLs[1])" class="btn btn-primary btncolor">More Info</button>
+                </div>
+              </div>
+              <div class="carousel-item">
+                <img src="../assets/bitcoin-to-usd.jpeg" class="d-block w-100" alt="...">
+                <div class="carousel-caption center-caption">
+                  <h3 class="caption-title font-bold mb-3">{{ articleTitles[2] }}</h3>
+                  <h5 class="caption-title truncated-summary mb-3">{{ articleSummary[2] }}</h5>
+                  <button @click="openArticle(articleURLs[2])" class="btn btn-primary btncolor">More Info</button>
+                </div>
               </div>
             </div>
-            <div class="carousel-item">
-              <img src="../assets/screen.jpeg" class="d-block w-100" alt="...">
-              <div class="carousel-caption center-caption">
-                <h3 class="caption-title font-bold mb-3">{{ articleTitles[1] }}</h3>
-                <h5 class="caption-title truncated-summary mb-3">{{ articleSummary[1] }}</h5>
-                <button @click="openArticle(articleURLs[1])" class="btn btn-primary btncolor">More Info</button>
-              </div>
-            </div>
-            <div class="carousel-item">
-              <img src="../assets/bitcoin-to-usd.jpeg" class="d-block w-100" alt="...">
-              <div class="carousel-caption center-caption">
-                <h3 class="caption-title font-bold mb-3">{{ articleTitles[2] }}</h3>
-                <h5 class="caption-title truncated-summary mb-3">{{ articleSummary[2] }}</h5>
-                <button @click="openArticle(articleURLs[2])" class="btn btn-primary btncolor">More Info</button>
-              </div>
-            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
           </div>
-          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-            
-          </button>
-          
         </div>
-
+        <!-- Statistics and Performance Cards -->
+        <div class="flex flex-row my-4 space-x-4 ml-4">
+          <portfolios-statistics-card :portfolios="portfolioList" :key="portfolioList"/>
+          <portfolio-performance-card title="Best Performing Portfolio" />
+          <portfolio-performance-card title="Worst Performing Portfolio" />
+        </div>
       </div>
-
-      <div>
-        <stock-rate-chart
-          class="m-2 border mr-2"
-          :popular-stocks="popularStocks.slice(0, 5)"
-        />
+      <!-- Container of Stock Rate Chart -->
+      <div class="w-1/3">
+          <stock-rate-chart
+              class="border mr-2 ml-4"
+              :popular-stocks="popularStocks.slice(0, 9)"
+          />
       </div>
-    </div>
-
-    <div class="flex flex-row my-4 space-x-4 ml-4">
-      <portfolios-statistics-card :portfolios="portfolioList" :key="portfolioList"/>
-      <portfolio-performance-card title="Best Performing Portfolio" />
-      <portfolio-performance-card title="Worst Performing Portfolio" />
     </div>
 
 
