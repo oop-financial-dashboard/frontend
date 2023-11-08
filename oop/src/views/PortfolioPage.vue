@@ -1,9 +1,14 @@
 <template>
   <main class="portfolioPage">
-    <div class="border rounded mb-2 bg-white">
-      <p class="text-l font-medium m-1 pl-2">
-        Portfolio Name: <b class="text-primary">{{ portfolioId }}</b>
-      </p>
+    <div class="flex mb-2">
+      <div class="border flex rounded bg-white w-3/4 mr-1">
+        <p class="text-xl font-medium m-3 pl-2">
+          Portfolio Name: <b class="text-primary">{{ portfolioId }}</b>
+        </p>
+      </div>
+      <div class="bg-white rounded border ml-3 text-center" style="width: 300px">
+        <p class="text-xl font-normal m-3">Total Value: <b class="text-black">{{ formatTotalValue(portfolioValue)}}</b></p>
+      </div>
     </div>
 
     <div class="row-section d-flex justify-content-between">
@@ -91,6 +96,9 @@ export default {
   data() {
     return {
       portfolioId: sessionStorage.getItem("portfolioId"),
+      // portfolioValue: sessionStorage.getItem("portfolio").totalValue,
+      portfolioValue: JSON.parse(sessionStorage.getItem("portfolio"))
+        .totalValue,
       portfolio: JSON.parse(sessionStorage.getItem("portfolio")),
       percentageData: 0,
       value: 0,
