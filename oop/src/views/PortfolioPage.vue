@@ -13,7 +13,7 @@
 
     <div class="row-section d-flex justify-content-between">
       <data-box
-        title="Price Return"
+        title="Price Return / Year"
         :displayValue="percentageData"
         :value="value"
         class="rounded-xl"
@@ -38,7 +38,7 @@
       >
       </data-box>
       <data-box
-        title="Active Return"
+        title="Active Return / Year"
         :displayValue="activeReturn"
         :bench-mark="benchMark"
         class="rounded-xl"

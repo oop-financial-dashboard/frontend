@@ -4,7 +4,7 @@
   >
     <header>{{ title }}</header>
     <p class="percentage-data" :class="getColour()" style="font-weight: bold">
-      {{ addUnits ? `${displayValue} % / Year` : displayValue }}
+      {{ addUnits ? `${displayValue} %` : displayValue }}
     </p>
     <p class="bench-mark">{{ benchMark }}</p>
     <p class="value" :class="getColour()">{{ value }}</p>
@@ -37,7 +37,7 @@ export default {
     },
   },
   created() {
-    if (this.title === "Price Return" || this.title === "Compound Annual Growth Rate" || this.title === "Active Return") {
+    if (this.title === "Price Return / Year" || this.title === "Compound Annual Growth Rate" || this.title === "Active Return / Year") {
       this.addUnits = true;
     }
   },
