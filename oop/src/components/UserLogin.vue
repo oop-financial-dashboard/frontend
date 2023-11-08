@@ -68,7 +68,7 @@
       >
         Don't have an account?
         <!-- <u>Register</u> -->
-        <a href="#registerModal" class="pe-auto">Register</a>
+        <a href="#registerModal" class="pe-auto text-primary">Register</a>
       </p>
     </form>
 
@@ -319,27 +319,6 @@ export default {
                 console.log(sessionStorage.getItem("token"));
                 this.$router.push("/homepage");
                 this.show("notification", "Welcome Back!", "", "success");
-
-                // const data = {
-                //   email: this.email,
-                // };
-
-                // const token = sessionStorage.getItem("token");
-                // const config = {
-                //   headers: {
-                //     "Content-Type": "application/json",
-                //     Authorization: `Bearer ${token}`,
-                //   },
-                // };
-
-                // axios
-                //   .post(`/users/user-details`, data, config)
-                //   .then((response) => {
-                //     if (response.status === 200) {
-                //       sessionStorage.setItem("user_id", response.data.id);
-                //       console.log(sessionStorage.getItem("user_id"));
-                //     }
-                //   });
               }
             });
         }

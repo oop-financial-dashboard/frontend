@@ -1,51 +1,75 @@
 <template>
   <main class="portfolioPage">
-    <div class="border rounded mb-2 bg-light">
-      <p class="text-l font-medium m-1 pl-2">
-        Portfolio Name: <b class="text-primary">{{ portfolioId }}</b>
-      </p>
+    <div class="flex mb-2">
+      <div class="border flex rounded bg-white w-3/4 mr-1">
+        <p class="text-xl font-medium m-3 pl-2">
+          Portfolio Name: <b class="text-primary">{{ portfolioId }}</b>
+        </p>
+      </div>
+      <div class="bg-white rounded border ml-3 text-center" style="width: 300px">
+        <p class="text-xl font-normal m-3">Total Value: <b class="text-black">{{ formatTotalValue(portfolioValue)}}</b></p>
+      </div>
     </div>
-      <div class="row-section d-flex justify-content-between">
-        <data-box
-          title="Price Return"
-          :displayValue="percentageData"
-          :value="value"
-        >
-        </data-box>
-        <data-box title="Standard Deviation" :displayValue="stdDev"> </data-box>
-        <data-box title="Sharpe Ratio" :displayValue="sharpeRatio"> </data-box>
-        <data-box
-          title="Active Return"
-          :displayValue="activeReturn"
-          :bench-mark="benchMark"
-        >
-        </data-box>
-      </div>
 
-      <div class="time-series-graph data-box bg-white p-4">
-        <!--      <header class="mb-1">Time Series Graph</header>-->
-        <portfolio-value-chart class="rounded" :portfolio-id="portfolioId" />
-      </div>
+    <div class="row-section d-flex justify-content-between">
+      <data-box
+        title="Price Return"
+        :displayValue="percentageData"
+        :value="value"
+        class="rounded-xl"
+      >
+      </data-box>
+      <data-box
+        title="Standard Deviation"
+        :displayValue="stdDev"
+        class="rounded-xl"
+      >
+      </data-box>
+      <data-box
+        title="Sharpe Ratio"
+        :displayValue="sharpeRatio"
+        class="rounded-xl"
+      >
+      </data-box>
+      <data-box
+        title="Active Return"
+        :displayValue="activeReturn"
+        :bench-mark="benchMark"
+        class="rounded-xl"
+      >
+      </data-box>
+    </div>
 
-      <div class="d-flex h-auto justify-content-between">
-        <!-- this exposure chart should be part of the div for all the alignments and padding to apply -->
-        <exposure-chart class="rounded" :portfolio-stocks="portfolio.stocks" />
+    <div class="time-series-graph data-box bg-white p-4 rounded-xl border">
+      <!--      <header class="mb-1">Time Series Graph</header>-->
+      <portfolio-value-chart :portfolio-id="portfolioId" />
+    </div>
 
-        <!-- <div class="bg-white data-box p-4"> -->
-        <!-- <header class="mb-1">Assets Pie Chart</header> -->
-        <assets-pie-chart class="rounded" :portfolio="portfolio"/>
-      </div>
-      <!-- </div> -->
-      <div class="time-series-graph data-box bg-white p-4">
-        <attribution-chart/>
-      </div>
-
-      <div class="stocks border data-box">
-        <stocks-table class="rounded" :portfolio-stocks="portfolio.stocks" />
-      </div>
+    <div class="flex space-x-4 my-4">
+      <!-- this exposure chart should be part of the div for all the alignments and padding to apply -->
+      <exposure-chart
+        class="rounded-xl border w-5/6"
+        :portfolio-stocks="portfolio.stocks"
+      />
+      <assets-pie-chart
+        class="rounded-xl border w-5/6"
+        :portfolio="portfolio"
+      />
+      <va-r-chart class="rounded-xl" :portfolio-stocks="portfolio.stocks" />
+    </div>
     <!-- </div> -->
-    
+    <div class="time-series-graph data-box bg-white p-4 rounded-xl border">
+      <attribution-chart />
+    </div>
 
+    <div class="stocks border data-box bg-white rounded-xl">
+      <p class="text-xl font-bold m-4">Portfolio Stocks</p>
+      <stocks-table
+        class="rounded m-4"
+        style="width: 1200px"
+        :portfolio-stocks="portfolio.stocks"
+      />
+    </div>
   </main>
 </template>
 
@@ -57,9 +81,11 @@ import PortfolioValueChart from "@/components/Analytics/PortfolioValueChart.vue"
 import AssetsPieChart from "@/components/Analytics/AssetsPieChart.vue";
 import AttributionChart from "@/components/Analytics/AttributionChart.vue";
 import axios from "axios";
+import VaRChart from "@/components/Analytics/VaRChart.vue";
 
 export default {
   components: {
+    VaRChart,
     AttributionChart,
     PortfolioValueChart,
     dataBox,
@@ -70,6 +96,9 @@ export default {
   data() {
     return {
       portfolioId: sessionStorage.getItem("portfolioId"),
+      // portfolioValue: sessionStorage.getItem("portfolio").totalValue,
+      portfolioValue: JSON.parse(sessionStorage.getItem("portfolio"))
+        .totalValue,
       portfolio: JSON.parse(sessionStorage.getItem("portfolio")),
       percentageData: 0,
       value: 0,
@@ -87,13 +116,21 @@ export default {
     };
   },
   mounted() {
+  mounted() {
     this.calculatePriceReturn();
     this.calculatePortfolioSD();
     this.calculateSharpeRatio();
     this.calculateActiveReturn();
   },
   methods: {
+  methods: {
     formatTotalValue(totalValue) {
+      return totalValue.toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
       return totalValue.toLocaleString("en-US", {
         style: "currency",
         currency: "USD",
@@ -103,11 +140,28 @@ export default {
     },
 
     calculatePriceReturn() {
+      const token = sessionStorage.getItem("token");
+    calculatePriceReturn() {
       const config = {
         headers: {
           Authorization: `Bearer ${this.token}`,
         },
       };
+
+      axios
+        .get(
+          `/portfolio/get-historicals/${this.userid}/${this.portfolioId}`,
+          config
+        )
+        .then((response) => {
+          if (response.status === 200) {
+            this.priceReturnList = response.data;
+            for (const key in response.data) {
+              console.log(response.data[key]);
+              for (const k in response.data[key]) {
+                this.priceReturnList = response.data[key][k];
+              }
+            }
 
       axios
         .get(
@@ -129,7 +183,27 @@ export default {
               }
             }
             // (summing all individual stocks in the portfolio then subtracting the last stock price) -1
+            for (const portfolio in this.portfolioList) {
+              if (portfolio == this.portfolioId) {
+                this.initialPrice += this.portfolioList[portfolio].totalValue;
+              }
+            }
+            // (summing all individual stocks in the portfolio then subtracting the last stock price) -1
 
+            this.priceReturn =
+              this.priceReturnList[this.priceReturnList.length - 1][1];
+            this.percentageData = Number(
+              (this.priceReturn - this.initialPrice - 1).toFixed(2)
+            );
+            this.value = this.formatTotalValue(
+              this.priceReturn - this.initialPrice
+            );
+          }
+        });
+    },
+
+    calculateSD() {},
+  },
             //TO DO : UNCOMMENT THIS OUT!!
             this.priceReturn =
               this.priceReturnList[this.priceReturnList.length - 1][1];
@@ -289,12 +363,9 @@ export default {
 .data-box {
   margin: 10px 0 10px 0;
   padding: 5px;
-  border-radius: 5px;
 }
 /* .portfoliopage {
   background-color: #f5f7ff;
   
 } */
-
-
 </style>

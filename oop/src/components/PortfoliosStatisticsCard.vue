@@ -33,6 +33,7 @@ export default {
   props: {
     portfolios: Object,
     change: Number,
+    assetsValue: Array
   },
   data() {
     return {
@@ -44,15 +45,14 @@ export default {
   },
   created() {
     this.numOfPortfolios = Object.entries(this.portfolios).length;
-    this.setTotalValue(this.portfolios);
-    // this.setPercentageChange(this.change);
+    this.setTotalValue(this.assetsValue);
   },
   methods: {
-    setTotalValue(portfolios) {
-      const portfoliosData = Object.values(portfolios);
+    setTotalValue(latestPrices) {
+      const currentAssetsValue = Object.values(latestPrices);
       let value = 0;
-      portfoliosData.forEach((data) => {
-        value += data.totalValue;
+      currentAssetsValue.forEach((asset) => {
+        value += asset[1];
       });
       value = Number((value).toFixed(0));
       this.totalValue = (value).toLocaleString();

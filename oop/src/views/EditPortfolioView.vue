@@ -180,20 +180,21 @@
         </table>
       </div>
     </div>
-    <!-- <div class="fixed-container">
-      <div class="btn-container">
-        <button class="btn btn-outline-dark" @click="updatePortfolio">
-          Update
-        </button>
-      </div>
-    </div> -->
     <div class="fixed-container">
-      <div class="btn-container">
+      <div class="btn-container" v-if="!showSpinner">
         <button class="btn btn-dark" @click="updatePortfolio">
           Edit portfolio
         </button>
       </div>
+
+      <div class="btn-container flex mb-1" v-else>
+        <div class="spinner-border spinner-border-sm mr-3 mt-0.5" style="color: #0A1B39" role="status">
+          <span class="p-3"></span> 
+        </div> 
+        <p class="fw-medium">Editing Portfolio...</p>
+      </div>
     </div>
+    
   </main>
 </template>
 
@@ -245,6 +246,7 @@ export default {
       quantity: 0,
       allPortolios: "",
       removeExistingStocks: [],
+      showSpinner : false,
     };
   },
   computed: {
@@ -738,13 +740,15 @@ export default {
       //console.log(token);
 
       try {
-        //console.log(portfolioData);
+        this.showSpinner = true;
         const response = await axios.post(
           "/portfolio/update",
           portfolioData,
           config
         );
         if (response.status === 200) {
+          this.showSpinner = false;
+
           if (action == "NewExistingIncrease") {
             this.showNotification(
               "notification",

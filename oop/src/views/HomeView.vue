@@ -25,7 +25,7 @@
                   class="d-block w-100 rounded-xl"
                   alt="..."
                 />
-                <div class="carousel-caption text-start" >
+                <div class="carousel-caption text-start" v-if="!articleDataLoading">
                   <h3
                     class="caption-title truncated-title font-bold text-3xl mb-2"
                   >
@@ -42,6 +42,18 @@
                     View Article
                   </button>
                 </div>
+
+                <div class="carousel-caption text-start"  v-else> 
+                  <!-- Display loading spinner or skeleton UI while data is loading -->
+                  <div class="mb-2 flex animate-pulse">
+                    <div class="w-full">
+                      <h3 class="h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 80%;"></h3>
+                      <h5 class="mt-4 h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 40%;"></h5>
+                      <h5 class="mt-4 h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 20%;"></h5>
+                    </div>
+                  </div>
+                </div>
+
               </div>
               <div class="carousel-item" data-bs-interval="5000">
                 <img
@@ -49,21 +61,33 @@
                   class="d-block w-100"
                   alt="..."
                 />
-                <div class="carousel-caption text-start">
+                <div class="carousel-caption text-start" v-if="!articleDataLoading">
                   <h3
                     class="caption-title truncated-title font-bold text-3xl mb-2"
                   >
                     {{ articleTitles[1] }}
                   </h3>
-                  <h5 class="caption-title truncated-summary mb-3 w-2/3">
+                  <h5 class="caption-title truncated-summary mb-3 w-2/3" >
                     {{ articleSummary[1] }}
                   </h5>
+                  <!-- <a :href="articleURLs[0]" target="_blank">Read more</a> -->
                   <button
-                    @click="openArticle(articleURLs[1])"
+                    @click="openArticle(articleURLs[0])"
                     class="btn btn-light"
                   >
                     View Article
                   </button>
+                </div>
+
+                <div class="carousel-caption text-start"  v-else> 
+                  <!-- Display loading spinner or skeleton UI while data is loading -->
+                  <div class="mb-2 flex animate-pulse">
+                    <div class="w-full">
+                      <h3 class="h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 80%;"></h3>
+                      <h5 class="mt-4 h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 40%;"></h5>
+                      <h5 class="mt-4 h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 20%;"></h5>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="carousel-item" data-bs-interval="5000">
@@ -72,22 +96,35 @@
                   class="d-block w-100"
                   alt="..."
                 />
-                <div class="carousel-caption text-start">
+                <div class="carousel-caption text-start" v-if="!articleDataLoading">
                   <h3
                     class="caption-title truncated-title font-bold text-3xl mb-2"
                   >
                     {{ articleTitles[2] }}
                   </h3>
-                  <h5 class="caption-title truncated-summary mb-3 w-2/3">
+                  <h5 class="caption-title truncated-summary mb-3 w-2/3" >
                     {{ articleSummary[2] }}
                   </h5>
+                  <!-- <a :href="articleURLs[0]" target="_blank">Read more</a> -->
                   <button
-                    @click="openArticle(articleURLs[2])"
+                    @click="openArticle(articleURLs[0])"
                     class="btn btn-light"
                   >
                     View Article
                   </button>
                 </div>
+
+                <div class="carousel-caption text-start"  v-else> 
+                  <!-- Display loading spinner or skeleton UI while data is loading -->
+                  <div class="mb-2 flex animate-pulse">
+                    <div class="w-full">
+                      <h3 class="h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 80%;"></h3>
+                      <h5 class="mt-4 h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 40%;"></h5>
+                      <h5 class="mt-4 h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 20%;"></h5>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
             <button
@@ -118,8 +155,8 @@
         </div>
         <!-- Statistics and Performance Cards -->
         <div class="flex flex-row my-4 space-x-4 ml-4">
-          <portfolios-statistics-card :portfolios="portfolioList" :change="totalPercentageChange" :key="portfolioList" v-if="allPercentageChanges.length > 0" class="border"/>
-          <blank-component class="border" v-else/>
+          <blank-component class="border" v-if="allPercentageChanges.length === 0" />
+          <portfolios-statistics-card :portfolios="portfolioList" :change="totalPercentageChange" :assets-value="currentAssetValue" :key="portfolioList" v-else class="border"/>
           <portfolio-performance-card title="Best Performing Portfolio" :details="allPercentageChanges[0]" :value="bestPortfolioValue"  v-if="allPercentageChanges.length > 0" class="border"/>
           <portfolio-performance-card title="Worst Performing Portfolio" :details="allPercentageChanges[allPercentageChanges.length-1]" :value="worstPortfolioValue" v-if="allPercentageChanges.length > 1" class="border"/>
         </div>
@@ -253,6 +290,8 @@ export default {
       bestPortfolioValue: 0,
       worstPortfolioValue: 0,
       isDataLoaded: true,
+      articleDataLoading: true,
+      currentAssetValue: []
     };
   },
  // The code snippet calls the function "populateCarousel" and then waits for the function "retrieveUserDetails" to finish executing before moving on.
@@ -262,15 +301,18 @@ export default {
     this.populateCarousel();
     await this.retrieveUserDetails();
   },
+  mounted() {
+    console.log("all changes ---->", this.allPercentageChanges.length);
+  },
   methods: {
     checkPortfolioExists(portfolios) {
       // Check if at least one portfolio ID exists
       const portfolioIds = Object.keys(portfolios);
 
+      let popularStocksInPortfoliosObj = {};
       if (portfolioIds.length > 0) {
         this.display = true;
 
-        let popularStocksInPortfoliosObj = {};
         Object.values(portfolios).forEach((portfolio) => {
           portfolio.stocks.forEach((stock) => {
             if (stock.symbol in popularStocksInPortfoliosObj) {
@@ -280,12 +322,23 @@ export default {
             }
           });
         });
-        this.popularStocks = Object.entries(popularStocksInPortfoliosObj).sort(
-          (a, b) => b[1] - a[1]
-        );
       } else {
         this.display = false;
+        // Initialising stock rate chart with pre-loaded stock list when no no portfolios are available
+        popularStocksInPortfoliosObj = {
+          "AAPL" : 1,
+          "MSFT" : 1,
+          "META" : 1,
+          "MCD" : 1,
+          "NFLX" : 1,
+          "SHEL" : 1,
+          "WMT" : 1,
+          "NKE" : 1
+        };
       }
+      this.popularStocks = Object.entries(popularStocksInPortfoliosObj).sort(
+        (a, b) => b[1] - a[1]
+      );
     },
     navigateToDetails(selectedPortfolio, portfolioId) {
       // save the data
@@ -346,7 +399,7 @@ export default {
         .get(`/portfolio/get-all/${user_id}`, config)
         .then(async (response) => {
           if (response.status === 200) {
-            console.log(response.data.portfolios);
+            console.log(response.data);
             let portfoliosInitialValues = {};
             this.portfolioList = response.data.portfolios;
             this.checkPortfolioExists(this.portfolioList);
@@ -354,15 +407,19 @@ export default {
               this.totalAsset += this.portfolioList[key].totalValue;
               portfoliosInitialValues[key] = this.portfolioList[key].totalValue;
             }
+            if (Object.keys(response.data.portfolios).length !== 0) {
+              //   TODO: Call function here to get portfolio latest prices
+              const portfolioLatestPrices = await this.getAllPortfoliosLatestPrice(this.portfolioList, user_id);
+              console.log("Lastest portfolio prices ----->", portfolioLatestPrices);
+              this.currentAssetValue = portfolioLatestPrices;
+              this.allPercentageChanges = this.calculateAllPortfoliosPercentageChange(portfoliosInitialValues, portfolioLatestPrices);
+              this.bestPortfolioValue = Number(portfolioLatestPrices[this.allPercentageChanges[0][0]][1].toFixed(0)).toLocaleString();
+              this.worstPortfolioValue = Number(portfolioLatestPrices[this.allPercentageChanges[this.allPercentageChanges.length-1][0]][1].toFixed(0)).toLocaleString();
+            }
             sessionStorage.setItem(
                 "portfolioList",
                 JSON.stringify(this.portfolioList)
             );
-            //   TODO: Call function here to get portfolio latest prices
-            const portfolioLatestPrices = await this.getAllPortfoliosLatestPrice(this.portfolioList, user_id);
-            this.allPercentageChanges = this.calculateAllPortfoliosPercentageChange(portfoliosInitialValues, portfolioLatestPrices);
-            this.bestPortfolioValue = Number(portfolioLatestPrices[this.allPercentageChanges[0][0]][1].toFixed(0)).toLocaleString();
-            this.worstPortfolioValue = Number(portfolioLatestPrices[this.allPercentageChanges[this.allPercentageChanges.length-1][0]][1].toFixed(0)).toLocaleString();
           }
         })
         .catch((err) => {
@@ -440,14 +497,12 @@ export default {
     },
 
     async populateCarousel() {
-      axios.get(`https://www.alphavantage.co/query?function=NEWS_SENTIMENT&financial_markets&sort=LATEST&apikey=769DTIWCBUJZZAYW`)
-      .then((response) => {
+      this.articleDataLoading = true; // Set loading state to true
+      axios
+        .get(`https://www.alphavantage.co/query?function=NEWS_SENTIMENT&financial_markets&sort=LATEST&apikey=769DTIWCBUJZZAYW`)
+        .then((response) => {
           if (response.status === 200) {
             this.data = response.data.feed;
-            // console.log(this.data[0]); // array of articles
-            console.log(this.data[0].title); // title of first article
-            // console.log(this.data[0].url); //url of first article
-            // Extract the top 3 articles
             this.articleTitles = this.data.slice(0, 3).map((article) => article.title);
             this.articleURLs = this.data.slice(0, 3).map((article) => article.url);
             this.articleSummary = this.data.slice(0, 3).map((article) => article.summary);
@@ -455,7 +510,9 @@ export default {
         })
         .catch((err) => {
           console.error(err);
-          // this.showNotification("notification", "Error", "Failed to retrieve portfolios. Please try again later.", "error");
+        })
+        .finally(() => {
+          this.articleDataLoading = false; // Set loading state to false
         });
     },
 
@@ -497,6 +554,8 @@ export default {
       Object.values(this.allPercentageChanges).forEach(change => { sum += change[1] });
       // console.log(sum);
       return sum;
+    }, checkPorfolioList() {
+      return JSON.stringify(this.portfolioList).length === 0;
     }
   }
 };
