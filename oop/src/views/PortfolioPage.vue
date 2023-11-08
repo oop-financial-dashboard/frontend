@@ -150,6 +150,7 @@ export default {
         .then((response) => {
           if (response.status === 200) {
             this.priceReturnList = response.data;
+            this.portfolioValue = response.data.data[this.portfolioId][response.data.data[this.portfolioId].length-1][1];
             for (const key in response.data) {
               for (const k in response.data[key]) {
                 this.priceReturnList = response.data[key][k];

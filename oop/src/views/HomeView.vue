@@ -177,7 +177,7 @@
       <div class="d-flex justify-content-between mb-3">
         <p class="text-xl font-bold my-2">My Portfolios</p>
 
-        <button class="btn bg-slate-600	text-white " @click="createPortfolio">
+        <button class="btn btn-dark text-white " @click="createPortfolio">
           Create Portfolio
         </button>
       </div>
