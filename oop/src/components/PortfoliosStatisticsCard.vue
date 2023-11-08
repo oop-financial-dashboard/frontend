@@ -33,7 +33,7 @@ export default {
   props: {
     portfolios: Object,
     change: Number,
-    assetsValue: Array
+    assetsValue: Object
   },
   data() {
     return {

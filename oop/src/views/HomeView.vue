@@ -420,6 +420,7 @@ export default {
                 "portfolioList",
                 JSON.stringify(this.portfolioList)
             );
+            console.log("this is stored in session ---->",Object.keys(sessionStorage.getItem("portfolioList")));
           }
         })
         .catch((err) => {
@@ -521,9 +522,14 @@ export default {
       window.open(articleURL, "_blank");
     },
     async getAllPortfoliosLatestPrice(portfolios, userID) {
+      const token = sessionStorage.getItem("token");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
       const portfolioIds = Object.keys(portfolios);
-      const allPortfoliosHistoricalValues = await Promise.allSettled(portfolioIds.map(pId => axios(`/portfolio/get-historicals/${userID}/${pId}`).then( ({data}) => data) ));
-      console.log("WHAT IS INSIDE ALL PORTFOLIO HIST",allPortfoliosHistoricalValues)
+      const allPortfoliosHistoricalValues = await Promise.allSettled(portfolioIds.map(pId => axios.get(`/portfolio/get-historicals/${userID}/${pId}`, config).then( ({data}) => data) ));
       let allPortfoliosLatestPrice = {};
       for (let i=0; i < portfolioIds.length; i++) {
         const portfolioId = portfolioIds[i];

@@ -73,8 +73,6 @@ export default {
         if (dd < 10) dd = '0' + yd;
       }
       if (mm < 10) mm = '0' + mm;
-
-      console.log(yyyy + '-' + mm + '-' + dd);
       return yyyy + '-' + mm + '-' + dd;
     },
     calculcateChange(currentData, previousData) {
