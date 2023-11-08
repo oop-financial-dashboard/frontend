@@ -85,12 +85,17 @@
         </div>
 
         <!-- Submit button -->
-        <button
+        <button v-if="!showSpinner"
           type="button"
           class="reset_btn my-4 p-2"
           @click="ChangePassword()"
         >
           Reset Password
+        </button>
+        <button v-else type="button" class="reset_btn my-4 p-2">
+          <div class="spinner-border spinner-border-sm mr-3 mt-0.5 text-white"  role="status">
+            <span class=""></span> 
+          </div> 
         </button>
         <!-- <div id="incorrect_text"></div> -->
       </form>
@@ -114,6 +119,7 @@ export default {
       currentPasswordError: null, // Error message for current password
       newPasswordError: null, // Error message for new password
       confirmPasswordError: null, // Error message for confirm password
+      showSpinner: false
     };
   },
   methods: {
@@ -168,6 +174,9 @@ export default {
       console.log("helllo over here");
 
       try {
+
+        this.showSpinner = true;
+
         const config = {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -192,6 +201,7 @@ export default {
                 "",
                 "success"
               );
+              this.showSpinner = false;
               this.$router.push("/");
             }
           })
