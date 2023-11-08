@@ -1,15 +1,20 @@
 <template>
   <div class="flex flex-row my-2.5 " style="height: 38px">
-    <img class="my-1.5" :src="require(`@/assets/${symbol}.svg`)" style="height: 30px;width: 30px" alt=""/>
+    <div v-if="name.length === 0" class="bg-slate-200 animate-pulse h-8 w-8 my-1"></div>
+    <img v-else class="my-1.5" :src="require(`@/assets/${symbol}.svg`)" style="height: 30px;width: 30px" alt=""/>
     <div class="flex-fill ml-1">
-      <div class="flex flex-col space-y-0.5">
+      <div class="flex flex-col" :class="[name.length === 0 ? 'space-y-3' : 'space-y-0.5']">
         <div class="d-flex flex-row justify-content-between min-h-min">
-          <p class="text-base">{{ name }}</p>
-          <p class="text-base">${{ price }}</p>
+          <div v-if="name.length === 0" class="bg-slate-200 animate-pulse rounded-sm h-4 text-transparent">Name is loading...</div>
+          <p v-else class="text-base">{{ name }}</p>
+          <div v-if="name.length === 0" class="bg-slate-200 animate-pulse rounded-sm h-4 text-transparent">Price.....</div>
+          <p v-else class="text-base">${{ price }}</p>
         </div>
         <div class="d-flex flex-row justify-content-between min-h-min">
-          <p class="text-sm font-medium text-slate-500">{{ symbol }}</p>
-          <p class="text-sm" :class="[change > 0 ? 'text-green-600' : 'text-red-600']">{{ change }}%</p>
+          <div v-if="name.length === 0" class="bg-slate-200 animate-pulse rounded-sm h-3 text-transparent">Ticker</div>
+          <p v-else class="text-sm font-medium text-slate-500">{{ symbol }}</p>
+          <div v-if="name.length === 0" class="bg-slate-200 animate-pulse rounded-sm h-3 text-transparent">%Chg</div>
+          <p v-else class="text-sm" :class="[change > 0 ? 'text-green-600' : 'text-red-600']">{{ change }}%</p>
         </div>
       </div>
     </div>
