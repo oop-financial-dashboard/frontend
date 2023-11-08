@@ -121,8 +121,8 @@ export default {
   mounted() {
     this.calculatePriceReturn();
     this.calculatePortfolioSD();
-    this.calculateSharpeRatio();
-    this.calculateActiveReturn();
+    //this.calculateSharpeRatio(this.value, this.stdDev);
+    //this.calculateActiveReturn();
   },
   methods: {
     formatTotalValue(totalValue) {
@@ -175,6 +175,7 @@ export default {
               this.priceReturn - this.initialPrice
             );
             this.calculateActiveReturn(this.percentageData);
+            this.calculatePortfolioSD(this.percentageData);
           }
         });
     },
@@ -230,7 +231,8 @@ export default {
       return portfolioVariance;
     },
 
-    async calculatePortfolioSD() {
+    async calculatePortfolioSD(ror) {
+      console.log("ROR: " + ror);
       let portfolioVariance = 0;
       const stockPromises = [];
 
@@ -275,41 +277,27 @@ export default {
 
         const portfolioStdv = Math.sqrt(portfolioVariance);
         this.stdDev = parseFloat(portfolioStdv * 100).toFixed(2) + "%"; // This sets the portfolio standard deviation
+
+        // call the method to calculate sharpe ratio
+        this.calculateSharpeRatio(ror, portfolioStdv);
+
       } catch (error) {
         // Handle errors here
         console.log("Failed to calculate portfolio standard deviation.")
       }
     },
 
-    calculateSharpeRatio() {
-      // TODO
+    calculateSharpeRatio(ror, stdDev) {
       // sharpe ratio
-      // ROR = curr - initial/initial x 100
-      // Enter the current value and expected rate of return for each investment. (7%)
-      // Indicate the weight of each investment.
-      // Multiply the weight by its expected return
-      // Sum these all up
-
-      // axios
-      //     .post(
-      //       `/stock/price`,
-      //         {
-      //           symbol: stockSymbol,
-      //           timestamp: "2023-11-03", // date should be yesterday date
-      //         },
-      //         config
-      //     )
-      //     .then((response) => {
-      //       if (response.status === 200) {
-      //         // calculate weights per stock
-              
-      //       }
-      //     });
-
       // Risk-free Rate of Return = [(1 + Government Bond Rate)/(1 + Inflation Rate)] – 1
-      // inflation rate = 3.7
-      // govt bond rate = 4.577
-
+      // inflation rate = 3.7% https://www.cnbc.com/2023/10/12/heres-the-inflation-breakdown-for-september-2023-in-one-chart.html#:~:text=The%20consumer%20price%20index%20rose,rate%20over%20the%20long%20term.
+      // govt bond rate = 4.5796% https://www.worldgovernmentbonds.com/country/united-states/
+      console.log("----" + ror + "," + stdDev);
+      const inflationRate = 3.7/100;
+      const govtBondRate = 4.5796/100;
+      let riskFreeRate = ((1 + govtBondRate)/(1 + inflationRate)) - 1;
+      let sharpeRatio = ((ror/100) - riskFreeRate)/(stdDev/100)
+      this.sharpeRatio = sharpeRatio.toFixed(2);
     },
 
     calculateActiveReturn(pData) {
@@ -319,10 +307,7 @@ export default {
       // ROR = curr - initial/initial x 100
       // ROR - benchmark = active return
       this.activeReturn = pData - 8.5;
-      console.log(pData);
-
-      
-
+      //console.log(pData);
     },
   }
 }
