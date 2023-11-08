@@ -25,7 +25,7 @@
                   class="d-block w-100 rounded-xl"
                   alt="..."
                 />
-                <div class="carousel-caption text-start" >
+                <div class="carousel-caption text-start" v-if="!articleDataLoading">
                   <h3
                     class="caption-title truncated-title font-bold text-3xl mb-2"
                   >
@@ -42,6 +42,18 @@
                     View Article
                   </button>
                 </div>
+
+                <div class="carousel-caption text-start"  v-else> 
+                  <!-- Display loading spinner or skeleton UI while data is loading -->
+                  <div class="mb-2 flex animate-pulse">
+                    <div class="w-full">
+                      <h3 class="h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 80%;"></h3>
+                      <h5 class="mt-4 h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 40%;"></h5>
+                      <h5 class="mt-4 h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 20%;"></h5>
+                    </div>
+                  </div>
+                </div>
+
               </div>
               <div class="carousel-item" data-bs-interval="5000">
                 <img
@@ -49,21 +61,33 @@
                   class="d-block w-100"
                   alt="..."
                 />
-                <div class="carousel-caption text-start">
+                <div class="carousel-caption text-start" v-if="!articleDataLoading">
                   <h3
                     class="caption-title truncated-title font-bold text-3xl mb-2"
                   >
                     {{ articleTitles[1] }}
                   </h3>
-                  <h5 class="caption-title truncated-summary mb-3 w-2/3">
+                  <h5 class="caption-title truncated-summary mb-3 w-2/3" >
                     {{ articleSummary[1] }}
                   </h5>
+                  <!-- <a :href="articleURLs[0]" target="_blank">Read more</a> -->
                   <button
-                    @click="openArticle(articleURLs[1])"
+                    @click="openArticle(articleURLs[0])"
                     class="btn btn-light"
                   >
                     View Article
                   </button>
+                </div>
+
+                <div class="carousel-caption text-start"  v-else> 
+                  <!-- Display loading spinner or skeleton UI while data is loading -->
+                  <div class="mb-2 flex animate-pulse">
+                    <div class="w-full">
+                      <h3 class="h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 80%;"></h3>
+                      <h5 class="mt-4 h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 40%;"></h5>
+                      <h5 class="mt-4 h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 20%;"></h5>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="carousel-item" data-bs-interval="5000">
@@ -72,22 +96,35 @@
                   class="d-block w-100"
                   alt="..."
                 />
-                <div class="carousel-caption text-start">
+                <div class="carousel-caption text-start" v-if="!articleDataLoading">
                   <h3
                     class="caption-title truncated-title font-bold text-3xl mb-2"
                   >
                     {{ articleTitles[2] }}
                   </h3>
-                  <h5 class="caption-title truncated-summary mb-3 w-2/3">
+                  <h5 class="caption-title truncated-summary mb-3 w-2/3" >
                     {{ articleSummary[2] }}
                   </h5>
+                  <!-- <a :href="articleURLs[0]" target="_blank">Read more</a> -->
                   <button
-                    @click="openArticle(articleURLs[2])"
+                    @click="openArticle(articleURLs[0])"
                     class="btn btn-light"
                   >
                     View Article
                   </button>
                 </div>
+
+                <div class="carousel-caption text-start"  v-else> 
+                  <!-- Display loading spinner or skeleton UI while data is loading -->
+                  <div class="mb-2 flex animate-pulse">
+                    <div class="w-full">
+                      <h3 class="h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 80%;"></h3>
+                      <h5 class="mt-4 h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 40%;"></h5>
+                      <h5 class="mt-4 h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 20%;"></h5>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
             <button
@@ -253,6 +290,7 @@ export default {
       bestPortfolioValue: 0,
       worstPortfolioValue: 0,
       isDataLoaded: true,
+      articleDataLoading: true,
     };
   },
  // The code snippet calls the function "populateCarousel" and then waits for the function "retrieveUserDetails" to finish executing before moving on.
@@ -440,14 +478,12 @@ export default {
     },
 
     async populateCarousel() {
-      axios.get(`https://www.alphavantage.co/query?function=NEWS_SENTIMENT&financial_markets&sort=LATEST&apikey=769DTIWCBUJZZAYW`)
-      .then((response) => {
+      this.articleDataLoading = true; // Set loading state to true
+      axios
+        .get(`https://www.alphavantage.co/query?function=NEWS_SENTIMENT&financial_markets&sort=LATEST&apikey=769DTIWCBUJZZAYW`)
+        .then((response) => {
           if (response.status === 200) {
             this.data = response.data.feed;
-            // console.log(this.data[0]); // array of articles
-            console.log(this.data[0].title); // title of first article
-            // console.log(this.data[0].url); //url of first article
-            // Extract the top 3 articles
             this.articleTitles = this.data.slice(0, 3).map((article) => article.title);
             this.articleURLs = this.data.slice(0, 3).map((article) => article.url);
             this.articleSummary = this.data.slice(0, 3).map((article) => article.summary);
@@ -455,7 +491,9 @@ export default {
         })
         .catch((err) => {
           console.error(err);
-          // this.showNotification("notification", "Error", "Failed to retrieve portfolios. Please try again later.", "error");
+        })
+        .finally(() => {
+          this.articleDataLoading = false; // Set loading state to false
         });
     },
 
