@@ -303,7 +303,13 @@ export default {
       // ROR = curr - initial/initial x 100
       // ROR - benchmark = active return
       this.activeReturn = (pData - 8.5).toFixed(2);
-      //console.log(pData);
+    },
+
+    getDifferenceInYears(timestamp1, timestamp2){
+      const date1 = new Date(parseInt(timestamp1, 10));
+      const date2 = new Date(parseInt(timestamp2, 10));
+      const diffInMs = Math.abs(date2 - date1);
+      return diffInMs / (1000 * 60 * 60 * 24 * 365.25);
     },
   }
 }
