@@ -305,10 +305,10 @@ export default {
       // Check if at least one portfolio ID exists
       const portfolioIds = Object.keys(portfolios);
 
+      let popularStocksInPortfoliosObj = {};
       if (portfolioIds.length > 0) {
         this.display = true;
 
-        let popularStocksInPortfoliosObj = {};
         Object.values(portfolios).forEach((portfolio) => {
           portfolio.stocks.forEach((stock) => {
             if (stock.symbol in popularStocksInPortfoliosObj) {
@@ -318,12 +318,23 @@ export default {
             }
           });
         });
-        this.popularStocks = Object.entries(popularStocksInPortfoliosObj).sort(
-          (a, b) => b[1] - a[1]
-        );
       } else {
         this.display = false;
+        // Initialising stock rate chart with pre-loaded stock list when no no portfolios are available
+        popularStocksInPortfoliosObj = {
+          "AAPL" : 1,
+          "MSFT" : 1,
+          "META" : 1,
+          "MCD" : 1,
+          "NFLX" : 1,
+          "SHEL" : 1,
+          "WMT" : 1,
+          "NKE" : 1
+        };
       }
+      this.popularStocks = Object.entries(popularStocksInPortfoliosObj).sort(
+        (a, b) => b[1] - a[1]
+      );
     },
     navigateToDetails(selectedPortfolio, portfolioId) {
       // save the data
