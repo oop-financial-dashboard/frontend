@@ -320,10 +320,8 @@ export default {
             })
             .then((response) => {
               if (response.status === 200) {
-                console.log(response);
                 sessionStorage.setItem("token", response.data.token);
                 sessionStorage.setItem("email", this.email);
-                console.log(sessionStorage.getItem("token"));
                 this.showSpinner = false;
                 this.$router.push("/homepage");
                 this.show("notification", "Welcome Back!", "", "success");

@@ -91,7 +91,6 @@ export default {
               )
               .then((response) => {
                 if (response.status === 200) {
-                  console.log("stock-historicals", response.data);
 
                   for (let i = 0; i < response.data.length; i++) {
                     this.stockPlot.push([
@@ -100,7 +99,6 @@ export default {
                     ]);
                   }
 
-                  console.log("STOCKPLOT", this.stockPlot);
                   this.stockOptions.series[0].data = this.stockPlot;
                   this.stockOptions.title.text = `Most Valued Stock Analysis for ${this.stockSymbol}`;
                 }

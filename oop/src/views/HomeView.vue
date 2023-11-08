@@ -302,7 +302,6 @@ export default {
     await this.retrieveUserDetails();
   },
   mounted() {
-    console.log("all changes ---->", this.allPercentageChanges.length);
   },
   methods: {
     checkPortfolioExists(portfolios) {
@@ -363,12 +362,10 @@ export default {
         const response = await axios.post(`/users/user-details`, data, config);
 
         if (response.status === 200) {
-          console.log("CHECK HOMEVIEW RESPONSE FROM USER", response.data)
           sessionStorage.setItem("user_id", response.data.id);
           sessionStorage.setItem("firstname", response.data.firstname);
           sessionStorage.setItem("lastname", response.data.lastname);
           sessionStorage.setItem("role", response.data.role);
-          console.log(sessionStorage.getItem("user_id"));
           // Now that the user-details API has completed, call getAllPortfolios
           await this.getAllPortfolios();
         }
@@ -393,13 +390,10 @@ export default {
 
       const user_id = sessionStorage.getItem("user_id");
 
-      //console.log("ID:" + user_id);
-
       axios
         .get(`/portfolio/get-all/${user_id}`, config)
         .then(async (response) => {
           if (response.status === 200) {
-            console.log(response.data);
             let portfoliosInitialValues = {};
             this.portfolioList = response.data.portfolios;
             this.checkPortfolioExists(this.portfolioList);
@@ -410,7 +404,6 @@ export default {
             if (Object.keys(response.data.portfolios).length !== 0) {
               //   TODO: Call function here to get portfolio latest prices
               const portfolioLatestPrices = await this.getAllPortfoliosLatestPrice(this.portfolioList, user_id);
-              console.log("Lastest portfolio prices ----->", portfolioLatestPrices);
               this.currentAssetValue = portfolioLatestPrices;
               this.allPercentageChanges = this.calculateAllPortfoliosPercentageChange(portfoliosInitialValues, portfolioLatestPrices);
               this.bestPortfolioValue = Number(portfolioLatestPrices[this.allPercentageChanges[0][0]][1].toFixed(0)).toLocaleString();
@@ -420,7 +413,6 @@ export default {
                 "portfolioList",
                 JSON.stringify(this.portfolioList)
             );
-            console.log("this is stored in session ---->",Object.keys(sessionStorage.getItem("portfolioList")));
           }
         })
         .catch((err) => {
@@ -557,9 +549,7 @@ export default {
   computed: {
     totalPercentageChange() {
       let sum = 0;
-      // console.log(Object.values(this.allPercentageChanges));
       Object.values(this.allPercentageChanges).forEach(change => { sum += change[1] });
-      // console.log(sum);
       return sum;
     }, checkPorfolioList() {
       return JSON.stringify(this.portfolioList).length === 0;
