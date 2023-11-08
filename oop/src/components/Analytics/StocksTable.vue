@@ -71,7 +71,7 @@ export default {
           if (stockIndex !== -1) {
 
             // Check if responses[0].data is null - no price available for yesterday closing price
-            if (responses[1].status === 'fulfilled' && responses[1].value.data) {
+            if (responses[0].status === 'fulfilled' && responses[0].value.data) {
               // Process the closing price for each stock here
               console.log(responses[0]);
               const closePrice = responses[0].value.data.close;
