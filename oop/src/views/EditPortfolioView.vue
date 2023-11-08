@@ -52,7 +52,7 @@
               <th class="table-heading" scope="col">Pick a Date</th>
               <th class="table-heading" scope="col">Price</th>
               <th class="table-heading" scope="col">Enter Quantity</th>
-              <th class="table-heading" scope="col">Capital %</th>
+              <th class="table-heading fixed-col" scope="col">Capital %</th>
             </tr>
           </thead>
           <tbody>
@@ -291,7 +291,7 @@ export default {
       return formattedDate;
     },
     capitalPerComputed(price, quantity) {
-      let result = "N.A.";
+      let result = "0%";
       if (this.portfolioCapital > 0) {
         result =
           parseFloat(
@@ -824,6 +824,10 @@ export default {
 </script>
 
 <style scoped>
+.fixed-col {
+  width: 100px;
+}
+
 .clickable {
   cursor: pointer;
 }

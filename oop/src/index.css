@@ -2,3 +2,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* styling vueprime multiselect */
+.p-multiselect-panel {
+    padding: 3px;
+}
+.p-checkbox-box, .p-multiselect-filter {
+    border: #D8D8D8 solid 1px;
+}
