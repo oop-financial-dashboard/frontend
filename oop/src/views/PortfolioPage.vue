@@ -104,8 +104,8 @@ export default {
       portfolio: JSON.parse(sessionStorage.getItem("portfolio")),
       percentageData: 0,
       value: 0,
-      stdDev: 15.43,
-      sharpeRatio: 2.5,
+      stdDev: 0,
+      sharpeRatio: 0,
       activeReturn: 0,
       benchMark: "S&P 500", // S&P stock name info
       userid: sessionStorage.getItem("user_id"),
@@ -122,7 +122,7 @@ export default {
     this.calculatePriceReturn();
     this.calculatePortfolioSD();
     //this.calculateSharpeRatio(this.value, this.stdDev);
-    //this.calculateActiveReturn();
+    // this.calculateActiveReturn();
   },
   methods: {
     formatTotalValue(totalValue) {
@@ -151,17 +151,14 @@ export default {
           if (response.status === 200) {
             this.priceReturnList = response.data;
             for (const key in response.data) {
-              console.log(response.data[key]);
               for (const k in response.data[key]) {
                 this.priceReturnList = response.data[key][k];
               }
             }
 
-            console.log(this.portfolio.stocks)
             for (const portfolio in this.portfolioList) {
-              console.log(portfolio);
               if (this.portfolio.stocks[0].portfolioId == this.portfolioId) {
-                console.log("correct")
+                console.log(portfolio);
                 this.initialPrice += this.portfolio.totalValue;
               }
             }
@@ -232,7 +229,6 @@ export default {
     },
 
     async calculatePortfolioSD(ror) {
-      console.log("ROR: " + ror);
       let portfolioVariance = 0;
       const stockPromises = [];
 
@@ -292,7 +288,6 @@ export default {
       // Risk-free Rate of Return = [(1 + Government Bond Rate)/(1 + Inflation Rate)] – 1
       // inflation rate = 3.7% https://www.cnbc.com/2023/10/12/heres-the-inflation-breakdown-for-september-2023-in-one-chart.html#:~:text=The%20consumer%20price%20index%20rose,rate%20over%20the%20long%20term.
       // govt bond rate = 4.5796% https://www.worldgovernmentbonds.com/country/united-states/
-      console.log("----" + ror + "," + stdDev);
       const inflationRate = 3.7/100;
       const govtBondRate = 4.5796/100;
       let riskFreeRate = ((1 + govtBondRate)/(1 + inflationRate)) - 1;
