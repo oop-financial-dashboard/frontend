@@ -19,9 +19,15 @@
         class="rounded-xl"
       >
       </data-box>
-      <data-box
+      <!-- <data-box
         title="Standard Deviation"
         :displayValue="stdDev"
+        class="rounded-xl"
+      >
+      </data-box> -->
+      <data-box
+        title="Compound Annual Growth Rate"
+        :displayValue="cagr"
         class="rounded-xl"
       >
       </data-box>
@@ -105,6 +111,7 @@ export default {
       percentageData: 0,
       value: 0,
       stdDev: 0,
+      cagr: 0,
       sharpeRatio: 0,
       activeReturn: 0,
       benchMark: "S&P 500", // S&P stock name info
@@ -149,6 +156,7 @@ export default {
         )
         .then((response) => {
           if (response.status === 200) {
+            this.calculateCAGR(response.data.data[this.portfolioId]); // send portfolio historicals
             this.priceReturnList = response.data;
             this.portfolioValue = response.data.data[this.portfolioId][response.data.data[this.portfolioId].length-1][1];
             for (const key in response.data) {
@@ -311,6 +319,14 @@ export default {
       const diffInMs = Math.abs(date2 - date1);
       return diffInMs / (1000 * 60 * 60 * 24 * 365.25);
     },
+
+    calculateCAGR(portfolioHistoricals) {
+      const start = portfolioHistoricals[0]; // earlier
+      const end = portfolioHistoricals[portfolioHistoricals.length - 1]; // latest/current
+      const numYears = this.getDifferenceInYears(start[0], end[0]);
+      const cagr = ((end[1]/start[1])**(1/numYears)-1) * 100
+      this.cagr = cagr.toFixed(2);
+    }
   }
 }
 </script>

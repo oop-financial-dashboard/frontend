@@ -37,7 +37,7 @@ export default {
     },
   },
   created() {
-    if (this.title === "Price Return" || this.title === "Active Return") {
+    if (this.title === "Price Return" || this.title === "Compound Annual Growth Rate" || this.title === "Active Return") {
       this.addUnits = true;
     }
   },
