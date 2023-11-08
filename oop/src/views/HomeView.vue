@@ -155,8 +155,8 @@
         </div>
         <!-- Statistics and Performance Cards -->
         <div class="flex flex-row my-4 space-x-4 ml-4">
-          <blank-component class="border" v-if="checkPorfolioList" />
-          <portfolios-statistics-card :portfolios="portfolioList" :change="totalPercentageChange" :key="portfolioList" v-if="!checkPorfolioList" class="border"/>
+          <blank-component class="border" v-if="allPercentageChanges.length === 0" />
+          <portfolios-statistics-card :portfolios="portfolioList" :change="totalPercentageChange" :assets-value="currentAssetValue" :key="portfolioList" v-else class="border"/>
           <portfolio-performance-card title="Best Performing Portfolio" :details="allPercentageChanges[0]" :value="bestPortfolioValue"  v-if="allPercentageChanges.length > 0" class="border"/>
           <portfolio-performance-card title="Worst Performing Portfolio" :details="allPercentageChanges[allPercentageChanges.length-1]" :value="worstPortfolioValue" v-if="allPercentageChanges.length > 1" class="border"/>
         </div>
@@ -291,6 +291,7 @@ export default {
       worstPortfolioValue: 0,
       isDataLoaded: true,
       articleDataLoading: true,
+      currentAssetValue: []
     };
   },
  // The code snippet calls the function "populateCarousel" and then waits for the function "retrieveUserDetails" to finish executing before moving on.
@@ -409,6 +410,8 @@ export default {
             if (Object.keys(response.data.portfolios).length !== 0) {
               //   TODO: Call function here to get portfolio latest prices
               const portfolioLatestPrices = await this.getAllPortfoliosLatestPrice(this.portfolioList, user_id);
+              console.log("Lastest portfolio prices ----->", portfolioLatestPrices);
+              this.currentAssetValue = portfolioLatestPrices;
               this.allPercentageChanges = this.calculateAllPortfoliosPercentageChange(portfoliosInitialValues, portfolioLatestPrices);
               this.bestPortfolioValue = Number(portfolioLatestPrices[this.allPercentageChanges[0][0]][1].toFixed(0)).toLocaleString();
               this.worstPortfolioValue = Number(portfolioLatestPrices[this.allPercentageChanges[this.allPercentageChanges.length-1][0]][1].toFixed(0)).toLocaleString();
