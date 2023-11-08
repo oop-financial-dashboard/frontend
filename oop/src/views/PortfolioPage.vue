@@ -62,14 +62,10 @@
 
     <div class="stocks border data-box bg-white rounded-xl">
       <p class="text-xl font-bold m-4">Portfolio Stocks</p>
-      <stocks-table class="rounded" :portfolio-stocks="portfolio.stocks" />
+      <stocks-table class="rounded m-4" style="width:1200px" :portfolio-stocks="portfolio.stocks" />
     </div>
 
-    <stocks-table
-      class="m-4"
-      style="width: 1200px"
-      :portfolio-stocks="portfolio.stocks"
-    />
+    
   </main>
 </template>
 
