@@ -47,9 +47,9 @@
                   <!-- Display loading spinner or skeleton UI while data is loading -->
                   <div class="mb-2 flex animate-pulse">
                     <div class="w-full">
-                      <h3 class="h-5 bg-gray-400 rounded-full dark:bg-gray-500" style="width: 80%;"></h3>
-                      <h5 class="mt-4 h-5 bg-gray-400 rounded-full dark:bg-gray-500" style="width: 40%;"></h5>
-                      <h5 class="mt-4 h-5 bg-gray-400 rounded-full dark:bg-gray-500" style="width: 20%;"></h5>
+                      <h3 class="h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 80%;"></h3>
+                      <h5 class="mt-4 h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 40%;"></h5>
+                      <h5 class="mt-4 h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 20%;"></h5>
                     </div>
                   </div>
                 </div>
@@ -72,7 +72,7 @@
                   </h5>
                   <!-- <a :href="articleURLs[0]" target="_blank">Read more</a> -->
                   <button
-                    @click="openArticle(articleURLs[1])"
+                    @click="openArticle(articleURLs[0])"
                     class="btn btn-light"
                   >
                     View Article
@@ -107,7 +107,7 @@
                   </h5>
                   <!-- <a :href="articleURLs[0]" target="_blank">Read more</a> -->
                   <button
-                    @click="openArticle(articleURLs[2])"
+                    @click="openArticle(articleURLs[0])"
                     class="btn btn-light"
                   >
                     View Article
@@ -523,9 +523,11 @@ export default {
     async getAllPortfoliosLatestPrice(portfolios, userID) {
       const portfolioIds = Object.keys(portfolios);
       const allPortfoliosHistoricalValues = await Promise.allSettled(portfolioIds.map(pId => axios(`/portfolio/get-historicals/${userID}/${pId}`).then( ({data}) => data) ));
+      console.log("WHAT IS INSIDE ALL PORTFOLIO HIST",allPortfoliosHistoricalValues)
       let allPortfoliosLatestPrice = {};
       for (let i=0; i < portfolioIds.length; i++) {
         const portfolioId = portfolioIds[i];
+        // console.log("can this commment???",portfolioIds[i])
         let portfolioHistoricalPrices = allPortfoliosHistoricalValues[i].value.data[portfolioId];
         let latestPrice = portfolioHistoricalPrices[portfolioHistoricalPrices.length-1];
         allPortfoliosLatestPrice[portfolioId] = latestPrice;
