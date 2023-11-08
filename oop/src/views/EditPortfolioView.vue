@@ -42,8 +42,7 @@
           class="p-2 rounded border"
           style="width: 100%"
         /><span style="float: right" class="mt-4 mb-2"
-          >Total: {{ totalPriceComputed }}</span
-        >
+          >Total: {{ totalPriceComputed }}</span>
 
         <table class="table mt-3">
           <thead>
@@ -227,10 +226,8 @@ export default {
       // originalStocks: ref(JSON.parse(sessionStorage.getItem("portfolio")).stocks),
       existingStocks: ref(),
       portfolioName: sessionStorage.getItem("portfolioId"),
-      portfolioDesc: JSON.parse(sessionStorage.getItem("portfolio"))
-        .description,
-      portfolioCapital: JSON.parse(sessionStorage.getItem("portfolio"))
-        .initialCapital,
+      portfolioDesc: JSON.parse(sessionStorage.getItem("portfolio")).description,
+      portfolioCapital: JSON.parse(sessionStorage.getItem("portfolio")).initialCapital,
       selectedDate: null,
       startDate: ref(new Date(new Date().setDate(new Date().getDate() - 1))),
       maxDate: new Date(
@@ -608,9 +605,6 @@ export default {
 
       // All error messages are false, meaning there are no errors
       if (errorMessages.every((errorMessage) => errorMessage === false)) {
-        // console.log(this.existingStocks);
-        // console.log(this.newSelectedStocks);
-        // console.log(this.removeExistingStocks);
 
         // Format portfolioData and send the request
         const date = new Date();
@@ -727,6 +721,15 @@ export default {
           }
         }
 
+        // Call the API when there are changes to either description or capital
+        const ogPortfolioDesc = JSON.parse(sessionStorage.getItem("portfolio")).description;
+        const ogPortfolioCapital = JSON.parse(sessionStorage.getItem("portfolio")).initialCapital
+        if (this.portfolioDesc != ogPortfolioDesc || this.portfolioCapital != ogPortfolioCapital) {
+          portfolioData.action = "Add";
+          portfolioData.stocks = [];
+          await this.updatePortfolioAPI(portfolioData, "Update");
+        } 
+
         // Reload to the home page after all the api has executed
         setTimeout(() => {
           window.location.href = "/homepage";
@@ -734,6 +737,7 @@ export default {
       }
     },
     async updatePortfolioAPI(portfolioData, action) {
+      
       const token = sessionStorage.getItem("token");
       const config = {
         headers: {
@@ -753,6 +757,14 @@ export default {
         if (response.status === 200) {
           this.showSpinner = false;
 
+          if (action == "Update") {
+            this.showNotification(
+              "notification",
+              "Success",
+              `Portfolio description and/or capital was updated successfully!`,
+              "success"
+            );
+          }
           if (action == "NewExistingIncrease") {
             this.showNotification(
               "notification",
@@ -788,6 +800,14 @@ export default {
         }
       } catch (error) {
         console.error(error);
+        if (action == "Update") {
+          this.showNotification(
+            "notification",
+            "Error",
+            `Failed to update description and/or capital. Please try again later.`,
+            "error"
+          );
+        }
         if (action == "NewExistingIncrease") {
           this.showNotification(
             "notification",
