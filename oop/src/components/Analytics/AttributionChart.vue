@@ -1,113 +1,122 @@
 <template>
-  <select v-model="seriesToShow">
-    <option value="attribution">Attribution</option>
-    <option value="allocation">Allocation</option>
-    <option value="selection">Selection</option>
-    <option value="interaction">Interaction</option>
-  </select>
   <highcharts
-      class="h-100"
-      :options="chartOptions"
+    class="h-100"
+    :constructor-type="'stockChart'"
+    :options="stockOptions"
   >
   </highcharts>
 </template>
 
 <script>
-
+import axios from "axios";
 import Highcharts from "highcharts";
 export default {
-  name: "AttributionChart",
+  name: "stock-analysis",
   created() {
-    const fetchAppleCData = async() => {
-      const data = await fetch('https://demo-live-data.highcharts.com/aapl-c.json')
-          .then(response => response.json());
-      this.seriesData[0].data = data;
-      this.chartOptions.series[0].data = data;
-    }
-    const fetchAppleVData = async() => {
-      this.seriesData[1].data = await fetch('https://demo-live-data.highcharts.com/aapl-v.json')
-          .then(response => response.json());
-    }
-    const fetchAppleOData = async() => {
-      this.seriesData[2].data = await fetch('https://demo-live-data.highcharts.com/aapl-c.json')
-          .then(response => response.json());
-    }
-    fetchAppleCData();
-    fetchAppleVData();
-    fetchAppleOData();
+    this.getTopStocks();
   },
+
   data() {
     return {
-      seriesToShow: "attribution",
-      seriesData: [{
-        name: 'Attribution Data',
-        id: 'attribution',
-        data: null,
-        color: Highcharts.getOptions().colors[0]
-      }, {
-        name: 'Allocation Data',
-        id: 'allocation',
-        data: null,
-        color: Highcharts.getOptions().colors[1]
-      }, {
-        name: 'Selection Data',
-        id: 'selection',
-        data: null,
-        color: Highcharts.getOptions().colors[2]
-      }, {
-        name: 'Interaction Data',
-        id: 'interaction',
-        data: null,
-        color: Highcharts.getOptions().colors[3]
-      }],
-      chartOptions: {
+      stockOptions: {
         title: {
-          text: "Attribution Effect"
+          text: `Most Valued Stock Analysis`,
         },
         plotOptions: {
           series: {
             animation: {
-              duration: 3000
-            }
-          }
+              duration: 3000,
+            },
+          },
         },
         navigator: {
-          enabled: false
+          enabled: false,
         },
-        series: [{
-          name: 'Attribution Data',
-          id: 'attribution',
-          data: null,
-          color: Highcharts.getOptions().colors[0]
-        }]
-      }
-    }
+        series: [
+          {
+            name: "Value",
+            id: "topstock",
+            data: null,
+            color: Highcharts.getOptions().colors[8],
+            threshold: null,
+            tooltip: {
+              valueDecimals: 2,
+            },
+            lineWidth: 3,
+          },
+        ],
+      },
+
+      stocks: [],
+      stockSymbol: "",
+
+      stockPlot: [],
+    };
   },
   methods: {
-    updateSeries(updatedSeries) {
-      this.chartOptions.series = [updatedSeries];
-    }
+    getTopStocks() {
+      const token = sessionStorage.getItem("token");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const user_id = sessionStorage.getItem("user_id");
+      const portfolioId = sessionStorage.getItem("portfolioId");
+
+      axios
+        .get(`/portfolio/get-all/${user_id}`, config)
+        .then((response) => {
+          if (response.status === 200) {
+            // console.log("portfolio data", response.data);
+
+            let portfolioStocks = response.data.portfolios[portfolioId];
+            // console.log("portoflio stocks", portfolioStocks);
+
+            this.stocks = portfolioStocks.stocks.sort(
+              (a, b) => b.value - a.value
+            );
+            this.stockSymbol = this.stocks[0]["symbol"];
+            // const endDate = 1685967600;
+            axios
+              .post(
+                `/stock/historicals`,
+                {
+                  symbol: this.stockSymbol,
+                  start: "2023-01-01",
+                  end: "2023-11-03",
+                },
+                config
+              )
+              .then((response) => {
+                if (response.status === 200) {
+                  console.log("stock-historicals", response.data);
+
+                  for (let i = 0; i < response.data.length; i++) {
+                    this.stockPlot.push([
+                      new Date(response.data[i]["timestamp"]).getTime(),
+                      parseFloat(response.data[i]["close"]),
+                    ]);
+                  }
+
+                  console.log("STOCKPLOT", this.stockPlot);
+                  this.stockOptions.series[0].data = this.stockPlot;
+                  this.stockOptions.title.text = `Most Valued Stock Analysis for ${this.stockSymbol}`;
+                }
+              })
+              .catch((err) => {
+                console.error(err);
+              });
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
   },
- watch: {
-    seriesToShow(newValue) {
-      switch (newValue){
-        case("allocation"):
-          this.updateSeries(this.seriesData[1]);
-          this.chartOptions.title.text = "Allocation Effect";
-          break;
-        case ("interaction"):
-          this.updateSeries(this.seriesData[2]);
-          this.chartOptions.title.text = "Interaction Effect";
-          break;
-        default:
-          this.updateSeries(this.seriesData[0]);
-          this.chartOptions.title.text = "Attribution Effect";
-      }
-    }
-  }
-}
+  watch: {},
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
