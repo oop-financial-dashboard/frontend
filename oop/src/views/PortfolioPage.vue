@@ -50,7 +50,7 @@
         class="rounded-xl border w-5/6"
         :portfolio="portfolio"
       />
-      <va-r-chart class="rounded" :portfolio-stocks="portfolio.stocks" />
+      <va-r-chart class="rounded-xl" :portfolio-stocks="portfolio.stocks" />
     </div>
     <!-- </div> -->
     <div class="time-series-graph data-box bg-white p-4 rounded-xl border">
