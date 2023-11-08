@@ -111,10 +111,11 @@ export default {
       userid: sessionStorage.getItem("user_id"),
       priceReturnList: [],
       priceReturn: 0,
-      portfolioList: JSON.parse(sessionStorage.getItem("portfolioList")),
+      portfolioList: [this.portfolio],
       initialPrice: 0,
       token: sessionStorage.getItem("token"),
-      stdData: {}
+      stdData: {},
+      ror: 0,
     };
   },
   mounted() {
@@ -156,15 +157,17 @@ export default {
               }
             }
 
+            console.log(this.portfolio.stocks)
             for (const portfolio in this.portfolioList) {
-              if (portfolio == this.portfolioId) {
-                this.initialPrice += this.portfolioList[portfolio].totalValue;
+              console.log(portfolio);
+              if (this.portfolio.stocks[0].portfolioId == this.portfolioId) {
+                console.log("correct")
+                this.initialPrice += this.portfolio.totalValue;
               }
             }
             // (summing all individual stocks in the portfolio then subtracting the last stock price) -1
 
-            this.priceReturn =
-              this.priceReturnList[this.priceReturnList.length - 1][1];
+            this.priceReturn = this.priceReturnList[this.priceReturnList.length - 1][1];
             this.percentageData = Number(
               (this.priceReturn - this.initialPrice - 1).toFixed(2)
             );
@@ -302,13 +305,20 @@ export default {
       //       }
       //     });
 
+      // Risk-free Rate of Return = [(1 + Government Bond Rate)/(1 + Inflation Rate)] – 1
+      // inflation rate = 3.7
+      // govt bond rate = 4.577
+
     },
 
     calculateActiveReturn() {
       // TODO
-      // Risk-free Rate of Return = [(1 + Government Bond Rate)/(1 + Inflation Rate)] – 1
-      // inflation rate = 3.7
-      // govt bond rate = 4.577
+      // ROR = curr - initial/initial x 100
+      // ROR - benchmark = active return
+      // benchmark = S&P 500
+
+      
+
     },
   }
 }
