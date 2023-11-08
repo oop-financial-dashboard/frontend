@@ -349,7 +349,7 @@ export default {
       });
     },
     ForgetPassword() {
-      this.$router.push("/forget_password");
+      this.$router.push("/");
     },
     ShowHide() {
       var x = document.getElementById("form2Example2");
