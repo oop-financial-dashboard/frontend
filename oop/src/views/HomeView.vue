@@ -47,9 +47,9 @@
                   <!-- Display loading spinner or skeleton UI while data is loading -->
                   <div class="mb-2 flex animate-pulse">
                     <div class="w-full">
-                      <h3 class="h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 80%;"></h3>
-                      <h5 class="mt-4 h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 40%;"></h5>
-                      <h5 class="mt-4 h-5 bg-gray-200 rounded-full dark:bg-gray-700" style="width: 20%;"></h5>
+                      <h3 class="h-5 bg-gray-400 rounded-full dark:bg-gray-500" style="width: 80%;"></h3>
+                      <h5 class="mt-4 h-5 bg-gray-400 rounded-full dark:bg-gray-500" style="width: 40%;"></h5>
+                      <h5 class="mt-4 h-5 bg-gray-400 rounded-full dark:bg-gray-500" style="width: 20%;"></h5>
                     </div>
                   </div>
                 </div>
