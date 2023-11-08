@@ -7,7 +7,8 @@
     group="notification"
     position="top right"
     animation-type="velocity"
-    :speed="1000"
+    :speed="300"
+    ignoreDuplicates="true"
   />
 </template>
 
