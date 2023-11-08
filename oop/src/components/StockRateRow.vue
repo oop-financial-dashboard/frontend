@@ -30,6 +30,8 @@ export default {
     stock: Array,
   },
   created() {
+    this.getDate('today');
+    this.getDate('yesterday');
     this.symbol = this.stock[0];
     const token = sessionStorage.getItem("token");
     const config = {
@@ -38,8 +40,8 @@ export default {
       },
     };
     axios.all([
-      axios.post("/stock/price", { "symbol": this.stock[0], "timestamp": '2023-11-03' }, config),
-      axios.post("/stock/price", { "symbol": this.stock[0], "timestamp": '2023-11-02' }, config),
+      axios.post("/stock/price", { "symbol": this.stock[0], "timestamp": this.getDate('today') }, config),
+      axios.post("/stock/price", { "symbol": this.stock[0], "timestamp": this.getDate('yesterday') }, config),
       axios.get(`/stock/description/${this.stock[0]}`, config)
     ]).then(axios.spread((currentDayInfo, previousDayInfo, stockDescription) => {
       // Both requests are now complete
@@ -62,8 +64,8 @@ export default {
       const current = new Date();
       const yyyy = current.getFullYear();
       let mm = current.getMonth() + 1; // Months start at 0!
-      let dd = current.getDate();
-      let yd = current.getDate()-1;
+      let dd = current.getDate() -1;
+      let yd = current.getDate()-2;
 
       if (day === 'today') {
         if (dd < 10) dd = '0' + dd;
@@ -72,7 +74,7 @@ export default {
       }
       if (mm < 10) mm = '0' + mm;
 
-
+      console.log(yyyy + '-' + mm + '-' + dd);
       return yyyy + '-' + mm + '-' + dd;
     },
     calculcateChange(currentData, previousData) {
