@@ -16,7 +16,7 @@ User
         <td>{{stock.quantity}}</td>
         <td>${{formatPrice(stock.averagePrice)}}</td>
         <td>${{formatPrice(stock.value)}}</td>
-        <td :style="updateProfitLossColour(stock.pl)">{{ stock.pl }}</td>
+        <td :style="updateProfitLossColour(stock.pl)">{{ stock.pl }}%</td>
       </tr>
     </tbody>
   </table>
