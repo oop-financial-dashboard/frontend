@@ -8,9 +8,6 @@ import velocity from 'velocity-animate';
 
 import PrimeVue from "primevue/config";
 
-import VueDatePicker from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css'
-
 import "primevue/resources/primevue.min.css"; // PrimeVue styles
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -25,6 +22,9 @@ import Highcharts from 'highcharts'
 import stockInit from 'highcharts/modules/stock'
 import './index.css'
 
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
+
 stockInit(Highcharts)
 
 createApp(App)
@@ -36,3 +36,4 @@ createApp(App)
     .use(HighchartsVue)
     .component('font-awesome-icon', FontAwesomeIcon)
     .mount('#app');
+
