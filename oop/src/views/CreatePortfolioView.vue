@@ -141,7 +141,7 @@
         </button>
       </div>
       <div class="btn-container flex mb-1" v-else>
-        <div class="spinner-border spinner-border-sm mr-3 text-primary mt-0.5" role="status">
+        <div class="spinner-border spinner-border-sm mr-3 mt-0.5" style="color: #0A1B39" role="status">
           <span class="p-3"></span> 
         </div> 
         <p class="fw-medium">Creating Portfolio...</p>
