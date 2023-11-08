@@ -5,12 +5,6 @@
         Portfolio Name: <b class="text-primary">{{ portfolioId }}</b>
       </p>
     </div>
-    <h1>mean of stock</h1>
-    {{ this.stockMeans }}
-
-    <h1>historical closing price</h1>
-    {{ this.histClosingPrice }}
-
       <div class="row-section d-flex justify-content-between">
         <data-box
           title="Price Return"
@@ -89,19 +83,12 @@ export default {
       portfolioList: JSON.parse(sessionStorage.getItem("portfolioList")),
       initialPrice: 0,
       token: sessionStorage.getItem("token"),
-      symbolArray: [],
-      // historicalList: [],
-      dateAdded: [],
-      valueArray: [],
-      weightsArray: [],
-      stockPriceArray: [],
-      histClosingPrice: [],
-      stockMeans: [],
+      stdData: {}
     };
   },
   mounted() {
     this.calculatePriceReturn();
-    this.calculateSD();
+    this.calculatePortfolioSD();
     this.calculateSharpeRatio();
     this.calculateActiveReturn();
   },
@@ -156,7 +143,7 @@ export default {
         });
     },
 
-    calculateSD() {
+    getYesterdayDate() {
       const today = new Date(); // Create a new Date instance with the current date and time
       const yesterday = new Date(today);
       yesterday.setDate(today.getDate() - 1); // Subtract one day
@@ -164,137 +151,132 @@ export default {
       const month = (yesterday.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based, so we add 1
       const day = yesterday.getDate().toString().padStart(2, "0");
       const timestamp = `${year}-${month}-${day}`;
+      return timestamp;
+    },
 
-      // get historicals
-      const stocksArray = this.portfolio.stocks;
-      for (const stock of stocksArray) {
-        this.symbolArray.push(stock.symbol);
-        this.dateAdded.push(stock.dateAdded);
-        this.valueArray.push(stock.value);
-      }
+    calculateStockSD(closeArray) {
 
-      const config = {
-        headers: {
-          Authorization: `Bearer ${this.token}`,
-        },
-      };
+      // Step 1: Calculate the mean
+      const mean = closeArray.reduce((acc, val) => acc + val, 0) / closeArray.length;
 
-      var counter = 0;
-      for (const symbol of this.symbolArray) {
-        axios
-          .post(
-            `/stock/historicals`,
-            {
-              symbol: symbol,
-              end: timestamp,
-              start: this.dateAdded[counter],
-            },
-            config
-          )
-          .then((response) => {
-            if (response.status === 200) {
-              let totalClose = 0;
-              for (const key in response.data) {
-                // this.historicalList.push(response.data[key]);
-                const close = parseFloat(response.data[key].close);
-                console.log("close", close);
-                this.histClosingPrice.push(close);
-                totalClose += close; // getting the mean for each stock
-                console.log("total", totalClose);
-              }
-              const meanClose = totalClose / response.data.length;
-              console.log("data length", response.data.length);
-              this.stockMeans.push(meanClose);
-              counter += 1;
+      // Step 2: Calculate the variance for each data point
+      const variances = closeArray.map(x => x - mean);
 
-              // calculate the portfolio SD when all data is collected
-              // summation of (x - mean / n-1)
-              // SD of 1 stock this.Histclosingprice - mean / this.Histclosingprice.length - 1 (?)              
+      // Step 3: Square the variances
+      const squaredVariances = variances.map(variance => Math.pow(variance, 2));
 
-              // if (counter === this.symbolArray.length) {
-              //   let sumOfVariance = 0;
-              //   for (const mean of this.stockMeans) {
-              //     const variance = mean - this.priceReturn; // this shouldnt be priceReturn, should be the historical closing price
-              //     const squaredVariance = variance ** 2;
-              //     sumOfVariance += squaredVariance;
-              //   }
-              //   const sampleStandardDeviation = Math.sqrt(
-              //     sumOfVariance / (this.stockMeans.length - 1)
-              //   );
-              //   this.stdDev = sampleStandardDeviation.toFixed(2);
-              // }
-            }
-          });
-        axios
-          .post(
-            `/stock/price`,
-            {
-              symbol: symbol,
-              timestamp: "2023-11-03",
-            },
-            config
-          )
-          .then((response) => {
-            if (response.status === 200) {
-              this.stockPriceArray.push(response.data);
-            }
-          });
-      }
+      // Step 4: Sum of squared variance values
+      const sumOfSquaredVariances = squaredVariances.reduce((sum, variance) => sum + variance, 0);
 
+      // Step 5: Calculate the sample standard deviation
+      const standardDeviation = Math.sqrt(sumOfSquaredVariances / (closeArray.length - 1));
+
+      return standardDeviation;
+    },
+
+    calculateStockWeight(stockValue) {
       // get weights
-      var capital = this.portfolio.initialCapital;
-      for (const value of this.valueArray) {
-        this.weightsArray.push(value / capital);
+      const initialCapital = this.portfolio.totalValue;
+      return stockValue/initialCapital;
+    },
+    
+    calculatePortfolioVariance(stdData) {
+      // Initialize the portfolio variance
+      let portfolioVariance = 0;
+
+      // Calculate the portfolio variance
+      for (const stockSymbol in stdData) {
+        const stdv = stdData[stockSymbol].stdDev;
+        const weight = stdData[stockSymbol].weight;
+        // Assume no correlation
+        portfolioVariance += (weight ** 2) * (stdv ** 2);
+      }
+      return portfolioVariance;
+    },
+
+    async calculatePortfolioSD() {
+      let portfolioVariance = 0;
+      const stockPromises = [];
+
+      for (const stock of this.portfolio.stocks) {
+        const stockSymbol = stock.symbol;
+        const stockAdded = stock.dateAdded;
+        const timestamp = this.getYesterdayDate();
+
+        const config = {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        };
+
+        const stockPromise = axios.post(`/stock/historicals`, {
+          symbol: stockSymbol,
+          end: timestamp,
+          start: stockAdded,
+        }, config);
+
+        stockPromises.push(stockPromise);
       }
 
-      // array A - push all closing point to an array [done]
-      // mean - sum of total closing price / length of array A, 1mean 1 stock [done]
+      try {
+        const responses = await Promise.all(stockPromises);
 
-      // # Sample data points (replace with your data)
+        for (const response of responses) {
+          if (response.status === 200) {
+            const closeArray = response.data.map(item => parseFloat(item.close));
+            const stockStd = this.calculateStockSD(closeArray);
 
-      // data_points = [12, 15, 18, 21, 24]
+            // Add stock weight
+            for (const stock of this.portfolio.stocks) {
+              const stockWeight = this.calculateStockWeight(stock.value);
+              this.stdData[stock.symbol] = { stdDev: stockStd, weight: stockWeight };
+            }
 
-      // # Step 1: Calculate the mean
-      // mean = sum(data_points) / len(data_points)
+            // Calculate portfolio variance
+            portfolioVariance = this.calculatePortfolioVariance(this.stdData);
+          }
+        }
 
-      // # Step 2: Calculate the variance for each data point
-      // variances = [(x - mean) for x in data_points]
+        const portfolioStdv = Math.sqrt(portfolioVariance);
+        this.stdDev = parseFloat(portfolioStdv * 100).toFixed(2) + "%"; // This sets the portfolio standard deviation
+      } catch (error) {
+        // Handle errors here
+        console.log("Failed to calculate portfolio standard deviation.")
+      }
+    },
 
-      // # Step 3: Square the variances
-      // squared_variances = [variance ** 2 for variance in variances]
-
-      // # Step 4: Sum of squared variance values
-      // sum_of_squared_variances = sum(squared_variances)
-
-      // # Step 5: Calculate the sample standard deviation
-      // sample_standard_deviation = math.sqrt(sum_of_squared_variances / (len(data_points) - 1))
-
-      // print("Mean:", mean)
-      // print("Sample Standard Deviation:", sample_standard_deviation)
-
-      // weights - how much $ (value/initial captial) - each stock
-      // start date - date of creation of portfolio
-      // end date - today
-
-      //rate of return (current-initial)/initial
-
+    calculateSharpeRatio() {
+      // TODO
       // sharpe ratio
+      // ROR = curr - initial/initial x 100
       // Enter the current value and expected rate of return for each investment. (7%)
       // Indicate the weight of each investment.
       // Multiply the weight by its expected return
       // Sum these all up
 
-      // Risk-free Rate of Return = [(1 + Government Bond Rate)/(1 + Inflation Rate)] – 1
-      // inflation rate = 3.7
-      // govt bond rate = 4.577
-    },
+      // axios
+      //     .post(
+      //       `/stock/price`,
+      //         {
+      //           symbol: stockSymbol,
+      //           timestamp: "2023-11-03", // date should be yesterday date
+      //         },
+      //         config
+      //     )
+      //     .then((response) => {
+      //       if (response.status === 200) {
+      //         // calculate weights per stock
+              
+      //       }
+      //     });
 
-    calculateSharpeRatio() {
-      // TODO
     },
 
     calculateActiveReturn() {
       // TODO
+      // Risk-free Rate of Return = [(1 + Government Bond Rate)/(1 + Inflation Rate)] – 1
+      // inflation rate = 3.7
+      // govt bond rate = 4.577
     },
   },
 };
