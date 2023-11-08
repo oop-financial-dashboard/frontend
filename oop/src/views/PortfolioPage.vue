@@ -64,11 +64,13 @@
 
     <div class="stocks border data-box bg-white rounded-xl">
       <p class="text-xl font-bold m-4">Portfolio Stocks</p>
-      <stocks-table
-        class="rounded m-4"
-        style="width: 1200px"
-        :portfolio-stocks="portfolio.stocks"
-      />
+      <div class="table-container">
+        <stocks-table
+          class="rounded m-4 "
+          style="width: 1200px"
+          :portfolio-stocks="portfolio.stocks"
+        />
+      </div>
     </div>
   </main>
 </template>
@@ -186,4 +188,9 @@ export default {
   background-color: #f5f7ff;
   
 } */
+
+.table-container {
+  overflow-x: auto; /* Add horizontal scroll on smaller screens */
+}
+
 </style>

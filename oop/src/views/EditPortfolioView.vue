@@ -183,7 +183,7 @@
     <div class="fixed-container">
       <div class="btn-container" v-if="!showSpinner">
         <button class="btn btn-dark" @click="updatePortfolio">
-          Edit portfolio
+          Save Changes
         </button>
       </div>
 

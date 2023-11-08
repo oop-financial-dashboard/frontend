@@ -72,7 +72,7 @@
                   </h5>
                   <!-- <a :href="articleURLs[0]" target="_blank">Read more</a> -->
                   <button
-                    @click="openArticle(articleURLs[0])"
+                    @click="openArticle(articleURLs[1])"
                     class="btn btn-light"
                   >
                     View Article
@@ -107,7 +107,7 @@
                   </h5>
                   <!-- <a :href="articleURLs[0]" target="_blank">Read more</a> -->
                   <button
-                    @click="openArticle(articleURLs[0])"
+                    @click="openArticle(articleURLs[2])"
                     class="btn btn-light"
                   >
                     View Article
