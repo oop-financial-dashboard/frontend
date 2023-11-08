@@ -306,7 +306,7 @@ export default {
       // with reference to the link above, S&P 500 has delivered a return of about 8.5% so far in 2023.
       // ROR = curr - initial/initial x 100
       // ROR - benchmark = active return
-      this.activeReturn = pData - 8.5;
+      this.activeReturn = (pData - 8.5).toFixed(2);
       //console.log(pData);
     },
   }
