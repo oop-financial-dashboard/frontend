@@ -533,7 +533,6 @@ export default {
       let allPortfoliosLatestPrice = {};
       for (let i=0; i < portfolioIds.length; i++) {
         const portfolioId = portfolioIds[i];
-        // console.log("can this commment???",portfolioIds[i])
         let portfolioHistoricalPrices = allPortfoliosHistoricalValues[i].value.data[portfolioId];
         let latestPrice = portfolioHistoricalPrices[portfolioHistoricalPrices.length-1];
         allPortfoliosLatestPrice[portfolioId] = latestPrice;
