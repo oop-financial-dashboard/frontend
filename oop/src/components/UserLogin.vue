@@ -58,9 +58,15 @@
       </div>
 
       <!-- Submit button -->
-      <button type="button" class="login_btn my-4 p-2" @click="Authenticate()">
+      <button type="button" class="login_btn my-4 p-2" @click="Authenticate()" v-if="!showSpinner">
         Log in
       </button>
+      <button type="button" class="login_btn my-4 p-2" v-else>
+        <div class="spinner-border spinner-border-sm mr-3 mt-0.5 text-white"  role="status">
+          <span class=""></span> 
+        </div> 
+      </button>
+
       <p
         class="grey_text"
         data-bs-toggle="modal"
@@ -288,6 +294,7 @@ export default {
   },
   methods: {
     async Authenticate() {
+      this.showSpinner = true;
       try {
         this.invalidEmailInput = false; // Reset validation flags
         this.invalidPwdInput = false;
@@ -317,12 +324,14 @@ export default {
                 sessionStorage.setItem("token", response.data.token);
                 sessionStorage.setItem("email", this.email);
                 console.log(sessionStorage.getItem("token"));
+                this.showSpinner = false;
                 this.$router.push("/homepage");
                 this.show("notification", "Welcome Back!", "", "success");
               }
             });
         }
       } catch (e) {
+        this.showSpinner = false;
         this.show(
           "notification",
           "Error",
