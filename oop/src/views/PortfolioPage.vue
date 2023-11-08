@@ -106,8 +106,8 @@ export default {
       value: 0,
       stdDev: 15.43,
       sharpeRatio: 2.5,
-      activeReturn: 159,
-      benchMark: "S&P stock name info",
+      activeReturn: 0,
+      benchMark: "S&P 500", // S&P stock name info
       userid: sessionStorage.getItem("user_id"),
       priceReturnList: [],
       priceReturn: 0,
@@ -174,6 +174,7 @@ export default {
             this.value = this.formatTotalValue(
               this.priceReturn - this.initialPrice
             );
+            this.calculateActiveReturn(this.percentageData);
           }
         });
     },
@@ -311,11 +312,14 @@ export default {
 
     },
 
-    calculateActiveReturn() {
-      // TODO
+    calculateActiveReturn(pData) {
+
+      // S&P 500 link https://www.fool.com/investing/2023/11/02/you-shocked-learn-sp-500-2023-magnificent-7-stocks/#:~:text=The%20benchmark%20S%26P%20500%20index%20has%20delivered%20a%20return%20of,dubbed%20the%20%22Magnificent%20Seven.%22
+      // with reference to the link above, S&P 500 has delivered a return of about 8.5% so far in 2023.
       // ROR = curr - initial/initial x 100
       // ROR - benchmark = active return
-      // benchmark = S&P 500
+      this.activeReturn = pData - 8.5;
+      console.log(pData);
 
       
 
