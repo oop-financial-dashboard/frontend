@@ -8,6 +8,7 @@
 
 <script>
   import axios from "axios";
+  import Highcharts from "highcharts";
 
   export default {
     name: "exposureChart",
@@ -53,7 +54,9 @@
           },
           series: [{
             name: "Number of Unique Stocks",
-            data: null
+            data: null,
+          color: Highcharts.getOptions().colors[6],
+
           }]
         }
       }
