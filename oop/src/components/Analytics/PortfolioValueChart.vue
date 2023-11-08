@@ -24,6 +24,7 @@ export default {
    };
     const fetchPortfolioData = async() => {
       const data = await axios.get(`/portfolio/get-historicals/${userId}/${this.portfolioId}`, config);
+      // console.log("portfolio historical ----->", data.data.data[this.portfolioId]);
       this.stockOptions.series[0].data = data.data.data[this.portfolioId];
       this.stockOptions.title.text = `${this.portfolioId} Value`;
     };
