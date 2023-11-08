@@ -191,7 +191,7 @@
         <div class="spinner-border spinner-border-sm mr-3 mt-0.5" style="color: #0A1B39" role="status">
           <span class="p-3"></span> 
         </div> 
-        <p class="fw-medium">Creating Portfolio...</p>
+        <p class="fw-medium">Editing Portfolio...</p>
       </div>
     </div>
     
