@@ -19,6 +19,7 @@ export default {
     this.portfolioWeightedReturn = this.calculatePortfolioDailyWeightedReturn(stocksDailyWeightedReturn);
     // this.chartOptions.series[1].data = this.calculatePortfolioDailyWeightedReturn(stocksDailyWeightedReturn);
     console.log("portfolio weighted return",this.portfolioWeightedReturn);
+    this.calculatePercentile();
   },
   data() {
     return {
@@ -110,9 +111,13 @@ export default {
         }
         // multiply aggregated weighted returns with portfolio value for Daily Portfolio Returns
         const dailyWeightedReturn = combinedStockDailyReturns * this.portfolioValue;
-        portfolioDailyWeightedReturn.push(Math.round(dailyWeightedReturn * 100) / 100)
+        portfolioDailyWeightedReturn.push(Math.abs(Math.round(dailyWeightedReturn * 100) / 100))
       }
       return portfolioDailyWeightedReturn;
+    },
+    calculatePercentile() {
+      const percentile = require("percentile");
+      console.log("calculating VAR" ,percentile(90, this.portfolioWeightedReturn));
     }
   }
 }
