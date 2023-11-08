@@ -74,12 +74,10 @@ export default {
         )
       );
     });
-    console.log("portfolio daily returns", stocksDailyWeightedReturn);
     this.portfolioWeightedReturn = this.calculatePortfolioDailyWeightedReturn(
       stocksDailyWeightedReturn
     );
     // this.chartOptions.series[1].data = this.calculatePortfolioDailyWeightedReturn(stocksDailyWeightedReturn);
-    console.log("portfolio weighted return", this.portfolioWeightedReturn);
     this.calculatePercentile();
   },
   data() {
@@ -177,7 +175,6 @@ export default {
         let weight = value / totalPortfolioValue;
         stockWeights.push(parseFloat(weight.toPrecision(5)));
       });
-      console.log(stockWeights);
       this.portfolioValue = totalPortfolioValue;
       return stockWeights;
     },
@@ -204,10 +201,10 @@ export default {
     },
     calculatePercentile() {
       const percentile = require("percentile");
-      console.log(
-        "calculating VAR",
-        percentile(0, this.portfolioWeightedReturn)
-      );
+      // console.log(
+      //   "calculating VAR",
+      //   percentile(0, this.portfolioWeightedReturn)
+      // );
       if(!this.showError){
         this.calculatedRiskOutput = percentile(
           this.confidenceLevelInput,

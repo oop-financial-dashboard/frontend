@@ -56,7 +56,6 @@ export default {
   },
   computed: {
     setPercentageChange() {
-      console.log(this.change);
       if (this.change > 0) {
        return '+' + Number((this.change).toFixed(2));
       } else {
