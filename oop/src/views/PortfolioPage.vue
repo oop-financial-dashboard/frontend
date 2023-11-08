@@ -40,32 +40,31 @@
       <portfolio-value-chart :portfolio-id="portfolioId" />
     </div>
 
-    <div class="d-flex h-auto justify-content-between">
+    <div class="flex space-x-4 my-4">
       <!-- this exposure chart should be part of the div for all the alignments and padding to apply -->
       <exposure-chart
-        class="rounded-xl border"
+        class="rounded-xl border w-5/6"
         :portfolio-stocks="portfolio.stocks"
       />
-
-      <!-- <div class="bg-white data-box p-4"> -->
-      <!-- <header class="mb-1">Assets Pie Chart</header> -->
-      <assets-pie-chart class="rounded-xl border" :portfolio="portfolio" />
+      <assets-pie-chart
+        class="rounded-xl border w-5/6"
+        :portfolio="portfolio"
+      />
+      <va-r-chart class="rounded" :portfolio-stocks="portfolio.stocks" />
     </div>
     <!-- </div> -->
     <div class="time-series-graph data-box bg-white p-4 rounded-xl border">
       <attribution-chart />
     </div>
 
-    <div>
-      <va-r-chart class="rounded" :portfolio-stocks="portfolio.stocks" />
-    </div>
-
     <div class="stocks border data-box bg-white rounded-xl">
       <p class="text-xl font-bold m-4">Portfolio Stocks</p>
-      <stocks-table class="rounded m-4" style="width:1200px" :portfolio-stocks="portfolio.stocks" />
+      <stocks-table
+        class="rounded m-4"
+        style="width: 1200px"
+        :portfolio-stocks="portfolio.stocks"
+      />
     </div>
-
-    
   </main>
 </template>
 

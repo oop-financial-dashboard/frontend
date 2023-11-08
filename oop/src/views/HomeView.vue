@@ -155,8 +155,8 @@
         </div>
         <!-- Statistics and Performance Cards -->
         <div class="flex flex-row my-4 space-x-4 ml-4">
-          <portfolios-statistics-card :portfolios="portfolioList" :change="totalPercentageChange" :key="portfolioList" v-if="allPercentageChanges.length > 0" class="border"/>
-          <blank-component class="border" v-else />
+          <blank-component class="border" v-if="checkPorfolioList" />
+          <portfolios-statistics-card :portfolios="portfolioList" :change="totalPercentageChange" :key="portfolioList" v-if="!checkPorfolioList" class="border"/>
           <portfolio-performance-card title="Best Performing Portfolio" :details="allPercentageChanges[0]" :value="bestPortfolioValue"  v-if="allPercentageChanges.length > 0" class="border"/>
           <portfolio-performance-card title="Worst Performing Portfolio" :details="allPercentageChanges[allPercentageChanges.length-1]" :value="worstPortfolioValue" v-if="allPercentageChanges.length > 1" class="border"/>
         </div>
@@ -299,6 +299,9 @@ export default {
     // this.retrieveUserDetails();
     this.populateCarousel();
     await this.retrieveUserDetails();
+  },
+  mounted() {
+    console.log("all changes ---->", this.allPercentageChanges.length);
   },
   methods: {
     checkPortfolioExists(portfolios) {
@@ -548,6 +551,8 @@ export default {
       Object.values(this.allPercentageChanges).forEach(change => { sum += change[1] });
       // console.log(sum);
       return sum;
+    }, checkPorfolioList() {
+      return JSON.stringify(this.portfolioList).length === 0;
     }
   }
 };
