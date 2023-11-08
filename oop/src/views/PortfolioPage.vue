@@ -111,11 +111,15 @@ export default {
       priceReturn: 0,
       portfolioList: JSON.parse(sessionStorage.getItem("portfolioList")),
       initialPrice: 0,
+      token: sessionStorage.getItem("token"),
+      stdData: {}
     };
   },
   mounted() {
     this.calculatePriceReturn();
-    this.calculateSD();
+    this.calculatePortfolioSD();
+    this.calculateSharpeRatio();
+    this.calculateActiveReturn();
   },
   methods: {
     formatTotalValue(totalValue) {
@@ -169,9 +173,143 @@ export default {
         });
     },
 
-    calculateSD() {},
-  },
-};
+    getYesterdayDate() {
+      const today = new Date(); // Create a new Date instance with the current date and time
+      const yesterday = new Date(today);
+      yesterday.setDate(today.getDate() - 1); // Subtract one day
+      const year = yesterday.getFullYear();
+      const month = (yesterday.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based, so we add 1
+      const day = yesterday.getDate().toString().padStart(2, "0");
+      const timestamp = `${year}-${month}-${day}`;
+      return timestamp;
+    },
+
+    calculateStockSD(closeArray) {
+
+      // Step 1: Calculate the mean
+      const mean = closeArray.reduce((acc, val) => acc + val, 0) / closeArray.length;
+
+      // Step 2: Calculate the variance for each data point
+      const variances = closeArray.map(x => x - mean);
+
+      // Step 3: Square the variances
+      const squaredVariances = variances.map(variance => Math.pow(variance, 2));
+
+      // Step 4: Sum of squared variance values
+      const sumOfSquaredVariances = squaredVariances.reduce((sum, variance) => sum + variance, 0);
+
+      // Step 5: Calculate the sample standard deviation
+      const standardDeviation = Math.sqrt(sumOfSquaredVariances / (closeArray.length - 1));
+
+      return standardDeviation;
+    },
+
+    calculateStockWeight(stockValue) {
+      // get weights
+      const initialCapital = this.portfolio.totalValue;
+      return stockValue/initialCapital;
+    },
+    
+    calculatePortfolioVariance(stdData) {
+      // Initialize the portfolio variance
+      let portfolioVariance = 0;
+
+      // Calculate the portfolio variance
+      for (const stockSymbol in stdData) {
+        const stdv = stdData[stockSymbol].stdDev;
+        const weight = stdData[stockSymbol].weight;
+        // Assume no correlation
+        portfolioVariance += (weight ** 2) * (stdv ** 2);
+      }
+      return portfolioVariance;
+    },
+
+    async calculatePortfolioSD() {
+      let portfolioVariance = 0;
+      const stockPromises = [];
+
+      for (const stock of this.portfolio.stocks) {
+        const stockSymbol = stock.symbol;
+        const stockAdded = stock.dateAdded;
+        const timestamp = this.getYesterdayDate();
+
+        const config = {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        };
+
+        const stockPromise = axios.post(`/stock/historicals`, {
+          symbol: stockSymbol,
+          end: timestamp,
+          start: stockAdded,
+        }, config);
+
+        stockPromises.push(stockPromise);
+      }
+
+      try {
+        const responses = await Promise.all(stockPromises);
+
+        for (const response of responses) {
+          if (response.status === 200) {
+            const closeArray = response.data.map(item => parseFloat(item.close));
+            const stockStd = this.calculateStockSD(closeArray);
+
+            // Add stock weight
+            for (const stock of this.portfolio.stocks) {
+              const stockWeight = this.calculateStockWeight(stock.value);
+              this.stdData[stock.symbol] = { stdDev: stockStd, weight: stockWeight };
+            }
+
+            // Calculate portfolio variance
+            portfolioVariance = this.calculatePortfolioVariance(this.stdData);
+          }
+        }
+
+        const portfolioStdv = Math.sqrt(portfolioVariance);
+        this.stdDev = parseFloat(portfolioStdv * 100).toFixed(2) + "%"; // This sets the portfolio standard deviation
+      } catch (error) {
+        // Handle errors here
+        console.log("Failed to calculate portfolio standard deviation.")
+      }
+    },
+
+    calculateSharpeRatio() {
+      // TODO
+      // sharpe ratio
+      // ROR = curr - initial/initial x 100
+      // Enter the current value and expected rate of return for each investment. (7%)
+      // Indicate the weight of each investment.
+      // Multiply the weight by its expected return
+      // Sum these all up
+
+      // axios
+      //     .post(
+      //       `/stock/price`,
+      //         {
+      //           symbol: stockSymbol,
+      //           timestamp: "2023-11-03", // date should be yesterday date
+      //         },
+      //         config
+      //     )
+      //     .then((response) => {
+      //       if (response.status === 200) {
+      //         // calculate weights per stock
+              
+      //       }
+      //     });
+
+    },
+
+    calculateActiveReturn() {
+      // TODO
+      // Risk-free Rate of Return = [(1 + Government Bond Rate)/(1 + Inflation Rate)] – 1
+      // inflation rate = 3.7
+      // govt bond rate = 4.577
+    },
+  }
+}
 </script>
 
 <style scoped>
@@ -182,8 +320,5 @@ export default {
   margin: 10px 0 10px 0;
   padding: 5px;
 }
-/* .portfoliopage {
-  background-color: #f5f7ff;
-  
-} */
+
 </style>
