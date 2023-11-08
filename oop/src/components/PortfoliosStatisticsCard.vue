@@ -19,10 +19,6 @@
         <p :class="[change > 0 ? 'text-green-600' : 'text-red-600']">{{ setPercentageChange }}%</p>
       </div>
 
-      <div class="flex flex-row justify-between">
-        <p>Total PnL</p>
-        <p>{{ totalPnL }}</p>
-      </div>
     </div>
   </div>
 </template>

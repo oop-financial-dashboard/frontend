@@ -48,7 +48,7 @@ export default {
         },
         series: [
           {
-            name: "Stock Price",
+            name: "Value",
             data: null,
             type: "area",
             threshold: null,
