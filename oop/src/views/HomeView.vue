@@ -156,7 +156,7 @@
         <!-- Statistics and Performance Cards -->
         <div class="flex flex-row my-4 space-x-4 ml-4">
           <portfolios-statistics-card :portfolios="portfolioList" :change="totalPercentageChange" :key="portfolioList" v-if="allPercentageChanges.length > 0" class="border"/>
-          <blank-component class="border" v-else/>
+          <blank-component class="border" v-else />
           <portfolio-performance-card title="Best Performing Portfolio" :details="allPercentageChanges[0]" :value="bestPortfolioValue"  v-if="allPercentageChanges.length > 0" class="border"/>
           <portfolio-performance-card title="Worst Performing Portfolio" :details="allPercentageChanges[allPercentageChanges.length-1]" :value="worstPortfolioValue" v-if="allPercentageChanges.length > 1" class="border"/>
         </div>
@@ -384,7 +384,7 @@ export default {
         .get(`/portfolio/get-all/${user_id}`, config)
         .then(async (response) => {
           if (response.status === 200) {
-            console.log(response.data.portfolios);
+            console.log(response.data);
             let portfoliosInitialValues = {};
             this.portfolioList = response.data.portfolios;
             this.checkPortfolioExists(this.portfolioList);
@@ -392,15 +392,17 @@ export default {
               this.totalAsset += this.portfolioList[key].totalValue;
               portfoliosInitialValues[key] = this.portfolioList[key].totalValue;
             }
+            if (Object.keys(response.data.portfolios).length !== 0) {
+              //   TODO: Call function here to get portfolio latest prices
+              const portfolioLatestPrices = await this.getAllPortfoliosLatestPrice(this.portfolioList, user_id);
+              this.allPercentageChanges = this.calculateAllPortfoliosPercentageChange(portfoliosInitialValues, portfolioLatestPrices);
+              this.bestPortfolioValue = Number(portfolioLatestPrices[this.allPercentageChanges[0][0]][1].toFixed(0)).toLocaleString();
+              this.worstPortfolioValue = Number(portfolioLatestPrices[this.allPercentageChanges[this.allPercentageChanges.length-1][0]][1].toFixed(0)).toLocaleString();
+            }
             sessionStorage.setItem(
                 "portfolioList",
                 JSON.stringify(this.portfolioList)
             );
-            //   TODO: Call function here to get portfolio latest prices
-            const portfolioLatestPrices = await this.getAllPortfoliosLatestPrice(this.portfolioList, user_id);
-            this.allPercentageChanges = this.calculateAllPortfoliosPercentageChange(portfoliosInitialValues, portfolioLatestPrices);
-            this.bestPortfolioValue = Number(portfolioLatestPrices[this.allPercentageChanges[0][0]][1].toFixed(0)).toLocaleString();
-            this.worstPortfolioValue = Number(portfolioLatestPrices[this.allPercentageChanges[this.allPercentageChanges.length-1][0]][1].toFixed(0)).toLocaleString();
           }
         })
         .catch((err) => {

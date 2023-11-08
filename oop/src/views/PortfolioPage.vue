@@ -43,7 +43,17 @@
         <stocks-table class="rounded" :portfolio-stocks="portfolio.stocks" />
       </div>
     <!-- </div> -->
-    
+    <div class="time-series-graph data-box bg-white p-4">
+      <attribution-chart/>
+    </div>
+
+    <div>
+      <va-r-chart class="rounded" :portfolio-stocks="portfolio.stocks" />
+    </div>
+
+    <div class="stocks border data-box">
+      <stocks-table class="rounded" :portfolio-stocks="portfolio.stocks" />
+    </div>
 
   </main>
 </template>
@@ -56,9 +66,11 @@ import PortfolioValueChart from "@/components/Analytics/PortfolioValueChart.vue"
 import AssetsPieChart from "@/components/Analytics/AssetsPieChart.vue";
 import AttributionChart from "@/components/Analytics/AttributionChart.vue";
 import axios from "axios";
+import VaRChart from "@/components/Analytics/VaRChart.vue";
 
 export default {
   components: {
+    VaRChart,
     AttributionChart,
     PortfolioValueChart,
     dataBox,
