@@ -228,6 +228,11 @@ export default {
   methods: {
     capitalPerComputed(price, quantity) {
       let result = "0%";
+      //console.log("Quantity: " + quantity);
+      if (typeof quantity === 'undefined') {
+        return result;
+      }
+      
       if (this.portfolioCapital > 0) {
         result =
           parseFloat(
