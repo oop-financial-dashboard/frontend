@@ -294,7 +294,7 @@ export default {
   },
   methods: {
     async Authenticate() {
-      this.showSpinner = true;
+     
       try {
         this.invalidEmailInput = false; // Reset validation flags
         this.invalidPwdInput = false;
@@ -312,7 +312,7 @@ export default {
         } else if (
           this.invalidEmailInput == false &&
           this.invalidPwdInput == false
-        ) {
+        ) { this.showSpinner = true;
           await axios
             .post(`/auth/login`, {
               email: this.email,
