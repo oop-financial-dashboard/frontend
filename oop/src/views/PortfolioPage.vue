@@ -116,21 +116,13 @@ export default {
     };
   },
   mounted() {
-  mounted() {
     this.calculatePriceReturn();
     this.calculatePortfolioSD();
     this.calculateSharpeRatio();
     this.calculateActiveReturn();
   },
   methods: {
-  methods: {
     formatTotalValue(totalValue) {
-      return totalValue.toLocaleString("en-US", {
-        style: "currency",
-        currency: "USD",
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
       return totalValue.toLocaleString("en-US", {
         style: "currency",
         currency: "USD",
@@ -141,10 +133,9 @@ export default {
 
     calculatePriceReturn() {
       const token = sessionStorage.getItem("token");
-    calculatePriceReturn() {
       const config = {
         headers: {
-          Authorization: `Bearer ${this.token}`,
+          Authorization: `Bearer ${token}`,
         },
       };
 
@@ -163,26 +154,6 @@ export default {
               }
             }
 
-      axios
-        .get(
-          `/portfolio/get-historicals/${this.userid}/${this.portfolioId}`,
-          config
-        )
-        .then((response) => {
-          if (response.status === 200) {
-            this.priceReturnList = response.data;
-            for (const key in response.data) {
-              for (const k in response.data[key]) {
-                this.priceReturnList = response.data[key][k];
-              }
-            }
-
-            for (const portfolio in this.portfolioList) {
-              if (portfolio == this.portfolioId) {
-                this.initialPrice += this.portfolioList[portfolio].totalValue;
-              }
-            }
-            // (summing all individual stocks in the portfolio then subtracting the last stock price) -1
             for (const portfolio in this.portfolioList) {
               if (portfolio == this.portfolioId) {
                 this.initialPrice += this.portfolioList[portfolio].totalValue;
@@ -190,21 +161,6 @@ export default {
             }
             // (summing all individual stocks in the portfolio then subtracting the last stock price) -1
 
-            this.priceReturn =
-              this.priceReturnList[this.priceReturnList.length - 1][1];
-            this.percentageData = Number(
-              (this.priceReturn - this.initialPrice - 1).toFixed(2)
-            );
-            this.value = this.formatTotalValue(
-              this.priceReturn - this.initialPrice
-            );
-          }
-        });
-    },
-
-    calculateSD() {},
-  },
-            //TO DO : UNCOMMENT THIS OUT!!
             this.priceReturn =
               this.priceReturnList[this.priceReturnList.length - 1][1];
             this.percentageData = Number(
@@ -352,8 +308,8 @@ export default {
       // inflation rate = 3.7
       // govt bond rate = 4.577
     },
-  },
-};
+  }
+}
 </script>
 
 <style scoped>
@@ -364,8 +320,5 @@ export default {
   margin: 10px 0 10px 0;
   padding: 5px;
 }
-/* .portfoliopage {
-  background-color: #f5f7ff;
-  
-} */
+
 </style>
