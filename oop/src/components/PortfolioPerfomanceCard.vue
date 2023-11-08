@@ -2,13 +2,12 @@
   <div class="card w-68 h-56 bg-white border-1 min-h-min rounded-xl">
     <div class="card-body flex flex-col space-y-3">
       <p class="text-lg font-bold">{{ title }}</p>
-      <p v-if="details" class="text-lg">{{ name }}</p>
+      <hr
+        class="mb-0 mt-0 rounded header-line"
+        :class="[ title.includes('Best') ? 'text-green-400' : 'text-red-400' ]"
+      />
 
-<!--      <hr-->
-<!--        class="mb-0 mt-0 rounded header-line"-->
-<!--        :style="{ borderColor: getTitleColor() }"-->
-<!--      />-->
-      <p class="text-lg">Portfolio Name</p>
+      <p v-if="details" class="text-lg">{{ name }}</p>
       <div class="flex flex-row justify-between">
         <p class="text-blue-600">${{ portfolioValue }}</p>
         <p
@@ -59,17 +58,17 @@ export default {
       return this.change.toFixed(2) + "%";
       // portfolio: Object;
     },
-    methods: {
-      // getTitleColor() {
-      //   if (this.title === "Best Performing Portfolio") {
-      //     return "#29CC97"; // Green color
-      //   } else if (this.title === "Worst Performing Portfolio") {
-      //     return "#FF616B"; // Red color
-      //   } else {
-      //     // Default color if neither of the conditions is met
-      //     return "#000000"; // Black color
-      //   }
-      // },
+    computed: {
+      getTitleColor() {
+        if (this.title === "Best Performing Portfolio") {
+          return "#29CC97"; // Green color
+        } else if (this.title === "Worst Performing Portfolio") {
+          return "#FF616B"; // Red color
+        } else {
+          // Default color if neither of the conditions is met
+          return "#000000"; // Black color
+        }
+      },
     },
   },
 };
