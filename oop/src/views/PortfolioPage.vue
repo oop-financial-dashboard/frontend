@@ -166,8 +166,8 @@ export default {
             // (summing all individual stocks in the portfolio then subtracting the last stock price) -1
 
             this.priceReturn = this.priceReturnList[this.priceReturnList.length - 1][1];
-            this.percentageData = Number(
-              (this.priceReturn - this.initialPrice - 1).toFixed(2)
+            this.percentageData = Number(((
+              (this.priceReturn/this.initialPrice) - 1) * 100).toFixed(2)
             );
             this.value = this.formatTotalValue(
               this.priceReturn - this.initialPrice
