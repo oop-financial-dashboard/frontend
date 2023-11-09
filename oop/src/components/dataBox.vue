@@ -47,8 +47,6 @@ export default {
         this.addUnits = true;
       }
     }
-
-    console.log(this.title + "----" + this.addUnits);
   },
 };
 </script>

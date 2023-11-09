@@ -325,7 +325,7 @@ export default {
       const end = portfolioHistoricals[portfolioHistoricals.length - 1]; // latest/current
       const numYears = this.getDifferenceInYears(start[0], end[0]);
       const cagr = ((end[1]/start[1])**(1/numYears)-1) * 100;
-      if (cagr > 10000) {
+      if (cagr > 200) {
         this.cagr = "Insufficient Data";
       } else {
         this.cagr = cagr.toFixed(2);
