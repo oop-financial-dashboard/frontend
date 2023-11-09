@@ -68,6 +68,7 @@
                   type="date"
                   v-model="item.dateAdded"
                   :enable-time-picker="false"
+                  :clearable="false"
                 />
               </td>
 
@@ -126,6 +127,7 @@
                   :model-value="item.selectedDate"
                   @update:model-value="updateDate(item, index, $event)"
                   :enable-time-picker="false"
+                  :clearable="false"
                 />
               </td>
 
