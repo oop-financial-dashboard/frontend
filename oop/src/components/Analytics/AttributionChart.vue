@@ -72,20 +72,21 @@ export default {
             // console.log("portfolio data", response.data);
 
             let portfolioStocks = response.data.portfolios[portfolioId];
-            // console.log("portoflio stocks", portfolioStocks);
+            console.log("portoflio stocks", portfolioStocks);
 
             this.stocks = portfolioStocks.stocks.sort(
               (a, b) => b.value - a.value
             );
             this.stockSymbol = this.stocks[0]["symbol"];
+            this.stockDateAdded = this.stocks[0]["dateAdded"];
             // const endDate = 1685967600;
             axios
               .post(
                 `/stock/historicals`,
                 {
                   symbol: this.stockSymbol,
-                  start: "2023-01-01",
-                  end: "2023-11-03",
+                  start: this.stockDateAdded,
+                  end: this.getDate('today'),
                 },
                 config
               )
@@ -111,6 +112,22 @@ export default {
         .catch((err) => {
           console.error(err);
         });
+    },
+    getDate(day) {
+      // TODO: Return 30/31 of previous month when today is 1st
+      const current = new Date();
+      const yyyy = current.getFullYear();
+      let mm = current.getMonth() + 1; // Months start at 0!
+      let dd = current.getDate() -1;
+      let yd = current.getDate()-2;
+
+      if (day === 'today') {
+        if (dd < 10) dd = '0' + dd;
+      } else if (day === 'yesterday') {
+        if (dd < 10) dd = '0' + yd;
+      }
+      if (mm < 10) mm = '0' + mm;
+      return yyyy + '-' + mm + '-' + dd;
     },
   },
   watch: {},

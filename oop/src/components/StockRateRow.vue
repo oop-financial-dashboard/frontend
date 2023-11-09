@@ -40,8 +40,8 @@ export default {
       },
     };
     axios.all([
-      axios.post("/stock/price", { "symbol": this.stock[0], "timestamp": "2023-11-07" }, config),
-      axios.post("/stock/price", { "symbol": this.stock[0], "timestamp": "2023-11-06" }, config),
+      axios.post("/stock/price", { "symbol": this.stock[0], "timestamp": this.getDate('today') }, config),
+      axios.post("/stock/price", { "symbol": this.stock[0], "timestamp": this.getDate('yesterday') }, config),
       axios.get(`/stock/description/${this.stock[0]}`, config)
     ]).then(axios.spread((currentDayInfo, previousDayInfo, stockDescription) => {
       // Both requests are now complete
