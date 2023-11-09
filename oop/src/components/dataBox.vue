@@ -37,9 +37,18 @@ export default {
     },
   },
   created() {
-    if (this.title === "Price Return / Year" || this.title === "Compound Annual Growth Rate" || this.title === "Active Return / Year") {
+    if (this.title === "Price Return / Year" || this.title === "Active Return / Year") {
       this.addUnits = true;
+    } else if (this.title === "Compound Annual Growth Rate") {
+      console.log("VALUE: " + this.displayValue);
+      if (this.displayValue == "Insufficient Data") {
+        this.addUnits = false;
+      } else {
+        this.addUnits = true;
+      }
     }
+
+    console.log(this.title + "----" + this.addUnits);
   },
 };
 </script>
